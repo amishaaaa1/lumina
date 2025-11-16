@@ -183,7 +183,7 @@ export default function Home() {
             </h1>
 
             <p className="text-xl md:text-2xl text-gray-600 mb-12 max-w-3xl mx-auto">
-              Hedge your bets. Earn yield. Built on BNB Chain.
+              Protect your trades, amplify your gains. First decentralized insurance protocol for prediction markets on BNB Chain
             </p>
 
             <div className="flex flex-wrap gap-4 justify-center mb-20">
@@ -192,7 +192,7 @@ export default function Home() {
                 className="group px-8 py-4 bg-gray-900 text-white rounded-full font-semibold hover:bg-gray-800 transition-all hover:scale-105 shadow-lg hover:shadow-xl"
               >
                 <span className="flex items-center gap-2">
-                  Buy Insurance
+                  Get Protected
                   <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
                   </svg>
@@ -214,19 +214,90 @@ export default function Home() {
             {/* Stats with Hover Effects */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto">
               {[
-                { label: 'Market Volume', value: '$500M+', color: 'blue' },
-                { label: 'LP APY', value: '40%', color: 'green' },
-                { label: 'Premium', value: '2-10%', color: 'purple' },
-                { label: 'Payout', value: '<3s', color: 'orange' },
+                { label: 'Prediction Market Volume', value: '$500M+' },
+                { label: 'APY for LPs', value: 'Up to 40%' },
+                { label: 'Claim Payout Rate', value: '90%' },
+                { label: 'Coverage', value: 'Instant' },
               ].map((stat) => (
                 <div key={stat.label} className="group text-center cursor-default">
                   <div className="text-4xl md:text-5xl font-bold text-gray-900 mb-2 group-hover:scale-110 transition-transform duration-300">
                     {stat.value}
                   </div>
                   <div className="text-sm text-gray-500 group-hover:text-gray-900 transition-colors">{stat.label}</div>
-                  <div className={`h-1 w-0 group-hover:w-full mx-auto mt-2 bg-${stat.color}-500 transition-all duration-300 rounded-full`} />
                 </div>
               ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Problem Section */}
+      <section className="px-6 py-24 bg-gray-900 text-white">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-5xl md:text-6xl font-bold mb-6">
+              Trading prediction markets is risky business
+            </h2>
+            <p className="text-xl text-gray-400">
+              Without protection, one wrong prediction can wipe out weeks of gains
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="bg-gray-800 rounded-xl p-8 border border-gray-700 hover:border-gray-600 transition-all">
+              <h3 className="text-2xl font-bold mb-3">Unlimited Downside</h3>
+              <p className="text-gray-400">You bear 100% of the risk on every trade</p>
+            </div>
+            
+            <div className="bg-gray-800 rounded-xl p-8 border border-gray-700 hover:border-gray-600 transition-all">
+              <h3 className="text-2xl font-bold mb-3">No Hedging Tools</h3>
+              <p className="text-gray-400">Traditional insurance doesn&apos;t cover prediction markets</p>
+            </div>
+            
+            <div className="bg-gray-800 rounded-xl p-8 border border-gray-700 hover:border-gray-600 transition-all">
+              <h3 className="text-2xl font-bold mb-3">Capital Inefficient</h3>
+              <p className="text-gray-400">You over-collateralize just to manage risk</p>
+            </div>
+            
+            <div className="bg-gray-800 rounded-xl p-8 border border-gray-700 hover:border-gray-600 transition-all">
+              <h3 className="text-2xl font-bold mb-3">Sleepless Nights</h3>
+              <p className="text-gray-400">Constantly worrying about market moves</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Solution Section */}
+      <section className="px-6 py-24 bg-white">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6">
+              Trade with confidence, earn with peace of mind
+            </h2>
+            <p className="text-xl text-gray-600">
+              Lumina brings institutional-grade risk management to every trader
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="bg-gray-50 rounded-xl p-8 border-2 border-gray-300 hover:border-blue-500 hover:shadow-lg transition-all">
+              <h3 className="text-2xl font-bold text-gray-900 mb-3">Buy Insurance</h3>
+              <p className="text-gray-600">Protect any prediction market position in seconds</p>
+            </div>
+            
+            <div className="bg-gray-50 rounded-xl p-8 border-2 border-gray-300 hover:border-green-500 hover:shadow-lg transition-all">
+              <h3 className="text-2xl font-bold text-gray-900 mb-3">Provide Liquidity</h3>
+              <p className="text-gray-600">Earn premium income as a coverage provider</p>
+            </div>
+            
+            <div className="bg-gray-50 rounded-xl p-8 border-2 border-gray-300 hover:border-purple-500 hover:shadow-lg transition-all">
+              <h3 className="text-2xl font-bold text-gray-900 mb-3">Automated Claims</h3>
+              <p className="text-gray-600">Get instant payouts when markets resolve against you</p>
+            </div>
+            
+            <div className="bg-gray-50 rounded-xl p-8 border-2 border-gray-300 hover:border-orange-500 hover:shadow-lg transition-all">
+              <h3 className="text-2xl font-bold text-gray-900 mb-3">Dynamic Pricing</h3>
+              <p className="text-gray-600">Fair premiums based on real-time risk assessment</p>
             </div>
           </div>
         </div>
@@ -235,82 +306,298 @@ export default function Home() {
       {/* How it Works */}
       <HowItWorksSection />
 
-      {/* Features */}
-      <section className="px-6 py-32">
+      {/* Marketplace Preview */}
+      <section className="px-6 py-24 bg-gray-50">
         <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-20">
+          <div className="text-center mb-16">
             <h2 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6">
-              Why Lumina
+              Active Insurance Markets
             </h2>
-            <p className="text-xl text-gray-600">
-              Built on solid tech, not hype
-            </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-6">
-            {[
-              { title: 'Fast & Cheap', desc: 'BNB Chain. 3s blocks. $0.10 gas.' },
-              { title: 'Secure', desc: 'OpenZeppelin contracts. 100% test coverage.' },
-              { title: 'Fair Pricing', desc: 'Dynamic rates based on pool utilization.' },
-              { title: 'Chainlink Oracles', desc: 'Decentralized price feeds for claims.' },
-              { title: 'Policy NFTs', desc: 'Every policy is an ERC-721 token.' },
-              { title: 'Non-Custodial', desc: 'Your keys, your funds. Always.' },
-            ].map((feature) => (
-              <div 
-                key={feature.title} 
-                className="bg-white rounded-xl p-6 border-2 border-gray-300 hover:border-gray-400 hover:shadow-lg transition-all"
-              >
-                <h3 className="text-lg font-bold text-gray-900 mb-2">{feature.title}</h3>
-                <p className="text-gray-600 text-sm leading-relaxed">{feature.desc}</p>
+          <div className="grid md:grid-cols-3 gap-6 mb-12">
+            <div className="bg-white rounded-xl p-8 border-2 border-gray-300 hover:border-blue-500 hover:shadow-lg transition-all">
+              <h3 className="text-2xl font-bold text-gray-900 mb-4">BTC &gt; $50K by Dec 31</h3>
+              <div className="space-y-3">
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Premium:</span>
+                  <span className="font-semibold text-gray-900">3.2%</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Coverage:</span>
+                  <span className="font-semibold text-gray-900">$2.4M</span>
+                </div>
               </div>
-            ))}
+            </div>
+
+            <div className="bg-white rounded-xl p-8 border-2 border-gray-300 hover:border-purple-500 hover:shadow-lg transition-all">
+              <h3 className="text-2xl font-bold text-gray-900 mb-4">ETH ETF Approval</h3>
+              <div className="space-y-3">
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Premium:</span>
+                  <span className="font-semibold text-gray-900">4.8%</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Coverage:</span>
+                  <span className="font-semibold text-gray-900">$1.8M</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-xl p-8 border-2 border-gray-300 hover:border-orange-500 hover:shadow-lg transition-all">
+              <h3 className="text-2xl font-bold text-gray-900 mb-4">Trump Election Win</h3>
+              <div className="space-y-3">
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Premium:</span>
+                  <span className="font-semibold text-gray-900">6.1%</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Coverage:</span>
+                  <span className="font-semibold text-gray-900">$3.2M</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="text-center">
+            <Link
+              href="/insurance"
+              className="inline-flex items-center gap-2 px-8 py-4 bg-gray-900 text-white rounded-xl font-semibold hover:bg-gray-800 transition-all hover:scale-105"
+            >
+              View All Markets
+              <span>→</span>
+            </Link>
           </div>
         </div>
       </section>
 
-      {/* Use Cases */}
-      <section className="px-6 py-32 bg-gray-50">
+      {/* Liquidity Pools Preview */}
+      <section className="px-6 py-24 bg-white">
         <div className="max-w-6xl mx-auto">
-          <h2 className="text-5xl md:text-6xl font-bold text-gray-900 mb-20 text-center">
-            Markets we cover
-          </h2>
+          <div className="text-center mb-16">
+            <h2 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6">
+              Earn Premium Income
+            </h2>
+          </div>
 
-          <div className="grid md:grid-cols-3 gap-6">
-            {[
-              { title: 'Crypto', desc: 'BTC/ETH price predictions' },
-              { title: 'Politics', desc: 'Election outcomes' },
-              { title: 'Sports', desc: 'Game results' },
-            ].map((useCase) => (
-              <div key={useCase.title} className="bg-white rounded-xl p-8 text-center border-2 border-gray-300 hover:border-gray-400 hover:shadow-lg transition-all">
-                <h3 className="text-2xl font-bold text-gray-900 mb-2">{useCase.title}</h3>
-                <p className="text-gray-600">{useCase.desc}</p>
+          <div className="grid md:grid-cols-3 gap-6 mb-12">
+            <div className="bg-gray-50 rounded-xl p-8 border-2 border-gray-300 hover:border-green-500 hover:shadow-lg transition-all">
+              <h3 className="text-2xl font-bold text-gray-900 mb-6">Stablecoin Pool</h3>
+              <div className="space-y-4">
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-600">APY:</span>
+                  <span className="text-3xl font-bold text-green-600">28%</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">TVL:</span>
+                  <span className="font-semibold text-gray-900">$4.2M</span>
+                </div>
               </div>
-            ))}
+            </div>
+
+            <div className="bg-gray-50 rounded-xl p-8 border-2 border-gray-300 hover:border-green-500 hover:shadow-lg transition-all">
+              <h3 className="text-2xl font-bold text-gray-900 mb-6">BNB Pool</h3>
+              <div className="space-y-4">
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-600">APY:</span>
+                  <span className="text-3xl font-bold text-green-600">32%</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">TVL:</span>
+                  <span className="font-semibold text-gray-900">$2.8M</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-gray-50 rounded-xl p-8 border-2 border-gray-300 hover:border-green-500 hover:shadow-lg transition-all">
+              <h3 className="text-2xl font-bold text-gray-900 mb-6">Blue Chip Pool</h3>
+              <div className="space-y-4">
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-600">APY:</span>
+                  <span className="text-3xl font-bold text-green-600">25%</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">TVL:</span>
+                  <span className="font-semibold text-gray-900">$3.1M</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-blue-50 rounded-xl p-8 mb-12">
+            <div className="grid md:grid-cols-2 gap-8 text-center">
+              <div>
+                <div className="text-4xl font-bold text-gray-900 mb-2">$842K</div>
+                <div className="text-gray-600">Total Premiums Earned</div>
+              </div>
+              <div>
+                <div className="text-4xl font-bold text-gray-900 mb-2">28.5%</div>
+                <div className="text-gray-600">Average APY</div>
+              </div>
+            </div>
+          </div>
+
+          <div className="text-center">
+            <Link
+              href="/pools"
+              className="inline-flex items-center gap-2 px-8 py-4 bg-green-600 text-white rounded-xl font-semibold hover:bg-green-700 transition-all hover:scale-105"
+            >
+              Start Earning
+              <span>→</span>
+            </Link>
           </div>
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="px-6 py-32">
+      {/* Technology Section */}
+      <section className="px-6 py-24 bg-gray-50">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6">
+              Built for scale, designed for trust
+            </h2>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="bg-white rounded-xl p-8 border-2 border-gray-300 hover:border-gray-400 hover:shadow-lg transition-all">
+              <h3 className="text-xl font-bold text-gray-900 mb-3">BNB Chain Native</h3>
+              <p className="text-gray-600">Optimized for speed and low fees</p>
+            </div>
+            
+            <div className="bg-white rounded-xl p-8 border-2 border-gray-300 hover:border-gray-400 hover:shadow-lg transition-all">
+              <h3 className="text-xl font-bold text-gray-900 mb-3">Smart Contract Security</h3>
+              <p className="text-gray-600">Audited, battle-tested code</p>
+            </div>
+            
+            <div className="bg-white rounded-xl p-8 border-2 border-gray-300 hover:border-gray-400 hover:shadow-lg transition-all">
+              <h3 className="text-xl font-bold text-gray-900 mb-3">Dynamic Risk Modeling</h3>
+              <p className="text-gray-600">Real-time premium calculation</p>
+            </div>
+            
+            <div className="bg-white rounded-xl p-8 border-2 border-gray-300 hover:border-gray-400 hover:shadow-lg transition-all">
+              <h3 className="text-xl font-bold text-gray-900 mb-3">Non-Custodial</h3>
+              <p className="text-gray-600">You control your funds always</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Testimonials */}
+      <section className="px-6 py-24 bg-white">
+        <div className="max-w-6xl mx-auto">
+          <div className="grid md:grid-cols-3 gap-8">
+            <div className="bg-gray-50 rounded-xl p-8 border-2 border-gray-300">
+              <p className="text-lg text-gray-900 mb-6">
+                &quot;Lumina saved me $15K when BTC crashed unexpectedly&quot;
+              </p>
+              <div className="text-sm font-semibold text-gray-600">Prediction Market Trader</div>
+            </div>
+
+            <div className="bg-gray-50 rounded-xl p-8 border-2 border-gray-300">
+              <p className="text-lg text-gray-900 mb-6">
+                &quot;Earning 35% APY providing insurance is a game-changer&quot;
+              </p>
+              <div className="text-sm font-semibold text-gray-600">Liquidity Provider</div>
+            </div>
+
+            <div className="bg-gray-50 rounded-xl p-8 border-2 border-gray-300">
+              <p className="text-lg text-gray-900 mb-6">
+                &quot;We use Lumina to hedge our prediction market exposure&quot;
+              </p>
+              <div className="text-sm font-semibold text-gray-600">DAO Treasury Manager</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Partners */}
+      <section className="px-6 py-24 bg-gray-50">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6">
+              Integrations
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+            <div className="bg-white rounded-xl p-8 border-2 border-gray-300 flex items-center justify-center">
+              <span className="text-2xl font-bold text-gray-900">BNB Chain</span>
+            </div>
+            <div className="bg-white rounded-xl p-8 border-2 border-gray-300 flex items-center justify-center">
+              <span className="text-2xl font-bold text-gray-900">Polymarket</span>
+            </div>
+            <div className="bg-white rounded-xl p-8 border-2 border-gray-300 flex items-center justify-center">
+              <span className="text-2xl font-bold text-gray-900">Chainlink</span>
+            </div>
+            <div className="bg-white rounded-xl p-8 border-2 border-gray-300 flex items-center justify-center">
+              <span className="text-2xl font-bold text-gray-900">OpenZeppelin</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ */}
+      <section className="px-6 py-24 bg-white">
+        <div className="max-w-4xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6">
+              Frequently Asked Questions
+            </h2>
+          </div>
+
+          <div className="space-y-6">
+            <div className="bg-gray-50 rounded-xl p-8 border-2 border-gray-300">
+              <h3 className="text-xl font-bold text-gray-900 mb-3">How are premiums calculated?</h3>
+              <p className="text-gray-600">
+                Premiums are dynamically calculated based on pool utilization, market risk, and coverage duration. Typically ranges from 2-10% of coverage amount.
+              </p>
+            </div>
+
+            <div className="bg-gray-50 rounded-xl p-8 border-2 border-gray-300">
+              <h3 className="text-xl font-bold text-gray-900 mb-3">What happens if insurance pool runs out of funds?</h3>
+              <p className="text-gray-600">
+                Each pool has a maximum capacity. When utilization is high, premiums increase to attract more liquidity providers and balance risk.
+              </p>
+            </div>
+
+            <div className="bg-gray-50 rounded-xl p-8 border-2 border-gray-300">
+              <h3 className="text-xl font-bold text-gray-900 mb-3">How quickly are claims processed?</h3>
+              <p className="text-gray-600">
+                Claims are processed automatically via smart contracts when Chainlink oracles confirm market resolution. Payouts typically complete in under 3 seconds.
+              </p>
+            </div>
+
+            <div className="bg-gray-50 rounded-xl p-8 border-2 border-gray-300">
+              <h3 className="text-xl font-bold text-gray-900 mb-3">Can I cancel my insurance policy?</h3>
+              <p className="text-gray-600">
+                Policies are active until market resolution. You can transfer your policy NFT to another wallet, but premiums are non-refundable once paid.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Final CTA */}
+      <section className="px-6 py-32 bg-gray-900 text-white">
         <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-5xl md:text-6xl font-bold text-gray-900 mb-8">
-            Ready to start?
+          <h2 className="text-5xl md:text-6xl font-bold mb-8">
+            Ready to trade without fear?
           </h2>
-          <p className="text-xl text-gray-600 mb-12">
-            Join thousands earning and hedging on BNB Chain.
+          <p className="text-xl text-gray-400 mb-12">
+            Join thousands of traders already protected by Lumina
           </p>
           <div className="flex flex-wrap gap-6 justify-center">
             <Link
               href="/insurance"
-              className="px-10 py-5 bg-gray-900 text-white rounded-full font-semibold text-lg hover:bg-gray-800 transition-all hover:scale-105 shadow-xl"
+              className="px-10 py-5 bg-white text-gray-900 rounded-full font-semibold text-lg hover:bg-gray-100 transition-all hover:scale-105 shadow-xl"
             >
-              Buy Insurance
+              Get Started
             </Link>
             <Link
-              href="/pools"
-              className="px-10 py-5 bg-white text-gray-900 rounded-full font-semibold text-lg border-2 border-gray-200 hover:border-gray-900 transition-all hover:scale-105"
+              href="/docs"
+              className="px-10 py-5 bg-transparent text-white rounded-full font-semibold text-lg border-2 border-white hover:bg-white hover:text-gray-900 transition-all hover:scale-105"
             >
-              Provide Liquidity
+              Read Documentation
             </Link>
           </div>
         </div>
