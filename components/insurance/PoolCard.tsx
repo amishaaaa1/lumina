@@ -1,85 +1,120 @@
 'use client';
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
-import { PoolInfo } from '@/lib/types';
-import { formatUSD, formatPercentage } from '@/lib/utils';
+import { formatEther } from 'viem';
 
 interface PoolCardProps {
-  poolInfo: PoolInfo;
+  poolId: string;
+  name: string;
+  totalLiquidity: bigint;
+  availableLiquidity: bigint;
+  totalPremiums: bigint;
+  totalClaims: bigint;
+  utilizationRate: number;
+  apy: number;
+  isActive: boolean;
+  onDeposit?: () => void;
+  onWithdraw?: () => void;
 }
 
-export function PoolCard({ poolInfo }: PoolCardProps) {
-  const apy = calculateAPY(poolInfo);
+export function PoolCard({
+  poolId,
+  name,
+  totalLiquidity,
+  availableLiquidity,
+  totalPremiums,
+  totalClaims,
+  utilizationRate,
+  apy,
+  isActive,
+  onDeposit,
+  onWithdraw,
+}: PoolCardProps) {
+  const total = Number(formatEther(totalLiquidity));
+  const available = Number(formatEther(availableLiquidity));
+  const premiums = Number(formatEther(totalPremiums));
+  const claims = Number(formatEther(totalClaims));
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Insurance Pool</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <p className="text-sm text-gray-600">Total Liquidity</p>
-              <p className="text-2xl font-bold text-gray-900">
-                {formatUSD(poolInfo.totalLiquidity)}
-              </p>
-            </div>
-            <div>
-              <p className="text-sm text-gray-600">Available</p>
-              <p className="text-2xl font-bold text-green-600">
-                {formatUSD(poolInfo.availableLiquidity)}
-              </p>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <p className="text-sm text-gray-600">Utilization Rate</p>
-              <p className="text-lg font-semibold text-gray-900">
-                {formatPercentage(poolInfo.utilizationRate)}
-              </p>
-            </div>
-            <div>
-              <p className="text-sm text-gray-600">Est. APY</p>
-              <p className="text-lg font-semibold text-blue-600">{apy}%</p>
-            </div>
-          </div>
-
-          <div className="pt-4 border-t border-gray-200">
-            <div className="flex justify-between text-sm">
-              <span className="text-gray-600">Total Premiums</span>
-              <span className="font-medium text-gray-900">
-                {formatUSD(poolInfo.totalPremiums)}
-              </span>
-            </div>
-            <div className="flex justify-between text-sm mt-2">
-              <span className="text-gray-600">Total Claims</span>
-              <span className="font-medium text-gray-900">
-                {formatUSD(poolInfo.totalClaims)}
-              </span>
-            </div>
-          </div>
-
-          <div className="flex gap-2 mt-4">
-            <button className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-              Deposit
-            </button>
-            <button className="flex-1 px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors">
-              Withdraw
-            </button>
-          </div>
+    <div className="bg-white dark:bg-black border border-neutral-200 dark:border-neutral-800 rounded-xl p-6 hover:border-blue-600 dark:hover:border-blue-400 transition-colors">
+      {/* Header */}
+      <div className="flex items-start justify-between mb-6">
+        <div>
+          <h3 className="text-lg font-semibold mb-1">{name}</h3>
+          <p className="text-sm text-neutral-600 dark:text-neutral-400">Pool #{poolId}</p>
         </div>
-      </CardContent>
-    </Card>
-  );
-}
+        {isActive && (
+          <span className="px-2 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 text-xs font-medium rounded">
+            Active
+          </span>
+        )}
+      </div>
 
-function calculateAPY(poolInfo: PoolInfo): string {
-  if (poolInfo.totalLiquidity === 0n) return '0.00';
-  
-  const premiumRate = Number(poolInfo.totalPremiums) / Number(poolInfo.totalLiquidity);
-  const apy = premiumRate * 365 * 100; // Annualized
-  
-  return apy.toFixed(2);
+      {/* APY Highlight */}
+      <div className="mb-6 p-4 bg-neutral-50 dark:bg-neutral-900 rounded-lg">
+        <div className="text-sm text-neutral-600 dark:text-neutral-400 mb-1">Current APY</div>
+        <div className="text-3xl font-bold text-green-600">{apy.toFixed(2)}%</div>
+      </div>
+
+      {/* Stats */}
+      <div className="space-y-4 mb-6">
+        <div className="flex justify-between">
+          <span className="text-sm text-neutral-600 dark:text-neutral-400">Total Liquidity</span>
+          <span className="text-sm font-semibold">${total.toLocaleString()}</span>
+        </div>
+        <div className="flex justify-between">
+          <span className="text-sm text-neutral-600 dark:text-neutral-400">Available</span>
+          <span className="text-sm font-semibold">${available.toLocaleString()}</span>
+        </div>
+        <div className="flex justify-between">
+          <span className="text-sm text-neutral-600 dark:text-neutral-400">Premiums Earned</span>
+          <span className="text-sm font-semibold text-green-600">${premiums.toLocaleString()}</span>
+        </div>
+        <div className="flex justify-between">
+          <span className="text-sm text-neutral-600 dark:text-neutral-400">Claims Paid</span>
+          <span className="text-sm font-semibold text-red-600">${claims.toLocaleString()}</span>
+        </div>
+      </div>
+
+      {/* Utilization Bar */}
+      <div className="mb-6">
+        <div className="flex justify-between text-sm mb-2">
+          <span className="text-neutral-600 dark:text-neutral-400">Utilization</span>
+          <span className="font-medium">{utilizationRate.toFixed(1)}%</span>
+        </div>
+        <div className="h-2 bg-neutral-200 dark:bg-neutral-800 rounded-full overflow-hidden">
+          <div
+            className={`h-full transition-all ${
+              utilizationRate > 70
+                ? 'bg-yellow-500'
+                : utilizationRate > 50
+                ? 'bg-blue-500'
+                : 'bg-green-500'
+            }`}
+            style={{ width: `${Math.min(utilizationRate, 100)}%` }}
+          />
+        </div>
+        {utilizationRate > 70 && (
+          <p className="text-xs text-yellow-600 dark:text-yellow-400 mt-2">
+            High utilization - premiums are elevated
+          </p>
+        )}
+      </div>
+
+      {/* Actions */}
+      <div className="flex gap-3">
+        <button
+          onClick={onDeposit}
+          className="flex-1 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors"
+        >
+          Deposit
+        </button>
+        <button
+          onClick={onWithdraw}
+          className="flex-1 px-4 py-2.5 border border-neutral-300 dark:border-neutral-700 hover:border-blue-600 dark:hover:border-blue-400 text-sm font-medium rounded-lg transition-colors"
+        >
+          Withdraw
+        </button>
+      </div>
+    </div>
+  );
 }

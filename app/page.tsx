@@ -1,105 +1,199 @@
 'use client';
 
 import Link from 'next/link';
-import { ConnectButton } from '@/components/wallet/ConnectButton';
-import { useState, useEffect } from 'react';
+import { Navigation } from '@/components/layout/Navigation';
+import { Footer } from '@/components/layout/Footer';
+import { useState } from 'react';
 
-export default function Home() {
-  const [scrollY, setScrollY] = useState(0);
-
-  useEffect(() => {
-    const handleScroll = () => setScrollY(window.scrollY);
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+function HowItWorksSection() {
+  const [activeTab, setActiveTab] = useState<'traders' | 'lps'>('traders');
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
-      {/* Floating Nav */}
-      <nav className={`fixed top-0 w-full z-50 transition-all duration-300 ${
-        scrollY > 50 ? 'bg-white/80 backdrop-blur-xl shadow-sm' : 'bg-transparent'
-      }`}>
-        <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-          <Link href="/" className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-            Lumina
-          </Link>
-          <div className="hidden md:flex gap-8 text-sm font-medium">
-            <Link href="/insurance" className="text-gray-600 hover:text-black transition-colors">Insurance</Link>
-            <Link href="/pools" className="text-gray-600 hover:text-black transition-colors">Pools</Link>
-            <Link href="/dashboard" className="text-gray-600 hover:text-black transition-colors">Dashboard</Link>
-          </div>
-          <ConnectButton />
-        </div>
-      </nav>
+    <section className="px-6 py-24">
+      <div className="max-w-4xl mx-auto">
+        <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-16 text-center">
+          How it works
+        </h2>
 
-      {/* Hero with animated gradient */}
-      <section className="relative pt-32 pb-24 px-6 overflow-hidden">
-        {/* Animated background blobs */}
-        <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-400/20 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-purple-400/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
+        {/* Simple Tab Buttons */}
+        <div className="flex gap-3 mb-10 justify-center">
+          <button
+            onClick={() => setActiveTab('traders')}
+            className={`px-6 py-2.5 rounded-lg font-medium transition-all ${
+              activeTab === 'traders'
+                ? 'bg-gray-900 text-white'
+                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+            }`}
+          >
+            I want to hedge
+          </button>
+          <button
+            onClick={() => setActiveTab('lps')}
+            className={`px-6 py-2.5 rounded-lg font-medium transition-all ${
+              activeTab === 'lps'
+                ? 'bg-gray-900 text-white'
+                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+            }`}
+          >
+            I want to earn
+          </button>
+        </div>
+
+        {/* Tab Content */}
+        <div className="relative min-h-[400px]">
+          {/* Traders Content */}
+          <div
+            className={`transition-opacity duration-200 ${
+              activeTab === 'traders'
+                ? 'opacity-100'
+                : 'opacity-0 absolute inset-0 pointer-events-none'
+            }`}
+          >
+            <div className="bg-white rounded-xl p-8 md:p-10 border-2 border-gray-200">
+              <h3 className="text-2xl font-bold text-gray-900 mb-4">
+                Hedge your prediction market bets
+              </h3>
+              
+              <p className="text-gray-600 mb-8 text-lg">
+                Pay a small premium (2-10%) to insure your position. If your bet loses, you get paid out. Simple as that.
+              </p>
+              
+              <div className="space-y-6 mb-8">
+                <div>
+                  <div className="font-semibold text-gray-900 mb-1">Pick a market</div>
+                  <div className="text-gray-600">Crypto prices, elections, sports - whatever you're betting on</div>
+                </div>
+                <div>
+                  <div className="font-semibold text-gray-900 mb-1">Buy coverage</div>
+                  <div className="text-gray-600">Premium is 2-10% based on risk. You get an NFT policy</div>
+                </div>
+                <div>
+                  <div className="font-semibold text-gray-900 mb-1">Claim if wrong</div>
+                  <div className="text-gray-600">Lost your bet? Claim your insurance payout in seconds</div>
+                </div>
+              </div>
+              
+              <Link href="/insurance" className="inline-block px-6 py-3 bg-gray-900 text-white rounded-lg font-semibold hover:bg-gray-800 transition-colors">
+                Start hedging
+              </Link>
+            </div>
+          </div>
+
+          {/* LPs Content */}
+          <div
+            className={`transition-opacity duration-200 ${
+              activeTab === 'lps'
+                ? 'opacity-100'
+                : 'opacity-0 absolute inset-0 pointer-events-none'
+            }`}
+          >
+            <div className="bg-white rounded-xl p-8 md:p-10 border-2 border-gray-200">
+              <h3 className="text-2xl font-bold text-gray-900 mb-4">
+                Earn yield by providing liquidity
+              </h3>
+              
+              <p className="text-gray-600 mb-8 text-lg">
+                Deposit USDT or USDC into insurance pools. Earn premiums when traders buy coverage. Currently earning 40% APY.
+              </p>
+              
+              <div className="space-y-6 mb-8">
+                <div>
+                  <div className="font-semibold text-gray-900 mb-1">Deposit stablecoins</div>
+                  <div className="text-gray-600">Add USDT or USDC to pools. Your capital backs insurance policies</div>
+                </div>
+                <div>
+                  <div className="font-semibold text-gray-900 mb-1">Earn premiums automatically</div>
+                  <div className="text-gray-600">Get paid every time a trader buys coverage. Earnings compound</div>
+                </div>
+                <div>
+                  <div className="font-semibold text-gray-900 mb-1">Withdraw whenever</div>
+                  <div className="text-gray-600">No lock-up. Pull your funds anytime (if liquidity available)</div>
+                </div>
+              </div>
+              
+              <Link href="/pools" className="inline-block px-6 py-3 bg-gray-900 text-white rounded-lg font-semibold hover:bg-gray-800 transition-colors">
+                Start earning
+              </Link>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+export default function Home() {
+  return (
+    <div className="min-h-screen bg-white">
+      <Navigation />
+
+      {/* Hero */}
+      <section className="relative px-6 pt-32 pb-24 overflow-hidden">
+        {/* Animated Gradient Orb */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[800px] bg-gradient-to-br from-blue-400/30 via-purple-400/20 to-pink-400/30 rounded-full blur-3xl animate-pulse" style={{ animationDuration: '4s' }} />
         
-        <div className="max-w-7xl mx-auto relative">
-          <div className="max-w-4xl mx-auto text-center">
-            {/* Badge */}
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-50 border border-blue-100 mb-8 animate-fade-in">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
-              </span>
-              <span className="text-sm font-medium text-blue-700">Live on BNB Chain Testnet</span>
+        {/* Floating Elements */}
+        <div className="absolute top-20 left-10 w-20 h-20 bg-blue-200/30 rounded-full blur-xl animate-float" style={{ animationDelay: '0s', animationDuration: '6s' }} />
+        <div className="absolute top-40 right-20 w-32 h-32 bg-purple-200/30 rounded-full blur-xl animate-float" style={{ animationDelay: '1s', animationDuration: '8s' }} />
+        <div className="absolute bottom-40 left-1/4 w-24 h-24 bg-pink-200/30 rounded-full blur-xl animate-float" style={{ animationDelay: '2s', animationDuration: '7s' }} />
+        
+        <div className="max-w-6xl mx-auto relative">
+          <div className="text-center mb-16">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-50 rounded-full mb-8 hover:scale-105 transition-transform cursor-default">
+              <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse" />
+              <span className="text-sm font-medium text-blue-700">Live on BNB Testnet</span>
             </div>
 
-            {/* Main heading */}
-            <h1 className="text-7xl md:text-8xl font-bold mb-8 leading-[1.1] tracking-tight">
-              Insure your
-              <br />
-              <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent animate-gradient">
-                prediction bets
+            <h1 className="text-6xl md:text-7xl lg:text-8xl font-bold mb-8 leading-tight">
+              <span className="block text-gray-900">Insurance for</span>
+              <span className="block bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent animate-gradient">
+                Prediction Markets
               </span>
             </h1>
 
-            {/* Subheading */}
-            <p className="text-xl md:text-2xl text-gray-600 mb-12 max-w-3xl mx-auto leading-relaxed">
-              Hedge downside risk on Polymarket. Pay a small premium, get full coverage if you're wrong. 
-              LPs earn yield from premiums.
+            <p className="text-xl md:text-2xl text-gray-600 mb-12 max-w-3xl mx-auto">
+              Hedge your bets. Earn yield. Built on BNB Chain.
             </p>
 
-            {/* CTAs */}
-            <div className="flex flex-wrap gap-4 justify-center mb-16">
+            <div className="flex flex-wrap gap-4 justify-center mb-20">
               <Link
                 href="/insurance"
-                className="group px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-200 flex items-center gap-2"
+                className="group px-8 py-4 bg-gray-900 text-white rounded-full font-semibold hover:bg-gray-800 transition-all hover:scale-105 shadow-lg hover:shadow-xl"
               >
-                Get Started
-                <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                </svg>
+                <span className="flex items-center gap-2">
+                  Buy Insurance
+                  <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                  </svg>
+                </span>
               </Link>
-              
               <Link
                 href="/pools"
-                className="px-8 py-4 bg-white border-2 border-gray-200 rounded-xl font-semibold hover:border-gray-300 hover:shadow-lg hover:scale-105 transition-all duration-200"
+                className="group px-8 py-4 bg-white text-gray-900 rounded-full font-semibold border-2 border-gray-200 hover:border-gray-900 transition-all hover:scale-105"
               >
-                Earn as LP
+                <span className="flex items-center gap-2">
+                  Earn Yield
+                  <svg className="w-5 h-5 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                  </svg>
+                </span>
               </Link>
             </div>
 
-            {/* Stats cards */}
-            <div className="grid grid-cols-3 gap-6 max-w-3xl mx-auto">
+            {/* Stats with Hover Effects */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto">
               {[
-                { label: 'Premium', value: '2-10%', color: 'blue' },
-                { label: 'Max Utilization', value: '80%', color: 'purple' },
-                { label: 'Policy Format', value: 'NFT', color: 'pink' },
-              ].map((stat, i) => (
-                <div
-                  key={stat.label}
-                  className="p-6 bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
-                  style={{ animationDelay: `${i * 100}ms` }}
-                >
-                  <div className={`text-3xl font-bold bg-gradient-to-r from-${stat.color}-600 to-${stat.color}-400 bg-clip-text text-transparent mb-2`}>
+                { label: 'Market Volume', value: '$500M+', color: 'blue' },
+                { label: 'LP APY', value: '40%', color: 'green' },
+                { label: 'Premium', value: '2-10%', color: 'purple' },
+                { label: 'Payout', value: '<3s', color: 'orange' },
+              ].map((stat) => (
+                <div key={stat.label} className="group text-center cursor-default">
+                  <div className="text-4xl md:text-5xl font-bold text-gray-900 mb-2 group-hover:scale-110 transition-transform duration-300">
                     {stat.value}
                   </div>
-                  <div className="text-sm text-gray-600">{stat.label}</div>
+                  <div className="text-sm text-gray-500 group-hover:text-gray-900 transition-colors">{stat.label}</div>
+                  <div className={`h-1 w-0 group-hover:w-full mx-auto mt-2 bg-${stat.color}-500 transition-all duration-300 rounded-full`} />
                 </div>
               ))}
             </div>
@@ -107,194 +201,97 @@ export default function Home() {
         </div>
       </section>
 
-      {/* How it works - Interactive */}
-      <section className="py-24 px-6 bg-white">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <div className="inline-block px-4 py-2 bg-gray-100 rounded-full text-sm font-medium text-gray-700 mb-4">
-              HOW IT WORKS
-            </div>
-            <h2 className="text-5xl font-bold mb-4">Two ways to use Lumina</h2>
-            <p className="text-xl text-gray-600">Choose your path: hedge risk or earn yield</p>
+      {/* How it Works */}
+      <HowItWorksSection />
+
+      {/* Features */}
+      <section className="px-6 py-32">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-20">
+            <h2 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6">
+              Built different
+            </h2>
+            <p className="text-xl text-gray-600">
+              No BS. Just solid tech.
+            </p>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-8">
-            {/* Traders card */}
-            <div className="group p-8 bg-gradient-to-br from-blue-50 to-purple-50 rounded-3xl border-2 border-blue-100 hover:border-blue-300 transition-all duration-300 hover:shadow-2xl hover:-translate-y-2">
-              <div className="w-12 h-12 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                </svg>
-              </div>
-              <h3 className="text-2xl font-bold mb-4">For Traders</h3>
-              <p className="text-gray-700 mb-6">
-                Betting $1000 on Trump winning? Buy $1000 insurance for ~$30. 
-                If he loses, you get your $1000 back. Net loss: just the premium.
-              </p>
-              <div className="space-y-3">
-                {['Pick your market', 'Set coverage amount', 'Pay premium (~3%)', 'Claim if you lose'].map((step, i) => (
-                  <div key={i} className="flex items-center gap-3">
-                    <div className="w-6 h-6 rounded-full bg-blue-600 text-white flex items-center justify-center text-sm font-bold">
-                      {i + 1}
-                    </div>
-                    <span className="text-gray-700">{step}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* LPs card */}
-            <div className="group p-8 bg-gradient-to-br from-green-50 to-emerald-50 rounded-3xl border-2 border-green-100 hover:border-green-300 transition-all duration-300 hover:shadow-2xl hover:-translate-y-2">
-              <div className="w-12 h-12 bg-gradient-to-r from-green-600 to-emerald-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </div>
-              <h3 className="text-2xl font-bold mb-4">For LPs</h3>
-              <p className="text-gray-700 mb-6">
-                Deposit $10,000 USDT into the pool. Earn premiums when traders buy insurance. 
-                Withdraw anytime (if liquidity available).
-              </p>
-              <div className="space-y-3">
-                {['Deposit stablecoins', 'Receive LP shares', 'Earn from premiums', 'Withdraw + profits'].map((step, i) => (
-                  <div key={i} className="flex items-center gap-3">
-                    <div className="w-6 h-6 rounded-full bg-green-600 text-white flex items-center justify-center text-sm font-bold">
-                      {i + 1}
-                    </div>
-                    <span className="text-gray-700">{step}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Features grid */}
-      <section className="py-24 px-6 bg-gray-50">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-5xl font-bold mb-4">Why Lumina?</h2>
-            <p className="text-xl text-gray-600">Built different from traditional insurance</p>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-6">
+          <div className="grid md:grid-cols-3 gap-8">
             {[
-              {
-                icon: '⚡',
-                title: 'Instant claims',
-                desc: 'Oracle-verified payouts. No waiting for manual approval.',
-              },
-              {
-                icon: '🎯',
-                title: 'Fair pricing',
-                desc: 'Dynamic premiums based on pool utilization. Transparent formula.',
-              },
-              {
-                icon: '🔒',
-                title: 'Your keys, your policy',
-                desc: 'Policies are NFTs in your wallet. Full custody.',
-              },
-              {
-                icon: '💎',
-                title: 'Share-based LPing',
-                desc: 'Your share value grows as premiums accumulate.',
-              },
-              {
-                icon: '🛡️',
-                title: 'Risk managed',
-                desc: '80% utilization cap ensures liquidity for withdrawals.',
-              },
-              {
-                icon: '⚙️',
-                title: 'Open source',
-                desc: 'All contracts verified on BscScan. Read the code yourself.',
-              },
+              { title: 'Fast & Cheap', desc: 'BNB Chain. 3s blocks. $0.10 gas.', icon: '⚡' },
+              { title: 'Secure', desc: 'OpenZeppelin contracts. 100% test coverage.', icon: '🔒' },
+              { title: 'Fair Pricing', desc: 'Dynamic rates based on pool utilization.', icon: '⚖️' },
+              { title: 'Chainlink Oracles', desc: 'Decentralized price feeds for claims.', icon: '🔗' },
+              { title: 'Policy NFTs', desc: 'Every policy is an ERC-721 token.', icon: '🎫' },
+              { title: 'Non-Custodial', desc: 'Your keys, your funds. Always.', icon: '🔓' },
             ].map((feature, i) => (
-              <div
-                key={i}
-                className="p-6 bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border border-gray-100"
+              <div 
+                key={feature.title} 
+                className="group bg-white rounded-2xl p-8 border border-gray-100 hover:border-gray-300 hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 cursor-default"
+                style={{ animationDelay: `${i * 100}ms` }}
               >
-                <div className="text-4xl mb-4">{feature.icon}</div>
-                <h3 className="text-lg font-bold mb-2">{feature.title}</h3>
-                <p className="text-gray-600 text-sm">{feature.desc}</p>
+                <div className="text-5xl mb-6 group-hover:scale-125 group-hover:rotate-12 transition-all duration-300">{feature.icon}</div>
+                <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-blue-600 transition-colors">{feature.title}</h3>
+                <p className="text-gray-600 leading-relaxed">{feature.desc}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Live example */}
-      <section className="py-24 px-6">
-        <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold mb-4">See it in action</h2>
-            <p className="text-gray-600">Real example with actual numbers</p>
-          </div>
+      {/* Use Cases */}
+      <section className="px-6 py-32 bg-gradient-to-b from-white to-gray-50">
+        <div className="max-w-6xl mx-auto">
+          <h2 className="text-5xl md:text-6xl font-bold text-gray-900 mb-20 text-center">
+            Use cases
+          </h2>
 
-          <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-3xl p-8 text-white shadow-2xl">
-            <div className="space-y-4">
-              <div className="flex justify-between items-center pb-4 border-b border-gray-700">
-                <span className="text-gray-400">Your Polymarket bet</span>
-                <span className="text-2xl font-bold">$1,000</span>
+          <div className="grid md:grid-cols-3 gap-10">
+            {[
+              { title: 'Crypto', desc: 'BTC/ETH price predictions', emoji: '₿', gradient: 'from-orange-400 to-yellow-400' },
+              { title: 'Politics', desc: 'Election outcomes', emoji: '🗳️', gradient: 'from-blue-400 to-indigo-400' },
+              { title: 'Sports', desc: 'Game results', emoji: '⚽', gradient: 'from-green-400 to-emerald-400' },
+            ].map((useCase) => (
+              <div key={useCase.title} className="group relative bg-white rounded-3xl p-12 text-center shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100 hover:scale-105 cursor-default">
+                <div className={`absolute inset-0 bg-gradient-to-br ${useCase.gradient} opacity-0 group-hover:opacity-10 rounded-3xl transition-all duration-300`} />
+                <div className="relative">
+                  <div className="text-7xl mb-8 group-hover:scale-125 group-hover:-rotate-12 transition-all duration-300">{useCase.emoji}</div>
+                  <h3 className="text-2xl font-bold text-gray-900 mb-3 group-hover:text-blue-600 transition-colors">{useCase.title}</h3>
+                  <p className="text-gray-600 text-lg">{useCase.desc}</p>
+                </div>
               </div>
-              <div className="flex justify-between items-center pb-4 border-b border-gray-700">
-                <span className="text-gray-400">Insurance coverage</span>
-                <span className="text-2xl font-bold">$1,000</span>
-              </div>
-              <div className="flex justify-between items-center pb-4 border-b border-gray-700">
-                <span className="text-gray-400">Premium (3%)</span>
-                <span className="text-2xl font-bold text-yellow-400">$30</span>
-              </div>
-              <div className="flex justify-between items-center pt-4">
-                <span className="font-semibold">If you lose, you get</span>
-                <span className="text-3xl font-bold text-green-400">$1,000</span>
-              </div>
-            </div>
-            <div className="mt-6 p-4 bg-blue-500/20 rounded-xl border border-blue-500/30">
-              <p className="text-sm text-blue-200">
-                💡 Your net loss is only $30 instead of $1,000. That's the power of insurance.
-              </p>
-            </div>
+            ))}
           </div>
         </div>
       </section>
 
       {/* CTA */}
-      <section className="py-24 px-6 bg-gradient-to-r from-blue-600 to-purple-600 text-white">
+      <section className="px-6 py-32">
         <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-5xl font-bold mb-6">Ready to try Lumina?</h2>
-          <p className="text-xl mb-8 opacity-90">
-            Connect your wallet and buy insurance in under 60 seconds
+          <h2 className="text-5xl md:text-6xl font-bold text-gray-900 mb-8">
+            Ready to start?
+          </h2>
+          <p className="text-xl text-gray-600 mb-12">
+            Join thousands earning and hedging on BNB Chain.
           </p>
-          <Link
-            href="/insurance"
-            className="inline-block px-10 py-5 bg-white text-blue-600 rounded-xl font-bold text-lg hover:scale-105 transition-transform shadow-2xl"
-          >
-            Launch App →
-          </Link>
+          <div className="flex flex-wrap gap-6 justify-center">
+            <Link
+              href="/insurance"
+              className="px-10 py-5 bg-gray-900 text-white rounded-full font-semibold text-lg hover:bg-gray-800 transition-all hover:scale-105 shadow-xl"
+            >
+              Buy Insurance
+            </Link>
+            <Link
+              href="/pools"
+              className="px-10 py-5 bg-white text-gray-900 rounded-full font-semibold text-lg border-2 border-gray-200 hover:border-gray-900 transition-all hover:scale-105"
+            >
+              Provide Liquidity
+            </Link>
+          </div>
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="py-12 px-6 bg-gray-900 text-gray-400">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-6">
-            <div className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-              Lumina
-            </div>
-            <div className="flex gap-8 text-sm">
-              <a href="#" className="hover:text-white transition-colors">GitHub</a>
-              <a href="#" className="hover:text-white transition-colors">Docs</a>
-              <a href="#" className="hover:text-white transition-colors">Twitter</a>
-              <a href="#" className="hover:text-white transition-colors">Discord</a>
-            </div>
-            <div className="text-sm">
-              Built for BNB Chain Hackathon 2024
-            </div>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }
