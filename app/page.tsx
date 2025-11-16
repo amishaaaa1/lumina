@@ -9,113 +9,144 @@ function HowItWorksSection() {
   const [activeTab, setActiveTab] = useState<'traders' | 'lps'>('traders');
 
   return (
-    <section className="px-6 py-24">
-      <div className="max-w-4xl mx-auto">
-        <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-16 text-center">
-          How it works
-        </h2>
+    <section className="px-6 py-24 bg-gray-50">
+      <div className="max-w-5xl mx-auto">
+        <div className="text-center mb-16">
+          <h2 className="text-5xl md:text-6xl font-bold text-gray-900 mb-4">
+            How it works
+          </h2>
+          <p className="text-xl text-gray-600">
+            Two ways to play
+          </p>
+        </div>
 
         {/* Simple Tab Buttons */}
-        <div className="flex gap-3 mb-10 justify-center">
+        <div className="flex justify-center gap-4 mb-16">
           <button
             onClick={() => setActiveTab('traders')}
-            className={`px-6 py-2.5 rounded-lg font-medium transition-all ${
+            className={`px-8 py-4 rounded-xl font-semibold text-lg transition-all ${
               activeTab === 'traders'
-                ? 'bg-gray-900 text-white'
-                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                ? 'bg-blue-600 text-white shadow-lg'
+                : 'bg-white text-gray-700 hover:bg-gray-100'
             }`}
           >
             I want to hedge
           </button>
           <button
             onClick={() => setActiveTab('lps')}
-            className={`px-6 py-2.5 rounded-lg font-medium transition-all ${
+            className={`px-8 py-4 rounded-xl font-semibold text-lg transition-all ${
               activeTab === 'lps'
-                ? 'bg-gray-900 text-white'
-                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                ? 'bg-green-600 text-white shadow-lg'
+                : 'bg-white text-gray-700 hover:bg-gray-100'
             }`}
           >
             I want to earn
           </button>
         </div>
 
-        {/* Tab Content */}
-        <div className="relative min-h-[400px]">
-          {/* Traders Content */}
-          <div
-            className={`transition-opacity duration-200 ${
-              activeTab === 'traders'
-                ? 'opacity-100'
-                : 'opacity-0 absolute inset-0 pointer-events-none'
-            }`}
-          >
-            <div className="bg-white rounded-xl p-8 md:p-10 border-2 border-gray-200">
-              <h3 className="text-2xl font-bold text-gray-900 mb-4">
-                Hedge your prediction market bets
-              </h3>
-              
-              <p className="text-gray-600 mb-8 text-lg">
-                Pay a small premium (2-10%) to insure your position. If your bet loses, you get paid out. Simple as that.
-              </p>
-              
-              <div className="space-y-6 mb-8">
-                <div>
-                  <div className="font-semibold text-gray-900 mb-1">Pick a market</div>
-                  <div className="text-gray-600">Crypto prices, elections, sports - whatever you're betting on</div>
+        {/* Content */}
+        <div className="relative">
+          {activeTab === 'traders' && (
+            <div className="animate-fade-in">
+              <div className="bg-white rounded-2xl p-10 md:p-12 shadow-lg">
+                <div className="text-center mb-12">
+                  <h3 className="text-3xl font-bold text-gray-900 mb-3">
+                    Hedge your prediction market bets
+                  </h3>
+                  <p className="text-lg text-gray-600">
+                    Pay 2-10% premium. If you lose, get paid out. That&apos;s it.
+                  </p>
                 </div>
-                <div>
-                  <div className="font-semibold text-gray-900 mb-1">Buy coverage</div>
-                  <div className="text-gray-600">Premium is 2-10% based on risk. You get an NFT policy</div>
+                
+                <div className="grid md:grid-cols-3 gap-6 mb-10">
+                  <div className="bg-gray-50 rounded-xl p-6 border-2 border-gray-300">
+                    <div className="text-sm font-semibold text-blue-600 mb-2">STEP 1</div>
+                    <h4 className="font-bold text-gray-900 mb-2 text-lg">Pick a market</h4>
+                    <p className="text-gray-600 text-sm">
+                      Crypto prices, elections, sports - whatever you&apos;re betting on
+                    </p>
+                  </div>
+                  
+                  <div className="bg-gray-50 rounded-xl p-6 border-2 border-gray-300">
+                    <div className="text-sm font-semibold text-purple-600 mb-2">STEP 2</div>
+                    <h4 className="font-bold text-gray-900 mb-2 text-lg">Buy coverage</h4>
+                    <p className="text-gray-600 text-sm">
+                      Premium is 2-10% based on risk. You get an NFT policy
+                    </p>
+                  </div>
+                  
+                  <div className="bg-gray-50 rounded-xl p-6 border-2 border-gray-300">
+                    <div className="text-sm font-semibold text-green-600 mb-2">STEP 3</div>
+                    <h4 className="font-bold text-gray-900 mb-2 text-lg">Claim if wrong</h4>
+                    <p className="text-gray-600 text-sm">
+                      Lost your bet? Claim your insurance payout in seconds
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <div className="font-semibold text-gray-900 mb-1">Claim if wrong</div>
-                  <div className="text-gray-600">Lost your bet? Claim your insurance payout in seconds</div>
+                
+                <div className="text-center">
+                  <Link 
+                    href="/insurance" 
+                    className="inline-flex items-center gap-2 px-8 py-4 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 transition-colors"
+                  >
+                    Start hedging
+                    <span>→</span>
+                  </Link>
                 </div>
               </div>
-              
-              <Link href="/insurance" className="inline-block px-6 py-3 bg-gray-900 text-white rounded-lg font-semibold hover:bg-gray-800 transition-colors">
-                Start hedging
-              </Link>
             </div>
-          </div>
+          )}
 
-          {/* LPs Content */}
-          <div
-            className={`transition-opacity duration-200 ${
-              activeTab === 'lps'
-                ? 'opacity-100'
-                : 'opacity-0 absolute inset-0 pointer-events-none'
-            }`}
-          >
-            <div className="bg-white rounded-xl p-8 md:p-10 border-2 border-gray-200">
-              <h3 className="text-2xl font-bold text-gray-900 mb-4">
-                Earn yield by providing liquidity
-              </h3>
-              
-              <p className="text-gray-600 mb-8 text-lg">
-                Deposit USDT or USDC into insurance pools. Earn premiums when traders buy coverage. Currently earning 40% APY.
-              </p>
-              
-              <div className="space-y-6 mb-8">
-                <div>
-                  <div className="font-semibold text-gray-900 mb-1">Deposit stablecoins</div>
-                  <div className="text-gray-600">Add USDT or USDC to pools. Your capital backs insurance policies</div>
+          {activeTab === 'lps' && (
+            <div className="animate-fade-in">
+              <div className="bg-white rounded-2xl p-10 md:p-12 shadow-lg">
+                <div className="text-center mb-12">
+                  <h3 className="text-3xl font-bold text-gray-900 mb-3">
+                    Earn yield on your stablecoins
+                  </h3>
+                  <p className="text-lg text-gray-600">
+                    Deposit USDT/USDC. Collect premiums. Earn up to 40% APY.
+                  </p>
                 </div>
-                <div>
-                  <div className="font-semibold text-gray-900 mb-1">Earn premiums automatically</div>
-                  <div className="text-gray-600">Get paid every time a trader buys coverage. Earnings compound</div>
+                
+                <div className="grid md:grid-cols-3 gap-6 mb-10">
+                  <div className="bg-gray-50 rounded-xl p-6 border-2 border-gray-300">
+                    <div className="text-sm font-semibold text-green-600 mb-2">STEP 1</div>
+                    <h4 className="font-bold text-gray-900 mb-2 text-lg">Deposit funds</h4>
+                    <p className="text-gray-600 text-sm">
+                      Add USDT or USDC to any insurance pool
+                    </p>
+                  </div>
+                  
+                  <div className="bg-gray-50 rounded-xl p-6 border-2 border-gray-300">
+                    <div className="text-sm font-semibold text-emerald-600 mb-2">STEP 2</div>
+                    <h4 className="font-bold text-gray-900 mb-2 text-lg">Collect premiums</h4>
+                    <p className="text-gray-600 text-sm">
+                      Earn fees every time someone buys insurance
+                    </p>
+                  </div>
+                  
+                  <div className="bg-gray-50 rounded-xl p-6 border-2 border-gray-300">
+                    <div className="text-sm font-semibold text-teal-600 mb-2">STEP 3</div>
+                    <h4 className="font-bold text-gray-900 mb-2 text-lg">Withdraw anytime</h4>
+                    <p className="text-gray-600 text-sm">
+                      No lock-up periods. Pull out whenever you want
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <div className="font-semibold text-gray-900 mb-1">Withdraw whenever</div>
-                  <div className="text-gray-600">No lock-up. Pull your funds anytime (if liquidity available)</div>
+                
+                <div className="text-center">
+                  <Link 
+                    href="/pools" 
+                    className="inline-flex items-center gap-2 px-8 py-4 bg-green-600 text-white rounded-xl font-semibold hover:bg-green-700 transition-colors"
+                  >
+                    Start earning
+                    <span>→</span>
+                  </Link>
                 </div>
               </div>
-              
-              <Link href="/pools" className="inline-block px-6 py-3 bg-gray-900 text-white rounded-lg font-semibold hover:bg-gray-800 transition-colors">
-                Start earning
-              </Link>
             </div>
-          </div>
+          )}
         </div>
       </div>
     </section>
@@ -209,30 +240,28 @@ export default function Home() {
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-20">
             <h2 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6">
-              Built different
+              Why Lumina
             </h2>
             <p className="text-xl text-gray-600">
-              No BS. Just solid tech.
+              Built on solid tech, not hype
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-3 gap-6">
             {[
-              { title: 'Fast & Cheap', desc: 'BNB Chain. 3s blocks. $0.10 gas.', icon: '⚡' },
-              { title: 'Secure', desc: 'OpenZeppelin contracts. 100% test coverage.', icon: '🔒' },
-              { title: 'Fair Pricing', desc: 'Dynamic rates based on pool utilization.', icon: '⚖️' },
-              { title: 'Chainlink Oracles', desc: 'Decentralized price feeds for claims.', icon: '🔗' },
-              { title: 'Policy NFTs', desc: 'Every policy is an ERC-721 token.', icon: '🎫' },
-              { title: 'Non-Custodial', desc: 'Your keys, your funds. Always.', icon: '🔓' },
-            ].map((feature, i) => (
+              { title: 'Fast & Cheap', desc: 'BNB Chain. 3s blocks. $0.10 gas.' },
+              { title: 'Secure', desc: 'OpenZeppelin contracts. 100% test coverage.' },
+              { title: 'Fair Pricing', desc: 'Dynamic rates based on pool utilization.' },
+              { title: 'Chainlink Oracles', desc: 'Decentralized price feeds for claims.' },
+              { title: 'Policy NFTs', desc: 'Every policy is an ERC-721 token.' },
+              { title: 'Non-Custodial', desc: 'Your keys, your funds. Always.' },
+            ].map((feature) => (
               <div 
                 key={feature.title} 
-                className="group bg-white rounded-2xl p-8 border border-gray-100 hover:border-gray-300 hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 cursor-default"
-                style={{ animationDelay: `${i * 100}ms` }}
+                className="bg-white rounded-xl p-6 border-2 border-gray-300 hover:border-gray-400 hover:shadow-lg transition-all"
               >
-                <div className="text-5xl mb-6 group-hover:scale-125 group-hover:rotate-12 transition-all duration-300">{feature.icon}</div>
-                <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-blue-600 transition-colors">{feature.title}</h3>
-                <p className="text-gray-600 leading-relaxed">{feature.desc}</p>
+                <h3 className="text-lg font-bold text-gray-900 mb-2">{feature.title}</h3>
+                <p className="text-gray-600 text-sm leading-relaxed">{feature.desc}</p>
               </div>
             ))}
           </div>
@@ -240,25 +269,21 @@ export default function Home() {
       </section>
 
       {/* Use Cases */}
-      <section className="px-6 py-32 bg-gradient-to-b from-white to-gray-50">
+      <section className="px-6 py-32 bg-gray-50">
         <div className="max-w-6xl mx-auto">
           <h2 className="text-5xl md:text-6xl font-bold text-gray-900 mb-20 text-center">
-            Use cases
+            Markets we cover
           </h2>
 
-          <div className="grid md:grid-cols-3 gap-10">
+          <div className="grid md:grid-cols-3 gap-6">
             {[
-              { title: 'Crypto', desc: 'BTC/ETH price predictions', emoji: '₿', gradient: 'from-orange-400 to-yellow-400' },
-              { title: 'Politics', desc: 'Election outcomes', emoji: '🗳️', gradient: 'from-blue-400 to-indigo-400' },
-              { title: 'Sports', desc: 'Game results', emoji: '⚽', gradient: 'from-green-400 to-emerald-400' },
+              { title: 'Crypto', desc: 'BTC/ETH price predictions' },
+              { title: 'Politics', desc: 'Election outcomes' },
+              { title: 'Sports', desc: 'Game results' },
             ].map((useCase) => (
-              <div key={useCase.title} className="group relative bg-white rounded-3xl p-12 text-center shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100 hover:scale-105 cursor-default">
-                <div className={`absolute inset-0 bg-gradient-to-br ${useCase.gradient} opacity-0 group-hover:opacity-10 rounded-3xl transition-all duration-300`} />
-                <div className="relative">
-                  <div className="text-7xl mb-8 group-hover:scale-125 group-hover:-rotate-12 transition-all duration-300">{useCase.emoji}</div>
-                  <h3 className="text-2xl font-bold text-gray-900 mb-3 group-hover:text-blue-600 transition-colors">{useCase.title}</h3>
-                  <p className="text-gray-600 text-lg">{useCase.desc}</p>
-                </div>
+              <div key={useCase.title} className="bg-white rounded-xl p-8 text-center border-2 border-gray-300 hover:border-gray-400 hover:shadow-lg transition-all">
+                <h3 className="text-2xl font-bold text-gray-900 mb-2">{useCase.title}</h3>
+                <p className="text-gray-600">{useCase.desc}</p>
               </div>
             ))}
           </div>
