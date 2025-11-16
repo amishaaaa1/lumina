@@ -548,20 +548,117 @@ export default function Home() {
             <h2 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6">
               Integrations
             </h2>
+            <p className="text-xl text-gray-600">
+              Built on industry-leading infrastructure
+            </p>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            <div className="bg-white rounded-2xl p-8 border-2 border-gray-200 hover:border-gray-400 hover:shadow-xl transition-all hover:scale-105 flex items-center justify-center">
-              <span className="text-2xl font-bold text-gray-900">BNB Chain</span>
-            </div>
-            <div className="bg-white rounded-2xl p-8 border-2 border-gray-200 hover:border-gray-400 hover:shadow-xl transition-all hover:scale-105 flex items-center justify-center">
-              <span className="text-2xl font-bold text-gray-900">Polymarket</span>
-            </div>
-            <div className="bg-white rounded-2xl p-8 border-2 border-gray-200 hover:border-gray-400 hover:shadow-xl transition-all hover:scale-105 flex items-center justify-center">
-              <span className="text-2xl font-bold text-gray-900">Chainlink</span>
-            </div>
-            <div className="bg-white rounded-2xl p-8 border-2 border-gray-200 hover:border-gray-400 hover:shadow-xl transition-all hover:scale-105 flex items-center justify-center">
-              <span className="text-2xl font-bold text-gray-900">OpenZeppelin</span>
+          {/* Infinite Scroll Container */}
+          <div className="relative">
+            <div className="flex overflow-hidden">
+              <div className="flex animate-scroll-left">
+                {/* First set of logos */}
+                <div className="flex items-center gap-16 px-8">
+                  {/* BNB Chain - Official Logo */}
+                  <div className="flex items-center gap-4 px-10 py-6 bg-white rounded-2xl border-2 border-gray-200 shadow-sm whitespace-nowrap min-w-[240px]">
+                    <svg className="w-12 h-12" viewBox="0 0 2500 2500" fill="none">
+                      <g clipPath="url(#clip0)">
+                        <path d="M764.48 1050.52L1250 565L1735.52 1050.52L2020.6 765.44L1250 0L479.4 765.44L764.48 1050.52Z" fill="#F3BA2F"/>
+                        <path d="M0 1250L285.08 964.92L570.16 1250L285.08 1535.08L0 1250Z" fill="#F3BA2F"/>
+                        <path d="M764.48 1449.48L1250 1935L1735.52 1449.48L2020.6 1734.56L1250 2500L479.4 1734.56L764.48 1449.48Z" fill="#F3BA2F"/>
+                        <path d="M1929.84 1250L2214.92 964.92L2500 1250L2214.92 1535.08L1929.84 1250Z" fill="#F3BA2F"/>
+                        <path d="M1530.28 1250L1250 969.72L1025.52 1194.2L969.72 1250L1250 1530.28L1530.28 1250Z" fill="#F3BA2F"/>
+                      </g>
+                    </svg>
+                    <span className="text-2xl font-bold text-gray-900">BNB Chain</span>
+                  </div>
+
+                  {/* Polymarket - Official Style */}
+                  <div className="flex items-center gap-4 px-10 py-6 bg-white rounded-2xl border-2 border-gray-200 shadow-sm whitespace-nowrap min-w-[240px]">
+                    <svg className="w-12 h-12" viewBox="0 0 100 100" fill="none">
+                      <rect width="100" height="100" rx="20" fill="url(#polyGradient)"/>
+                      <path d="M30 35h15c8 0 15 7 15 15s-7 15-15 15H30V35z" fill="white"/>
+                      <defs>
+                        <linearGradient id="polyGradient" x1="0" y1="0" x2="100" y2="100">
+                          <stop offset="0%" stopColor="#6366F1"/>
+                          <stop offset="100%" stopColor="#8B5CF6"/>
+                        </linearGradient>
+                      </defs>
+                    </svg>
+                    <span className="text-2xl font-bold text-gray-900">Polymarket</span>
+                  </div>
+
+                  {/* Chainlink - Official Logo */}
+                  <div className="flex items-center gap-4 px-10 py-6 bg-white rounded-2xl border-2 border-gray-200 shadow-sm whitespace-nowrap min-w-[240px]">
+                    <svg className="w-12 h-12" viewBox="0 0 397 397" fill="none">
+                      <path d="M198.5 0L148.5 28.9L49.2 86.2L0 115.1V281.9L49.2 310.8L148.5 368.1L198.5 397L248.5 368.1L347.8 310.8L397 281.9V115.1L347.8 86.2L248.5 28.9L198.5 0Z" fill="#375BD2"/>
+                      <path d="M198.5 116.7L148.5 145.6L99.8 173.8V223.2L148.5 251.4L198.5 280.3L248.5 251.4L297.2 223.2V173.8L248.5 145.6L198.5 116.7Z" fill="white"/>
+                    </svg>
+                    <span className="text-2xl font-bold text-gray-900">Chainlink</span>
+                  </div>
+
+                  {/* OpenZeppelin - Official Logo */}
+                  <div className="flex items-center gap-4 px-10 py-6 bg-white rounded-2xl border-2 border-gray-200 shadow-sm whitespace-nowrap min-w-[240px]">
+                    <svg className="w-12 h-12" viewBox="0 0 100 100" fill="none">
+                      <path d="M50 5L10 27.5V72.5L50 95L90 72.5V27.5L50 5Z" fill="#4E5EE4"/>
+                      <path d="M50 25L30 37.5V62.5L50 75L70 62.5V37.5L50 25Z" fill="white"/>
+                      <circle cx="50" cy="50" r="8" fill="#4E5EE4"/>
+                    </svg>
+                    <span className="text-2xl font-bold text-gray-900">OpenZeppelin</span>
+                  </div>
+                </div>
+
+                {/* Duplicate set for seamless loop */}
+                <div className="flex items-center gap-16 px-8">
+                  {/* BNB Chain */}
+                  <div className="flex items-center gap-4 px-10 py-6 bg-white rounded-2xl border-2 border-gray-200 shadow-sm whitespace-nowrap min-w-[240px]">
+                    <svg className="w-12 h-12" viewBox="0 0 2500 2500" fill="none">
+                      <g clipPath="url(#clip1)">
+                        <path d="M764.48 1050.52L1250 565L1735.52 1050.52L2020.6 765.44L1250 0L479.4 765.44L764.48 1050.52Z" fill="#F3BA2F"/>
+                        <path d="M0 1250L285.08 964.92L570.16 1250L285.08 1535.08L0 1250Z" fill="#F3BA2F"/>
+                        <path d="M764.48 1449.48L1250 1935L1735.52 1449.48L2020.6 1734.56L1250 2500L479.4 1734.56L764.48 1449.48Z" fill="#F3BA2F"/>
+                        <path d="M1929.84 1250L2214.92 964.92L2500 1250L2214.92 1535.08L1929.84 1250Z" fill="#F3BA2F"/>
+                        <path d="M1530.28 1250L1250 969.72L1025.52 1194.2L969.72 1250L1250 1530.28L1530.28 1250Z" fill="#F3BA2F"/>
+                      </g>
+                    </svg>
+                    <span className="text-2xl font-bold text-gray-900">BNB Chain</span>
+                  </div>
+
+                  {/* Polymarket */}
+                  <div className="flex items-center gap-4 px-10 py-6 bg-white rounded-2xl border-2 border-gray-200 shadow-sm whitespace-nowrap min-w-[240px]">
+                    <svg className="w-12 h-12" viewBox="0 0 100 100" fill="none">
+                      <rect width="100" height="100" rx="20" fill="url(#polyGradient2)"/>
+                      <path d="M30 35h15c8 0 15 7 15 15s-7 15-15 15H30V35z" fill="white"/>
+                      <defs>
+                        <linearGradient id="polyGradient2" x1="0" y1="0" x2="100" y2="100">
+                          <stop offset="0%" stopColor="#6366F1"/>
+                          <stop offset="100%" stopColor="#8B5CF6"/>
+                        </linearGradient>
+                      </defs>
+                    </svg>
+                    <span className="text-2xl font-bold text-gray-900">Polymarket</span>
+                  </div>
+
+                  {/* Chainlink */}
+                  <div className="flex items-center gap-4 px-10 py-6 bg-white rounded-2xl border-2 border-gray-200 shadow-sm whitespace-nowrap min-w-[240px]">
+                    <svg className="w-12 h-12" viewBox="0 0 397 397" fill="none">
+                      <path d="M198.5 0L148.5 28.9L49.2 86.2L0 115.1V281.9L49.2 310.8L148.5 368.1L198.5 397L248.5 368.1L347.8 310.8L397 281.9V115.1L347.8 86.2L248.5 28.9L198.5 0Z" fill="#375BD2"/>
+                      <path d="M198.5 116.7L148.5 145.6L99.8 173.8V223.2L148.5 251.4L198.5 280.3L248.5 251.4L297.2 223.2V173.8L248.5 145.6L198.5 116.7Z" fill="white"/>
+                    </svg>
+                    <span className="text-2xl font-bold text-gray-900">Chainlink</span>
+                  </div>
+
+                  {/* OpenZeppelin */}
+                  <div className="flex items-center gap-4 px-10 py-6 bg-white rounded-2xl border-2 border-gray-200 shadow-sm whitespace-nowrap min-w-[240px]">
+                    <svg className="w-12 h-12" viewBox="0 0 100 100" fill="none">
+                      <path d="M50 5L10 27.5V72.5L50 95L90 72.5V27.5L50 5Z" fill="#4E5EE4"/>
+                      <path d="M50 25L30 37.5V62.5L50 75L70 62.5V37.5L50 25Z" fill="white"/>
+                      <circle cx="50" cy="50" r="8" fill="#4E5EE4"/>
+                    </svg>
+                    <span className="text-2xl font-bold text-gray-900">OpenZeppelin</span>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
