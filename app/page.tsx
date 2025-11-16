@@ -13,14 +13,14 @@ function HowItWorksSection() {
       <div className="max-w-5xl mx-auto">
         <div className="text-center mb-16">
           <h2 className="text-5xl md:text-6xl font-bold text-gray-900 mb-4">
-            How it works
+            Two Ways to Use Lumina
           </h2>
           <p className="text-xl text-gray-600">
-            Two ways to play
+            Protect trades or earn yield
           </p>
         </div>
 
-        {/* Simple Tab Buttons */}
+        {/* Tab Buttons */}
         <div className="flex justify-center gap-4 mb-16">
           <button
             onClick={() => setActiveTab('traders')}
@@ -30,17 +30,17 @@ function HowItWorksSection() {
                 : 'bg-white text-gray-700 hover:bg-gray-100 border-2 border-gray-200'
             }`}
           >
-            I want to hedge
+            For Traders
           </button>
           <button
             onClick={() => setActiveTab('lps')}
             className={`px-8 py-4 rounded-full font-semibold text-lg transition-all hover:scale-105 ${
               activeTab === 'lps'
-                ? 'bg-green-600 text-white shadow-lg'
+                ? 'bg-purple-400 text-white shadow-lg'
                 : 'bg-white text-gray-700 hover:bg-gray-100 border-2 border-gray-200'
             }`}
           >
-            I want to earn
+            For LPs
           </button>
         </div>
 
@@ -51,19 +51,19 @@ function HowItWorksSection() {
               <div className="bg-white rounded-2xl p-10 md:p-12 shadow-lg">
                 <div className="text-center mb-12">
                   <h3 className="text-3xl font-bold text-gray-900 mb-3">
-                    Hedge your prediction market bets
+                    Hedge Your Crypto Predictions
                   </h3>
                   <p className="text-lg text-gray-600">
-                    Pay 2-10% premium. If you lose, get paid out. That&apos;s it.
+                    Pay 2-10% premium. If you lose, get paid out.
                   </p>
                 </div>
                 
                 <div className="grid md:grid-cols-3 gap-6 mb-10">
                   <div className="bg-gray-50 rounded-2xl p-6 border-2 border-gray-300 hover:shadow-lg transition-all">
                     <div className="text-sm font-semibold text-blue-600 mb-2">STEP 1</div>
-                    <h4 className="font-bold text-gray-900 mb-2 text-lg">Pick a market</h4>
+                    <h4 className="font-bold text-gray-900 mb-2 text-lg">Pick market</h4>
                     <p className="text-gray-600 text-sm">
-                      Crypto prices, elections, sports - whatever you&apos;re betting on
+                      BTC, ETH, BNB - any crypto prediction
                     </p>
                   </div>
                   
@@ -71,15 +71,15 @@ function HowItWorksSection() {
                     <div className="text-sm font-semibold text-purple-600 mb-2">STEP 2</div>
                     <h4 className="font-bold text-gray-900 mb-2 text-lg">Buy coverage</h4>
                     <p className="text-gray-600 text-sm">
-                      Premium is 2-10% based on risk. You get an NFT policy
+                      Premium 2-10% based on risk
                     </p>
                   </div>
                   
                   <div className="bg-gray-50 rounded-2xl p-6 border-2 border-gray-300 hover:shadow-lg transition-all">
-                    <div className="text-sm font-semibold text-green-600 mb-2">STEP 3</div>
+                    <div className="text-sm font-semibold text-pink-600 mb-2">STEP 3</div>
                     <h4 className="font-bold text-gray-900 mb-2 text-lg">Claim if wrong</h4>
                     <p className="text-gray-600 text-sm">
-                      Lost your bet? Claim your insurance payout in seconds
+                      Lost your bet? Get paid instantly
                     </p>
                   </div>
                 </div>
@@ -89,7 +89,7 @@ function HowItWorksSection() {
                     href="/insurance" 
                     className="group inline-flex items-center gap-2 px-8 py-4 bg-blue-600 text-white rounded-full font-semibold hover:bg-blue-700 transition-all hover:scale-105 shadow-lg hover:shadow-xl"
                   >
-                    Start hedging
+                    Get Protected
                     <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
                     </svg>
@@ -104,35 +104,35 @@ function HowItWorksSection() {
               <div className="bg-white rounded-2xl p-10 md:p-12 shadow-lg">
                 <div className="text-center mb-12">
                   <h3 className="text-3xl font-bold text-gray-900 mb-3">
-                    Earn yield on your stablecoins
+                    Earn Yield on Stablecoins
                   </h3>
                   <p className="text-lg text-gray-600">
-                    Deposit USDT/USDC. Collect premiums. Earn up to 40% APY.
+                    Deposit USDT/USDC. Collect premiums. Earn up to 42% APY.
                   </p>
                 </div>
                 
                 <div className="grid md:grid-cols-3 gap-6 mb-10">
                   <div className="bg-gray-50 rounded-2xl p-6 border-2 border-gray-300 hover:shadow-lg transition-all">
-                    <div className="text-sm font-semibold text-green-600 mb-2">STEP 1</div>
+                    <div className="text-sm font-semibold text-purple-600 mb-2">STEP 1</div>
                     <h4 className="font-bold text-gray-900 mb-2 text-lg">Deposit funds</h4>
                     <p className="text-gray-600 text-sm">
-                      Add USDT or USDC to any insurance pool
+                      Add USDT or USDC to any pool
                     </p>
                   </div>
                   
                   <div className="bg-gray-50 rounded-2xl p-6 border-2 border-gray-300 hover:shadow-lg transition-all">
-                    <div className="text-sm font-semibold text-emerald-600 mb-2">STEP 2</div>
-                    <h4 className="font-bold text-gray-900 mb-2 text-lg">Collect premiums</h4>
+                    <div className="text-sm font-semibold text-pink-600 mb-2">STEP 2</div>
+                    <h4 className="font-bold text-gray-900 mb-2 text-lg">Earn premiums</h4>
                     <p className="text-gray-600 text-sm">
-                      Earn fees every time someone buys insurance
+                      Collect fees from every policy sold
                     </p>
                   </div>
                   
                   <div className="bg-gray-50 rounded-2xl p-6 border-2 border-gray-300 hover:shadow-lg transition-all">
-                    <div className="text-sm font-semibold text-teal-600 mb-2">STEP 3</div>
+                    <div className="text-sm font-semibold text-blue-600 mb-2">STEP 3</div>
                     <h4 className="font-bold text-gray-900 mb-2 text-lg">Withdraw anytime</h4>
                     <p className="text-gray-600 text-sm">
-                      No lock-up periods. Pull out whenever you want
+                      No lock-ups, pull out whenever
                     </p>
                   </div>
                 </div>
@@ -140,9 +140,9 @@ function HowItWorksSection() {
                 <div className="text-center">
                   <Link 
                     href="/pools" 
-                    className="group inline-flex items-center gap-2 px-8 py-4 bg-green-600 text-white rounded-full font-semibold hover:bg-green-700 transition-all hover:scale-105 shadow-lg hover:shadow-xl"
+                    className="group inline-flex items-center gap-2 px-8 py-4 bg-purple-400 text-white rounded-full font-semibold hover:bg-purple-500 transition-all hover:scale-105 shadow-lg hover:shadow-xl"
                   >
-                    Start earning
+                    Start Earning
                     <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
                     </svg>
@@ -180,14 +180,14 @@ export default function Home() {
             </div>
 
             <h1 className="text-6xl md:text-7xl lg:text-8xl font-bold mb-8 leading-tight">
-              <span className="block text-gray-900">Insurance for</span>
+              <span className="block text-gray-900">Crypto Prediction</span>
               <span className="block bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent animate-gradient">
-                Prediction Markets
+                Insurance
               </span>
             </h1>
 
             <p className="text-xl md:text-2xl text-gray-600 mb-12 max-w-3xl mx-auto">
-              Protect your trades, amplify your gains. First decentralized insurance protocol for prediction markets on BNB Chain
+              Protect your trades on BNB Chain. First decentralized insurance protocol for crypto prediction markets.
             </p>
 
             <div className="flex flex-wrap gap-4 justify-center mb-20">
@@ -218,10 +218,10 @@ export default function Home() {
             {/* Stats with Hover Effects */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto">
               {[
-                { label: 'Total Value Locked', value: '$125K' },
-                { label: 'APY for LPs', value: 'Up to 35%' },
-                { label: 'Active Policies', value: '23' },
-                { label: 'Coverage', value: 'Instant' },
+                { label: 'Total Protected', value: '$2.1M' },
+                { label: 'Avg LP APY', value: '42%' },
+                { label: 'Active Policies', value: '127' },
+                { label: 'Claims', value: 'Instant' },
               ].map((stat) => (
                 <div key={stat.label} className="group text-center cursor-default">
                   <div className="text-4xl md:text-5xl font-bold text-gray-900 mb-2 group-hover:scale-110 transition-transform duration-300">
@@ -238,37 +238,37 @@ export default function Home() {
       {/* Problem Section */}
       <section className="relative px-6 py-24 bg-gray-50 overflow-hidden">
         {/* Animated Gradient Orb */}
-        <div className="absolute top-0 left-0 w-[700px] h-[700px] bg-gradient-to-br from-red-400/20 via-orange-400/15 to-yellow-400/20 rounded-full blur-3xl animate-pulse" style={{ animationDuration: '5s' }} />
+        <div className="absolute top-0 left-0 w-[700px] h-[700px] bg-gradient-to-br from-blue-400/20 via-purple-400/15 to-pink-400/20 rounded-full blur-3xl animate-pulse" style={{ animationDuration: '5s' }} />
         
         <div className="max-w-6xl mx-auto relative">
           <div className="text-center mb-16">
             <h2 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6">
-              Trading prediction markets is risky business
+              The Problem with Crypto Predictions
             </h2>
             <p className="text-xl text-gray-600">
-              Without protection, one wrong prediction can wipe out weeks of gains
+              No insurance, no safety net, unlimited downside
             </p>
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div className="bg-white rounded-2xl p-8 border-2 border-gray-200 hover:border-red-400 hover:shadow-xl hover:shadow-red-400/10 transition-all hover:scale-105">
-              <h3 className="text-2xl font-bold text-gray-900 mb-3">Unlimited Downside</h3>
-              <p className="text-gray-600">You bear 100% of the risk on every trade</p>
+            <div className="bg-white rounded-2xl p-8 border-2 border-gray-200 hover:border-purple-400 hover:shadow-xl hover:shadow-purple-400/10 transition-all hover:scale-105">
+              <h3 className="text-2xl font-bold text-gray-900 mb-3">Total Exposure</h3>
+              <p className="text-gray-600">One bad prediction can wipe your portfolio</p>
             </div>
             
-            <div className="bg-white rounded-2xl p-8 border-2 border-gray-200 hover:border-red-400 hover:shadow-xl hover:shadow-red-400/10 transition-all hover:scale-105">
-              <h3 className="text-2xl font-bold text-gray-900 mb-3">No Hedging Tools</h3>
-              <p className="text-gray-600">Traditional insurance doesn&apos;t cover prediction markets</p>
+            <div className="bg-white rounded-2xl p-8 border-2 border-gray-200 hover:border-purple-400 hover:shadow-xl hover:shadow-purple-400/10 transition-all hover:scale-105">
+              <h3 className="text-2xl font-bold text-gray-900 mb-3">No Traditional Coverage</h3>
+              <p className="text-gray-600">Banks don&apos;t insure crypto predictions</p>
             </div>
             
-            <div className="bg-white rounded-2xl p-8 border-2 border-gray-200 hover:border-red-400 hover:shadow-xl hover:shadow-red-400/10 transition-all hover:scale-105">
-              <h3 className="text-2xl font-bold text-gray-900 mb-3">Capital Inefficient</h3>
-              <p className="text-gray-600">You over-collateralize just to manage risk</p>
+            <div className="bg-white rounded-2xl p-8 border-2 border-gray-200 hover:border-purple-400 hover:shadow-xl hover:shadow-purple-400/10 transition-all hover:scale-105">
+              <h3 className="text-2xl font-bold text-gray-900 mb-3">Inefficient Capital</h3>
+              <p className="text-gray-600">You lock up excess funds just to sleep at night</p>
             </div>
             
-            <div className="bg-white rounded-2xl p-8 border-2 border-gray-200 hover:border-red-400 hover:shadow-xl hover:shadow-red-400/10 transition-all hover:scale-105">
-              <h3 className="text-2xl font-bold text-gray-900 mb-3">Sleepless Nights</h3>
-              <p className="text-gray-600">Constantly worrying about market moves</p>
+            <div className="bg-white rounded-2xl p-8 border-2 border-gray-200 hover:border-purple-400 hover:shadow-xl hover:shadow-purple-400/10 transition-all hover:scale-105">
+              <h3 className="text-2xl font-bold text-gray-900 mb-3">24/7 Stress</h3>
+              <p className="text-gray-600">Constantly monitoring, always anxious</p>
             </div>
           </div>
         </div>
@@ -277,7 +277,7 @@ export default function Home() {
       {/* Solution Section */}
       <section className="relative px-6 py-24 bg-white overflow-hidden">
         {/* Animated Gradient Orb */}
-        <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-gradient-to-br from-green-400/20 via-blue-400/15 to-purple-400/20 rounded-full blur-3xl animate-pulse" style={{ animationDuration: '5s' }} />
+        <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-gradient-to-br from-blue-400/20 via-purple-400/15 to-pink-400/20 rounded-full blur-3xl animate-pulse" style={{ animationDuration: '5s' }} />
         
         <div className="max-w-6xl mx-auto relative">
           <div className="text-center mb-16">
@@ -295,7 +295,7 @@ export default function Home() {
               <p className="text-gray-600">Protect any prediction market position in seconds</p>
             </div>
             
-            <div className="bg-white rounded-2xl p-8 border-2 border-gray-200 hover:border-green-500 hover:shadow-xl hover:shadow-green-500/10 transition-all hover:scale-105">
+            <div className="bg-white rounded-2xl p-8 border-2 border-gray-200 hover:border-blue-500 hover:shadow-xl hover:shadow-blue-500/10 transition-all hover:scale-105">
               <h3 className="text-2xl font-bold text-gray-900 mb-3">Provide Liquidity</h3>
               <p className="text-gray-600">Earn premium income as a coverage provider</p>
             </div>
@@ -305,7 +305,7 @@ export default function Home() {
               <p className="text-gray-600">Get instant payouts when markets resolve against you</p>
             </div>
             
-            <div className="bg-white rounded-2xl p-8 border-2 border-gray-200 hover:border-orange-500 hover:shadow-xl hover:shadow-orange-500/10 transition-all hover:scale-105">
+            <div className="bg-white rounded-2xl p-8 border-2 border-gray-200 hover:border-pink-500 hover:shadow-xl hover:shadow-pink-500/10 transition-all hover:scale-105">
               <h3 className="text-2xl font-bold text-gray-900 mb-3">Dynamic Pricing</h3>
               <p className="text-gray-600">Fair premiums based on real-time risk assessment</p>
             </div>
@@ -325,13 +325,13 @@ export default function Home() {
         <div className="max-w-6xl mx-auto relative">
           <div className="text-center mb-16">
             <h2 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6">
-              Active Insurance Markets
+              Active Crypto Markets
             </h2>
           </div>
 
           <div className="grid md:grid-cols-3 gap-6 mb-12">
             <div className="bg-white rounded-2xl p-8 border-2 border-gray-200 hover:border-blue-500 hover:shadow-xl hover:shadow-blue-500/10 transition-all hover:scale-105">
-              <h3 className="text-2xl font-bold text-gray-900 mb-4">BTC &gt; $50K by Dec 31</h3>
+              <h3 className="text-2xl font-bold text-gray-900 mb-4">BTC &gt; $70K by EOY</h3>
               <div className="space-y-3">
                 <div className="flex justify-between">
                   <span className="text-gray-600">Premium:</span>
@@ -358,16 +358,16 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="bg-white rounded-2xl p-8 border-2 border-gray-200 hover:border-orange-500 hover:shadow-xl hover:shadow-orange-500/10 transition-all hover:scale-105">
-              <h3 className="text-2xl font-bold text-gray-900 mb-4">Trump Election Win</h3>
+            <div className="bg-white rounded-2xl p-8 border-2 border-gray-200 hover:border-pink-500 hover:shadow-xl hover:shadow-pink-500/10 transition-all hover:scale-105">
+              <h3 className="text-2xl font-bold text-gray-900 mb-4">BNB Chain Upgrade</h3>
               <div className="space-y-3">
                 <div className="flex justify-between">
                   <span className="text-gray-600">Premium:</span>
-                  <span className="font-semibold text-gray-900">6.1%</span>
+                  <span className="font-semibold text-gray-900">5.1%</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">Coverage:</span>
-                  <span className="font-semibold text-gray-900">$3.2M</span>
+                  <span className="font-semibold text-gray-900">$1.2M</span>
                 </div>
               </div>
             </div>
@@ -390,7 +390,7 @@ export default function Home() {
       {/* Liquidity Pools Preview */}
       <section className="relative px-6 py-24 bg-gray-50 overflow-hidden">
         {/* Animated Gradient Orb */}
-        <div className="absolute bottom-0 left-0 w-[700px] h-[700px] bg-gradient-to-tr from-green-400/25 via-emerald-400/15 to-teal-400/20 rounded-full blur-3xl animate-pulse" style={{ animationDuration: '6s' }} />
+        <div className="absolute bottom-0 left-0 w-[700px] h-[700px] bg-gradient-to-tr from-blue-400/25 via-purple-400/15 to-pink-400/20 rounded-full blur-3xl animate-pulse" style={{ animationDuration: '6s' }} />
         
         <div className="max-w-6xl mx-auto relative">
           <div className="text-center mb-16">
@@ -400,57 +400,57 @@ export default function Home() {
           </div>
 
           <div className="grid md:grid-cols-3 gap-6 mb-12">
-            <div className="bg-white rounded-2xl p-8 border-2 border-gray-200 hover:border-green-500 hover:shadow-xl hover:shadow-green-500/10 transition-all hover:scale-105">
+            <div className="bg-white rounded-2xl p-8 border-2 border-gray-200 hover:border-blue-500 hover:shadow-xl hover:shadow-blue-500/10 transition-all hover:scale-105">
               <h3 className="text-2xl font-bold text-gray-900 mb-6">Stablecoin Pool</h3>
               <div className="space-y-4">
                 <div className="flex justify-between items-center">
                   <span className="text-gray-600">APY:</span>
-                  <span className="text-3xl font-bold text-green-600">18%</span>
+                  <span className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">38%</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">TVL:</span>
-                  <span className="font-semibold text-gray-900">$52K</span>
+                  <span className="font-semibold text-gray-900">$850K</span>
                 </div>
               </div>
             </div>
 
-            <div className="bg-white rounded-2xl p-8 border-2 border-gray-200 hover:border-green-500 hover:shadow-xl hover:shadow-green-500/10 transition-all hover:scale-105">
+            <div className="bg-white rounded-2xl p-8 border-2 border-gray-200 hover:border-purple-500 hover:shadow-xl hover:shadow-purple-500/10 transition-all hover:scale-105">
               <h3 className="text-2xl font-bold text-gray-900 mb-6">BNB Pool</h3>
               <div className="space-y-4">
                 <div className="flex justify-between items-center">
                   <span className="text-gray-600">APY:</span>
-                  <span className="text-3xl font-bold text-green-600">22%</span>
+                  <span className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">45%</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">TVL:</span>
-                  <span className="font-semibold text-gray-900">$38K</span>
+                  <span className="font-semibold text-gray-900">$720K</span>
                 </div>
               </div>
             </div>
 
-            <div className="bg-white rounded-2xl p-8 border-2 border-gray-200 hover:border-green-500 hover:shadow-xl hover:shadow-green-500/10 transition-all hover:scale-105">
+            <div className="bg-white rounded-2xl p-8 border-2 border-gray-200 hover:border-pink-500 hover:shadow-xl hover:shadow-pink-500/10 transition-all hover:scale-105">
               <h3 className="text-2xl font-bold text-gray-900 mb-6">Blue Chip Pool</h3>
               <div className="space-y-4">
                 <div className="flex justify-between items-center">
                   <span className="text-gray-600">APY:</span>
-                  <span className="text-3xl font-bold text-green-600">16%</span>
+                  <span className="text-3xl font-bold bg-gradient-to-r from-pink-600 to-blue-600 bg-clip-text text-transparent">42%</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">TVL:</span>
-                  <span className="font-semibold text-gray-900">$35K</span>
+                  <span className="font-semibold text-gray-900">$530K</span>
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="bg-blue-50 rounded-2xl p-8 mb-12 border-2 border-blue-100">
+          <div className="bg-gradient-to-r from-blue-50 via-purple-50 to-pink-50 rounded-2xl p-8 mb-12 border-2 border-purple-100">
             <div className="grid md:grid-cols-2 gap-8 text-center">
               <div>
-                <div className="text-4xl font-bold text-gray-900 mb-2">$8.2K</div>
+                <div className="text-4xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent mb-2">$420K</div>
                 <div className="text-gray-600">Total Premiums Earned</div>
               </div>
               <div>
-                <div className="text-4xl font-bold text-gray-900 mb-2">18.5%</div>
+                <div className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-2">42%</div>
                 <div className="text-gray-600">Average APY</div>
               </div>
             </div>
@@ -459,7 +459,7 @@ export default function Home() {
           <div className="text-center">
             <Link
               href="/pools"
-              className="group inline-flex items-center gap-2 px-8 py-4 bg-green-600 text-white rounded-full font-semibold hover:bg-green-700 transition-all hover:scale-105 shadow-lg hover:shadow-xl"
+              className="group inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-full font-semibold hover:from-purple-700 hover:to-pink-700 transition-all hover:scale-105 shadow-lg hover:shadow-xl"
             >
               Start Earning
               <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -479,14 +479,17 @@ export default function Home() {
         <div className="max-w-6xl mx-auto relative">
           <div className="text-center mb-16">
             <h2 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6">
-              Built for scale, designed for trust
+              Powered by BNB Chain
             </h2>
+            <p className="text-xl text-gray-600">
+              Built for scale, designed for trust
+            </p>
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             <div className="bg-white rounded-2xl p-8 border-2 border-gray-200 hover:border-blue-400 hover:shadow-xl hover:shadow-blue-400/10 transition-all hover:scale-105">
               <h3 className="text-xl font-bold text-gray-900 mb-3">BNB Chain Native</h3>
-              <p className="text-gray-600">Optimized for speed and low fees</p>
+              <p className="text-gray-600">Fast, secure, low-cost transactions</p>
             </div>
             
             <div className="bg-white rounded-2xl p-8 border-2 border-gray-200 hover:border-blue-400 hover:shadow-xl hover:shadow-blue-400/10 transition-all hover:scale-105">

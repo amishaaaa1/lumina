@@ -203,9 +203,9 @@ export default function PoolsClient() {
                       <div className="text-sm text-gray-600 mb-1">Position Value</div>
                       <div className="text-2xl font-bold">{position.value}</div>
                     </div>
-                    <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-4">
+                    <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl p-4">
                       <div className="text-sm text-gray-600 mb-1">Earnings (30d)</div>
-                      <div className="text-2xl font-bold text-green-600">
+                      <div className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
                         {position.earnings30d}
                       </div>
                     </div>
@@ -282,7 +282,7 @@ export default function PoolsClient() {
                     </div>
                     <div className="text-right">
                       <div className="text-sm text-gray-600 mb-1">APY</div>
-                      <div className="text-3xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
+                      <div className="text-3xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
                         {pool.apy}
                       </div>
                     </div>
@@ -295,7 +295,7 @@ export default function PoolsClient() {
                     </div>
                     <div className="bg-gray-50 rounded-xl p-3">
                       <div className="text-xs text-gray-600 mb-1">Premiums (30d)</div>
-                      <div className="text-lg font-bold text-green-600">{pool.premiums30d}</div>
+                      <div className="text-lg font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">{pool.premiums30d}</div>
                     </div>
                   </div>
 
@@ -476,9 +476,9 @@ export default function PoolsClient() {
             </div>
 
             {depositAmount && parseFloat(depositAmount) > 0 && (
-              <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-2xl p-6 border-2 border-green-200">
+              <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl p-6 border-2 border-purple-200">
                 <h3 className="font-bold text-lg mb-4 flex items-center gap-2">
-                  <TrendingUp className="w-5 h-5 text-green-600" />
+                  <TrendingUp className="w-5 h-5 text-purple-600" />
                   Projected Earnings
                 </h3>
                 <div className="space-y-3">
@@ -492,7 +492,7 @@ export default function PoolsClient() {
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-sm text-gray-600">Yearly</span>
-                    <span className="font-bold text-lg text-green-600">~${(parseFloat(depositAmount) * 0.243).toFixed(2)}</span>
+                    <span className="font-bold text-lg bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">~${(parseFloat(depositAmount) * 0.243).toFixed(2)}</span>
                   </div>
                 </div>
               </div>
@@ -532,7 +532,7 @@ export default function PoolsClient() {
             <div className="flex items-center justify-between p-4 bg-gradient-to-r from-blue-50 to-teal-50 rounded-xl">
               <div>
                 <div className="text-sm text-gray-600 mb-1">Current APY</div>
-                <div className="text-3xl font-bold text-green-600">{selectedPool.apy}</div>
+                <div className="text-3xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">{selectedPool.apy}</div>
               </div>
               <Badge className={`text-lg ${getRiskColor(selectedPool.risk)}`}>
                 {selectedPool.risk.charAt(0).toUpperCase() + selectedPool.risk.slice(1)} Risk
@@ -552,7 +552,7 @@ export default function PoolsClient() {
                 </div>
                 <div className="p-4 bg-gray-50 rounded-xl">
                   <div className="text-xs text-gray-600 mb-1">Premiums (30d)</div>
-                  <div className="font-bold text-xl text-green-600">{selectedPool.premiums30d}</div>
+                  <div className="font-bold text-xl bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">{selectedPool.premiums30d}</div>
                 </div>
                 <div className="p-4 bg-gray-50 rounded-xl">
                   <div className="text-xs text-gray-600 mb-1">Your Share</div>

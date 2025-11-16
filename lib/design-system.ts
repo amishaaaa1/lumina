@@ -1,5 +1,14 @@
 // Design System - Colors, Spacing, Typography
 export const colors = {
+  // Brand gradient: blue-purple-pink
+  brand: {
+    gradient: 'from-blue-600 via-purple-600 to-pink-600',
+    gradientHover: 'from-blue-700 via-purple-700 to-pink-700',
+    orb: 'from-blue-400/30 via-purple-400/20 to-pink-400/30',
+    floatBlue: 'bg-blue-200/30',
+    floatPurple: 'bg-purple-200/30',
+    floatPink: 'bg-pink-200/30',
+  },
   primary: {
     50: '#f0f9ff',
     100: '#e0f2fe',
