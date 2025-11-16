@@ -63,6 +63,18 @@ body {
   transition-duration: 150ms;
 }
 
+/* Respect user's motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
 /* Focus styles */
 *:focus-visible {
   outline: 2px solid #3b82f6;
@@ -498,4 +510,54 @@ body {
 
 .animate-scroll-left {
   animation: scroll-left 25s linear infinite;
+}
+
+/* Optimized animation classes for landing page */
+.animate-orb-slow {
+  animation: blob 4s ease-in-out infinite;
+}
+
+.animate-orb-medium {
+  animation: blob 5s ease-in-out infinite;
+}
+
+.animate-orb-fast {
+  animation: blob 6s ease-in-out infinite;
+}
+
+.animate-float-6s {
+  animation: float 6s ease-in-out infinite;
+}
+
+.animate-float-7s {
+  animation: float 7s ease-in-out infinite;
+}
+
+.animate-float-8s {
+  animation: float 8s ease-in-out infinite;
+}
+
+.animate-float-9s {
+  animation: float 9s ease-in-out infinite;
+}
+
+.delay-0 {
+  animation-delay: 0s;
+}
+
+.delay-1s {
+  animation-delay: 1s;
+}
+
+.delay-2s {
+  animation-delay: 2s;
+}
+
+/* Performance optimization */
+.will-change-transform {
+  will-change: transform;
+}
+
+.will-change-opacity {
+  will-change: opacity;
 }
