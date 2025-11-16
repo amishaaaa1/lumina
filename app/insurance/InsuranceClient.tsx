@@ -2,8 +2,8 @@
 
 import { useState, useMemo } from 'react';
 import { useAccount, useReadContract } from 'wagmi';
+import { useConnectModal } from '@rainbow-me/rainbowkit';
 import { Header } from '@/components/layout/Header';
-import { Footer } from '@/components/layout/Footer';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { useContractWrite } from '@/hooks/useContract';
 import { formatUSD, parseTokenAmount } from '@/lib/utils';
@@ -65,6 +65,7 @@ const MARKETS = [
 
 export default function InsuranceClient() {
   const { address, isConnected } = useAccount();
+  const { openConnectModal } = useConnectModal();
   const [selectedMarket, setSelectedMarket] = useState<string | null>(null);
   const [coverageAmount, setCoverageAmount] = useState('');
   const [duration, setDuration] = useState('30');
@@ -151,7 +152,6 @@ export default function InsuranceClient() {
             </p>
           </div>
         </div>
-        <Footer />
       </>
     );
   }
@@ -221,7 +221,13 @@ export default function InsuranceClient() {
                 filteredMarkets.map((m) => (
                   <button
                     key={m.id}
-                    onClick={() => setSelectedMarket(m.id)}
+                    onClick={() => {
+                      if (!isConnected) {
+                        openConnectModal?.();
+                        return;
+                      }
+                      setSelectedMarket(m.id);
+                    }}
                     className={cn(
                       'w-full p-6 bg-white rounded-xl border-2 transition-all text-left',
                       selectedMarket === m.id
@@ -400,7 +406,6 @@ export default function InsuranceClient() {
           </div>
         </div>
       </main>
-      <Footer />
     </>
   );
 }

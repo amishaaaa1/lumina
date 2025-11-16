@@ -218,9 +218,9 @@ export default function Home() {
             {/* Stats with Hover Effects */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto">
               {[
-                { label: 'Prediction Market Volume', value: '$500M+' },
-                { label: 'APY for LPs', value: 'Up to 40%' },
-                { label: 'Claim Payout Rate', value: '90%' },
+                { label: 'Total Value Locked', value: '$125K' },
+                { label: 'APY for LPs', value: 'Up to 35%' },
+                { label: 'Active Policies', value: '23' },
                 { label: 'Coverage', value: 'Instant' },
               ].map((stat) => (
                 <div key={stat.label} className="group text-center cursor-default">
@@ -405,11 +405,11 @@ export default function Home() {
               <div className="space-y-4">
                 <div className="flex justify-between items-center">
                   <span className="text-gray-600">APY:</span>
-                  <span className="text-3xl font-bold text-green-600">28%</span>
+                  <span className="text-3xl font-bold text-green-600">18%</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">TVL:</span>
-                  <span className="font-semibold text-gray-900">$4.2M</span>
+                  <span className="font-semibold text-gray-900">$52K</span>
                 </div>
               </div>
             </div>
@@ -419,11 +419,11 @@ export default function Home() {
               <div className="space-y-4">
                 <div className="flex justify-between items-center">
                   <span className="text-gray-600">APY:</span>
-                  <span className="text-3xl font-bold text-green-600">32%</span>
+                  <span className="text-3xl font-bold text-green-600">22%</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">TVL:</span>
-                  <span className="font-semibold text-gray-900">$2.8M</span>
+                  <span className="font-semibold text-gray-900">$38K</span>
                 </div>
               </div>
             </div>
@@ -433,11 +433,11 @@ export default function Home() {
               <div className="space-y-4">
                 <div className="flex justify-between items-center">
                   <span className="text-gray-600">APY:</span>
-                  <span className="text-3xl font-bold text-green-600">25%</span>
+                  <span className="text-3xl font-bold text-green-600">16%</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">TVL:</span>
-                  <span className="font-semibold text-gray-900">$3.1M</span>
+                  <span className="font-semibold text-gray-900">$35K</span>
                 </div>
               </div>
             </div>
@@ -446,11 +446,11 @@ export default function Home() {
           <div className="bg-blue-50 rounded-2xl p-8 mb-12 border-2 border-blue-100">
             <div className="grid md:grid-cols-2 gap-8 text-center">
               <div>
-                <div className="text-4xl font-bold text-gray-900 mb-2">$842K</div>
+                <div className="text-4xl font-bold text-gray-900 mb-2">$8.2K</div>
                 <div className="text-gray-600">Total Premiums Earned</div>
               </div>
               <div>
-                <div className="text-4xl font-bold text-gray-900 mb-2">28.5%</div>
+                <div className="text-4xl font-bold text-gray-900 mb-2">18.5%</div>
                 <div className="text-gray-600">Average APY</div>
               </div>
             </div>

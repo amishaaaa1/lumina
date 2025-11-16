@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import { Container } from '@/components/layout/Container';
 import { Navigation } from '@/components/layout/Navigation';
-import { Footer } from '@/components/layout/Footer';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
@@ -207,7 +206,6 @@ export default function CryptoDashboardClient() {
             <Button size="lg">Connect Wallet</Button>
           </Card>
         </Container>
-        <Footer />
       </div>
     );
   }
@@ -387,7 +385,6 @@ export default function CryptoDashboardClient() {
           </Card>
         </div>
       </Container>
-      <Footer />
     </div>
   );
 }

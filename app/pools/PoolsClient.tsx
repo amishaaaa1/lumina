@@ -3,16 +3,16 @@
 import { useState, useMemo } from 'react';
 import { Container } from '@/components/layout/Container';
 import { Navigation } from '@/components/layout/Navigation';
-import { Footer } from '@/components/layout/Footer';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
-import { Progress } from '@/components/ui/Progress';
 import { Modal } from '@/components/ui/Modal';
 import { Input } from '@/components/ui/Input';
-import { Tabs } from '@/components/ui/Tabs';
 import { useAccount } from 'wagmi';
-import { TrendingUp, Shield, Droplet, Activity, ChevronRight, Info, AlertCircle, CheckCircle2, Wallet, ArrowUpRight, ArrowDownRight, DollarSign, Percent, Users, Zap } from 'lucide-react';
+import { useConnectModal } from '@rainbow-me/rainbowkit';
+import { useToast } from '@/hooks/useToast';
+import { Toast } from '@/components/ui/Toast';
+import { TrendingUp, Shield, Droplet, Activity, Info, AlertCircle, CheckCircle2, ArrowUpRight, ArrowDownRight, DollarSign, Zap } from 'lucide-react';
 
 interface Pool {
   id: string;
@@ -121,6 +121,8 @@ const activities = [
 
 export default function PoolsClient() {
   const { isConnected } = useAccount();
+  const { openConnectModal } = useConnectModal();
+  const { toasts, dismissToast } = useToast();
   const [selectedPool, setSelectedPool] = useState<Pool | null>(null);
   const [showAddLiquidity, setShowAddLiquidity] = useState(false);
   const [depositAmount, setDepositAmount] = useState('');
@@ -161,72 +163,20 @@ export default function PoolsClient() {
   return (
     <div className="min-h-screen bg-white">
       <Navigation />
-      {/* Hero Header */}
-      <div className="relative overflow-hidden bg-white">
-        {/* Animated Gradient Orb */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[900px] bg-gradient-to-br from-green-400/30 via-emerald-400/20 to-teal-400/30 rounded-full blur-3xl animate-pulse" style={{ animationDuration: '5s' }} />
-        
-        {/* Floating Elements */}
-        <div className="absolute top-20 left-10 w-24 h-24 bg-green-200/30 rounded-full blur-xl animate-float" style={{ animationDelay: '0s', animationDuration: '7s' }} />
-        <div className="absolute bottom-20 right-10 w-32 h-32 bg-teal-200/30 rounded-full blur-xl animate-float" style={{ animationDelay: '1.5s', animationDuration: '9s' }} />
-        
-        <Container className="relative py-20">
-          <div className="max-w-4xl mx-auto text-center">
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-green-50 rounded-full mb-8 hover:scale-105 transition-transform cursor-default">
-              <Droplet className="w-4 h-4 text-green-600" />
-              <span className="text-sm font-medium text-green-700">Earn Passive Income</span>
-            </div>
-            
-            <h1 className="text-6xl md:text-7xl lg:text-8xl font-bold mb-8 leading-tight">
-              <span className="block text-gray-900">Liquidity</span>
-              <span className="block bg-gradient-to-r from-green-600 via-emerald-600 to-teal-600 bg-clip-text text-transparent animate-gradient">
-                Pools
-              </span>
-            </h1>
-            <p className="text-xl md:text-2xl text-gray-600 mb-12 max-w-2xl mx-auto">
-              Provide liquidity, earn premiums. Simple, transparent, profitable.
-            </p>
+      
+      <Container className="py-8">
+        {/* Page Header */}
+        <div className="mb-8">
+          <h1 className="text-4xl font-bold mb-2">Liquidity Pools</h1>
+          <p className="text-lg text-gray-600">Provide liquidity and earn premiums from insurance policies</p>
+        </div>
 
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto">
-              <div className="group text-center cursor-default">
-                <div className="text-4xl md:text-5xl font-bold text-gray-900 mb-2 group-hover:scale-110 transition-transform duration-300">
-                  $8.4M
-                </div>
-                <div className="text-sm text-gray-500 group-hover:text-gray-900 transition-colors">Total TVL</div>
-              </div>
-              
-              <div className="group text-center cursor-default">
-                <div className="text-4xl md:text-5xl font-bold text-gray-900 mb-2 group-hover:scale-110 transition-transform duration-300">
-                  26.8%
-                </div>
-                <div className="text-sm text-gray-500 group-hover:text-gray-900 transition-colors">Avg APY</div>
-              </div>
-              
-              <div className="group text-center cursor-default">
-                <div className="text-4xl md:text-5xl font-bold text-gray-900 mb-2 group-hover:scale-110 transition-transform duration-300">
-                  $1.2M
-                </div>
-                <div className="text-sm text-gray-500 group-hover:text-gray-900 transition-colors">Premiums</div>
-              </div>
-              
-              <div className="group text-center cursor-default">
-                <div className="text-4xl md:text-5xl font-bold text-gray-900 mb-2 group-hover:scale-110 transition-transform duration-300">
-                  1,842
-                </div>
-                <div className="text-sm text-gray-500 group-hover:text-gray-900 transition-colors">LPs</div>
-              </div>
-            </div>
-          </div>
-        </Container>
-      </div>
-
-      <Container className="py-12">
         {/* Your Positions */}
         {isConnected && hasPositions && (
           <div className="mb-12">
             <div className="flex items-center justify-between mb-6">
               <div>
-                <h2 className="text-3xl font-bold mb-2">Your Positions</h2>
+                <h2 className="text-2xl font-bold mb-1">Your Positions</h2>
                 <p className="text-gray-600">Manage your liquidity positions</p>
               </div>
               <Badge variant="success" className="text-lg px-4 py-2">
@@ -279,9 +229,9 @@ export default function PoolsClient() {
 
         {/* Available Pools */}
         <div className="mb-12">
-          <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center justify-between mb-6">
             <div>
-              <h2 className="text-3xl font-bold mb-2">Available Pools</h2>
+              <h2 className="text-2xl font-bold mb-1">{hasPositions ? 'Available Pools' : 'All Pools'}</h2>
               <p className="text-gray-600">Choose a pool that matches your risk appetite</p>
             </div>
             <div className="flex gap-3">
@@ -384,6 +334,10 @@ export default function PoolsClient() {
                       className="flex-1 group-hover:scale-105 transition-transform" 
                       size="lg"
                       onClick={() => {
+                        if (!isConnected) {
+                          openConnectModal?.();
+                          return;
+                        }
                         setSelectedPool(pool);
                         setShowAddLiquidity(true);
                       }}
@@ -409,7 +363,7 @@ export default function PoolsClient() {
         <div className="mb-12">
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h2 className="text-3xl font-bold mb-2">Recent Activity</h2>
+              <h2 className="text-2xl font-bold mb-1">Recent Activity</h2>
               <p className="text-gray-600">Live pool transactions</p>
             </div>
             <Badge className="bg-green-100 text-green-700">
@@ -647,6 +601,10 @@ export default function PoolsClient() {
               <Button 
                 className="flex-1 h-14 text-lg"
                 onClick={() => {
+                  if (!isConnected) {
+                    openConnectModal?.();
+                    return;
+                  }
                   setShowAddLiquidity(true);
                 }}
               >
@@ -664,7 +622,17 @@ export default function PoolsClient() {
           </div>
         </Modal>
       )}
-      <Footer />
+      {/* Toast Notifications */}
+      <div className="fixed bottom-4 right-4 z-50 space-y-2">
+        {toasts.map((toast) => (
+          <Toast
+            key={toast.id}
+            message={toast.message}
+            type={toast.type}
+            onClose={() => dismissToast(toast.id)}
+          />
+        ))}
+      </div>
     </div>
   );
 }
