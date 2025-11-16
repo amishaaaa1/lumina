@@ -34,7 +34,7 @@ function HowItWorksSection() {
             onClick={() => setActiveTab('traders')}
             className={`px-8 py-4 rounded-full font-semibold text-lg transition-all hover:scale-105 ${
               activeTab === 'traders'
-                ? 'bg-blue-600 text-white shadow-lg'
+                ? 'bg-gray-900 text-white shadow-lg'
                 : 'bg-white text-gray-700 hover:bg-gray-100 border-2 border-gray-200'
             }`}
             aria-pressed={activeTab === 'traders'}
@@ -45,7 +45,7 @@ function HowItWorksSection() {
             onClick={() => setActiveTab('lps')}
             className={`px-8 py-4 rounded-full font-semibold text-lg transition-all hover:scale-105 ${
               activeTab === 'lps'
-                ? 'bg-purple-400 text-white shadow-lg'
+                ? 'bg-gray-900 text-white shadow-lg'
                 : 'bg-white text-gray-700 hover:bg-gray-100 border-2 border-gray-200'
             }`}
             aria-pressed={activeTab === 'lps'}
@@ -92,7 +92,7 @@ function HowItWorksSection() {
                 <div className="text-center">
                   <Link 
                     href="/insurance" 
-                    className="group inline-flex items-center gap-2 px-8 py-4 bg-blue-600 text-white rounded-full font-semibold hover:bg-blue-700 transition-all hover:scale-105 shadow-lg hover:shadow-xl"
+                    className="group inline-flex items-center gap-2 px-8 py-4 bg-gray-900 text-white rounded-full font-semibold hover:bg-gray-800 transition-all hover:scale-105 shadow-lg hover:shadow-xl"
                   >
                     Get Protected
                     <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
@@ -140,7 +140,7 @@ function HowItWorksSection() {
                 <div className="text-center">
                   <Link 
                     href="/pools" 
-                    className="group inline-flex items-center gap-2 px-8 py-4 bg-purple-400 text-white rounded-full font-semibold hover:bg-purple-500 transition-all hover:scale-105 shadow-lg hover:shadow-xl"
+                    className="group inline-flex items-center gap-2 px-8 py-4 bg-gray-900 text-white rounded-full font-semibold hover:bg-gray-800 transition-all hover:scale-105 shadow-lg hover:shadow-xl"
                   >
                     Start Earning
                     <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
@@ -205,7 +205,7 @@ export default function Home() {
               </h1>
 
               <p className="text-xl md:text-2xl text-gray-600 mb-12 max-w-3xl mx-auto">
-                Protect your trades on BNB Chain. First decentralized insurance protocol for crypto prediction markets.
+                Hedge your Polymarket bets on BNB Chain. First risk management infrastructure for prediction markets.
               </p>
 
               <div className="flex flex-wrap gap-4 justify-center mb-20">
@@ -262,32 +262,32 @@ export default function Home() {
           <div className="max-w-6xl mx-auto relative">
             <div className="text-center mb-16">
               <h2 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6">
-                The Problem with Crypto Predictions
+                Why Prediction Markets Need Insurance
               </h2>
               <p className="text-xl text-gray-600">
-                No insurance, no safety net, unlimited downside
+                Bet wrong on Polymarket? You lose everything.
               </p>
             </div>
 
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
               <FeatureCard
-                title="Total Exposure"
-                description="One bad prediction can wipe your portfolio"
+                title="All or Nothing"
+                description="Wrong prediction = total loss of capital"
                 color="purple"
               />
               <FeatureCard
-                title="No Traditional Coverage"
-                description="Banks don't insure crypto predictions"
+                title="No Hedging Tools"
+                description="Can't protect downside like in TradFi"
                 color="purple"
               />
               <FeatureCard
-                title="Inefficient Capital"
-                description="You lock up excess funds just to sleep at night"
+                title="Limits Bet Sizes"
+                description="Traders stay small to manage risk"
                 color="purple"
               />
               <FeatureCard
-                title="24/7 Stress"
-                description="Constantly monitoring, always anxious"
+                title="Blocks Institutions"
+                description="Funds need risk management to participate"
                 color="purple"
               />
             </div>
@@ -312,32 +312,32 @@ export default function Home() {
           <div className="max-w-6xl mx-auto relative">
             <div className="text-center mb-16">
               <h2 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6">
-                Trade with confidence, earn with peace of mind
+                How Lumina Works
               </h2>
               <p className="text-xl text-gray-600">
-                Lumina brings institutional-grade risk management to every trader
+                Two-sided marketplace for prediction market risk
               </p>
             </div>
 
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
               <FeatureCard
-                title="Buy Insurance"
-                description="Protect any prediction market position in seconds"
+                title="Traders Buy Coverage"
+                description="Pay 2-10% premium to hedge your bet"
                 color="blue"
               />
               <FeatureCard
-                title="Provide Liquidity"
-                description="Earn premium income as a coverage provider"
+                title="LPs Provide Capital"
+                description="Deposit stables, earn from premiums"
                 color="blue"
               />
               <FeatureCard
-                title="Automated Claims"
-                description="Get instant payouts when markets resolve against you"
+                title="Chainlink Resolves"
+                description="Oracle verifies market outcomes"
                 color="purple"
               />
               <FeatureCard
-                title="Dynamic Pricing"
-                description="Fair premiums based on real-time risk assessment"
+                title="Auto Payouts"
+                description="Claims processed in seconds"
                 color="pink"
               />
             </div>
@@ -347,9 +347,9 @@ export default function Home() {
         {/* Section Divider */}
         <div className="relative h-24 bg-white flex items-center justify-center">
           <div className="flex items-center gap-3">
-            <div className="w-2 h-2 rounded-full bg-blue-400 animate-pulse"></div>
-            <div className="w-2 h-2 rounded-full bg-purple-400 animate-pulse delay-100"></div>
-            <div className="w-2 h-2 rounded-full bg-pink-400 animate-pulse delay-200"></div>
+            <div className="w-2 h-2 rounded-full bg-gray-300 animate-pulse"></div>
+            <div className="w-2 h-2 rounded-full bg-gray-400 animate-pulse delay-100"></div>
+            <div className="w-2 h-2 rounded-full bg-gray-300 animate-pulse delay-200"></div>
           </div>
         </div>
 
@@ -370,27 +370,30 @@ export default function Home() {
           <div className="max-w-6xl mx-auto relative">
             <div className="text-center mb-16">
               <h2 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6">
-                Active Crypto Markets
+                Insure Any Prediction Market
               </h2>
+              <p className="text-xl text-gray-600">
+                Live markets from Polymarket and beyond
+              </p>
             </div>
 
             <div className="grid md:grid-cols-3 gap-6 mb-12">
               <MarketCard
-                title="BTC > $70K by EOY"
-                premium="3.2%"
-                coverage="$2.4M"
+                title="BTC hits $100K in 2024?"
+                premium="3.5%"
+                coverage="$2.1M"
                 color="blue"
               />
               <MarketCard
-                title="ETH ETF Approval"
-                premium="4.8%"
-                coverage="$1.8M"
+                title="Trump wins 2024 election?"
+                premium="4.2%"
+                coverage="$1.9M"
                 color="purple"
               />
               <MarketCard
-                title="BNB Chain Upgrade"
-                premium="5.1%"
-                coverage="$1.2M"
+                title="ETH reaches $5K in 2024?"
+                premium="5.8%"
+                coverage="$1.3M"
                 color="pink"
               />
             </div>
@@ -420,39 +423,46 @@ export default function Home() {
           <div className="max-w-6xl mx-auto relative">
             <div className="text-center mb-16">
               <h2 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6">
-                Earn Premium Income
+                Provide Liquidity, Earn from Prediction Markets
               </h2>
+              <p className="text-xl text-gray-600">
+                Back prediction market insurance pools and earn premiums
+              </p>
             </div>
 
             <div className="grid md:grid-cols-3 gap-6 mb-12">
               <PoolCard
-                name="Stablecoin Pool"
-                apy="38%"
-                tvl="$850K"
+                name="Crypto Markets Pool"
+                apy="41%"
+                tvl="$1.2M"
                 color="blue"
               />
               <PoolCard
-                name="BNB Pool"
-                apy="45%"
-                tvl="$720K"
+                name="Politics Markets Pool"
+                apy="38%"
+                tvl="$890K"
                 color="purple"
               />
               <PoolCard
-                name="Blue Chip Pool"
-                apy="42%"
-                tvl="$530K"
+                name="Sports Markets Pool"
+                apy="35%"
+                tvl="$640K"
                 color="pink"
               />
             </div>
 
             <div className="bg-gray-50 rounded-2xl p-8 mb-12 border-2 border-gray-200">
-              <div className="grid md:grid-cols-2 gap-8 text-center">
+              <div className="grid md:grid-cols-3 gap-8 text-center">
                 <div>
-                  <div className="text-4xl font-bold text-gray-900 mb-2">$420K</div>
-                  <div className="text-gray-600">Total Premiums Earned</div>
+                  <div className="text-4xl font-bold text-gray-900 mb-2">$2.7M</div>
+                  <div className="text-gray-600">Total Value Locked</div>
                 </div>
                 <div>
-                  <div className="text-4xl font-bold text-gray-900 mb-2">42%</div>
+                  <div className="text-4xl font-bold text-gray-900 mb-2">$387K</div>
+                  <div className="text-gray-600">Premiums Earned</div>
+                </div>
+                <div>
+                  <div className="text-4xl font-bold text-gray-900 mb-2">38%</div>
                   <div className="text-gray-600">Average APY</div>
                 </div>
               </div>
@@ -461,7 +471,7 @@ export default function Home() {
             <div className="text-center">
               <Link
                 href="/pools"
-                className="group inline-flex items-center gap-2 px-8 py-4 bg-purple-600 text-white rounded-full font-semibold hover:bg-purple-700 transition-all hover:scale-105 shadow-lg hover:shadow-xl"
+                className="group inline-flex items-center gap-2 px-8 py-4 bg-gray-900 text-white rounded-full font-semibold hover:bg-gray-800 transition-all hover:scale-105 shadow-lg hover:shadow-xl"
               >
                 Start Earning
                 <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
@@ -484,61 +494,18 @@ export default function Home() {
           <div className="max-w-6xl mx-auto relative">
             <div className="text-center mb-16">
               <h2 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6">
-                Powered by BNB Chain
+                Built on BNB Chain
               </h2>
               <p className="text-xl text-gray-600">
-                Built for scale, designed for trust
+                Low fees, fast finality, proven security
               </p>
             </div>
 
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-              <FeatureCard
-                title="BNB Chain Native"
-                description="Fast, secure, low-cost transactions"
-                color="blue"
-              />
-              <FeatureCard
-                title="Smart Contract Security"
-                description="Audited, battle-tested code"
-                color="blue"
-              />
-              <FeatureCard
-                title="Dynamic Risk Modeling"
-                description="Real-time premium calculation"
-                color="blue"
-              />
-              <FeatureCard
-                title="Non-Custodial"
-                description="You control your funds always"
-                color="blue"
-              />
-            </div>
-          </div>
-        </section>
-
-        <SectionDivider bgColor="bg-white" />
-
-        {/* ============================================ */}
-        {/* PARTNERS SECTION */}
-        {/* ============================================ */}
-        <section className="relative px-6 py-24 bg-white overflow-hidden">
-          <div className="absolute top-1/3 left-10 w-24 h-24 bg-cyan-200/20 rounded-full blur-xl animate-float-9s delay-1s will-change-transform" aria-hidden="true" />
-          
-          <div className="max-w-6xl mx-auto relative">
-            <div className="text-center mb-16">
-              <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-                Built with Industry Leaders
-              </h2>
-              <p className="text-lg text-gray-600">
-                Powered by the best infrastructure in Web3
-              </p>
-            </div>
-
-            <div className="relative overflow-hidden">
+            <div className="relative overflow-hidden py-4">
               <div className="flex items-center">
-                <div className="flex items-center gap-16 px-8 animate-scroll-left">
+                <div className="flex items-center gap-20 px-8 animate-scroll-left">
                   {/* BNB Chain */}
-                  <div className="flex items-center gap-4 px-10 py-6 bg-white rounded-2xl border-2 border-gray-200 shadow-sm whitespace-nowrap min-w-[240px]">
+                  <div className="flex items-center gap-4 whitespace-nowrap">
                     <svg className="w-12 h-12" viewBox="0 0 2500 2500" fill="none" aria-hidden="true">
                       <g clipPath="url(#clip1)">
                         <path d="M764.48 1050.52L1250 565L1735.52 1050.52L2020.6 765.44L1250 0L479.4 765.44L764.48 1050.52Z" fill="#F3BA2F"/>
@@ -551,23 +518,18 @@ export default function Home() {
                     <span className="text-2xl font-bold text-gray-900">BNB Chain</span>
                   </div>
 
-                  {/* Polymarket */}
-                  <div className="flex items-center gap-4 px-10 py-6 bg-white rounded-2xl border-2 border-gray-200 shadow-sm whitespace-nowrap min-w-[240px]">
-                    <svg className="w-12 h-12" viewBox="0 0 100 100" fill="none" aria-hidden="true">
-                      <rect width="100" height="100" rx="20" fill="url(#polyGradient)"/>
-                      <path d="M30 35h15c8 0 15 7 15 15s-7 15-15 15H30V35z" fill="white"/>
-                      <defs>
-                        <linearGradient id="polyGradient" x1="0" y1="0" x2="100" y2="100">
-                          <stop offset="0%" stopColor="#6366F1"/>
-                          <stop offset="100%" stopColor="#8B5CF6"/>
-                        </linearGradient>
-                      </defs>
+                  {/* OpenZeppelin */}
+                  <div className="flex items-center gap-4 whitespace-nowrap">
+                    <svg className="w-12 h-12" viewBox="0 0 72 80" fill="none" aria-hidden="true">
+                      <path d="M71.9467191,79.7449034 L71.9467191,58.9869035 L49.3413194,58.9869035 C43.1938864,58.9869035 37.4994627,62.2139743 34.3509334,67.4825142 L27.0223684,79.7449034 L71.9467191,79.7449034 Z" fill="#63D2F9"/>
+                      <polygon fill="#4E5EE4" points="0 0 0 20.7579998 59.5406738 20.7579998 71.946759 0"/>
+                      <path d="M28.495536,32.4415868 L0.0655576857,79.7449433 L24.2872287,79.7449433 L58.2844095,23.1531803 L44.9090947,23.1531803 C38.1814306,23.1531803 31.9486498,26.6803104 28.495536,32.4415868 Z" fill="#63B0F9"/>
                     </svg>
-                    <span className="text-2xl font-bold text-gray-900">Polymarket</span>
+                    <span className="text-2xl font-bold text-gray-900">OpenZeppelin</span>
                   </div>
 
                   {/* Chainlink */}
-                  <div className="flex items-center gap-4 px-10 py-6 bg-white rounded-2xl border-2 border-gray-200 shadow-sm whitespace-nowrap min-w-[240px]">
+                  <div className="flex items-center gap-4 whitespace-nowrap">
                     <svg className="w-12 h-12" viewBox="0 0 397 397" fill="none" aria-hidden="true">
                       <path d="M198.5 0L148.5 28.9L49.2 86.2L0 115.1V281.9L49.2 310.8L148.5 368.1L198.5 397L248.5 368.1L347.8 310.8L397 281.9V115.1L347.8 86.2L248.5 28.9L198.5 0Z" fill="#375BD2"/>
                       <path d="M198.5 116.7L148.5 145.6L99.8 173.8V223.2L148.5 251.4L198.5 280.3L248.5 251.4L297.2 223.2V173.8L248.5 145.6L198.5 116.7Z" fill="white"/>
@@ -575,18 +537,16 @@ export default function Home() {
                     <span className="text-2xl font-bold text-gray-900">Chainlink</span>
                   </div>
 
-                  {/* OpenZeppelin */}
-                  <div className="flex items-center gap-4 px-10 py-6 bg-white rounded-2xl border-2 border-gray-200 shadow-sm whitespace-nowrap min-w-[240px]">
-                    <svg className="w-12 h-12" viewBox="0 0 100 100" fill="none" aria-hidden="true">
-                      <path d="M50 5L10 27.5V72.5L50 95L90 72.5V27.5L50 5Z" fill="#4E5EE4"/>
-                      <path d="M50 25L30 37.5V62.5L50 75L70 62.5V37.5L50 25Z" fill="white"/>
-                      <circle cx="50" cy="50" r="8" fill="#4E5EE4"/>
+                  {/* Polymarket */}
+                  <div className="flex items-center gap-4 whitespace-nowrap">
+                    <svg className="w-12 h-12" viewBox="0 0 200 200" fill="none" aria-hidden="true">
+                      <path d="M173.2,163.2L51.1,128.3v-83.7l122.1-34.9V163.2z M161.4,96.2l-89.8,25.6l89.8,25.6L161.4,96.2z M62.9,60.8v51.3l89.8-25.6L62.9,60.8z M161.4,25.3L71.6,51l89.8,25.6L161.4,25.3z" fill="#010202"/>
                     </svg>
-                    <span className="text-2xl font-bold text-gray-900">OpenZeppelin</span>
+                    <span className="text-2xl font-bold text-gray-900">Polymarket</span>
                   </div>
 
                   {/* Duplicate for seamless loop */}
-                  <div className="flex items-center gap-4 px-10 py-6 bg-white rounded-2xl border-2 border-gray-200 shadow-sm whitespace-nowrap min-w-[240px]">
+                  <div className="flex items-center gap-4 whitespace-nowrap">
                     <svg className="w-12 h-12" viewBox="0 0 2500 2500" fill="none" aria-hidden="true">
                       <g clipPath="url(#clip2)">
                         <path d="M764.48 1050.52L1250 565L1735.52 1050.52L2020.6 765.44L1250 0L479.4 765.44L764.48 1050.52Z" fill="#F3BA2F"/>
@@ -598,13 +558,37 @@ export default function Home() {
                     </svg>
                     <span className="text-2xl font-bold text-gray-900">BNB Chain</span>
                   </div>
+
+                  <div className="flex items-center gap-4 whitespace-nowrap">
+                    <svg className="w-12 h-12" viewBox="0 0 72 80" fill="none" aria-hidden="true">
+                      <path d="M71.9467191,79.7449034 L71.9467191,58.9869035 L49.3413194,58.9869035 C43.1938864,58.9869035 37.4994627,62.2139743 34.3509334,67.4825142 L27.0223684,79.7449034 L71.9467191,79.7449034 Z" fill="#63D2F9"/>
+                      <polygon fill="#4E5EE4" points="0 0 0 20.7579998 59.5406738 20.7579998 71.946759 0"/>
+                      <path d="M28.495536,32.4415868 L0.0655576857,79.7449433 L24.2872287,79.7449433 L58.2844095,23.1531803 L44.9090947,23.1531803 C38.1814306,23.1531803 31.9486498,26.6803104 28.495536,32.4415868 Z" fill="#63B0F9"/>
+                    </svg>
+                    <span className="text-2xl font-bold text-gray-900">OpenZeppelin</span>
+                  </div>
+
+                  <div className="flex items-center gap-4 whitespace-nowrap">
+                    <svg className="w-12 h-12" viewBox="0 0 397 397" fill="none" aria-hidden="true">
+                      <path d="M198.5 0L148.5 28.9L49.2 86.2L0 115.1V281.9L49.2 310.8L148.5 368.1L198.5 397L248.5 368.1L347.8 310.8L397 281.9V115.1L347.8 86.2L248.5 28.9L198.5 0Z" fill="#375BD2"/>
+                      <path d="M198.5 116.7L148.5 145.6L99.8 173.8V223.2L148.5 251.4L198.5 280.3L248.5 251.4L297.2 223.2V173.8L248.5 145.6L198.5 116.7Z" fill="white"/>
+                    </svg>
+                    <span className="text-2xl font-bold text-gray-900">Chainlink</span>
+                  </div>
+
+                  <div className="flex items-center gap-4 whitespace-nowrap">
+                    <svg className="w-12 h-12" viewBox="0 0 200 200" fill="none" aria-hidden="true">
+                      <path d="M173.2,163.2L51.1,128.3v-83.7l122.1-34.9V163.2z M161.4,96.2l-89.8,25.6l89.8,25.6L161.4,96.2z M62.9,60.8v51.3l89.8-25.6L62.9,60.8z M161.4,25.3L71.6,51l89.8,25.6L161.4,25.3z" fill="#010202"/>
+                    </svg>
+                    <span className="text-2xl font-bold text-gray-900">Polymarket</span>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </section>
 
-        <SectionDivider bgColor="bg-white" />
+
 
         {/* ============================================ */}
         {/* FAQ SECTION */}
