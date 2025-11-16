@@ -26,16 +26,16 @@ export function Navigation() {
 
   return (
     <nav
-      className={`sticky top-0 z-50 transition-all duration-200 ${
+      className={`sticky top-0 z-50 transition-all duration-300 ${
         scrolled
-          ? 'bg-white/80 dark:bg-black/80 backdrop-blur-xl border-b border-neutral-200 dark:border-neutral-800 shadow-sm'
-          : 'bg-transparent'
+          ? 'bg-white/90 backdrop-blur-xl border-b border-gray-200 shadow-sm'
+          : 'bg-white/50 backdrop-blur-sm'
       }`}
     >
       <div className="max-w-7xl mx-auto px-6">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link href="/" className="text-xl font-bold text-neutral-900 dark:text-white">
+          <Link href="/" className="text-xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent hover:scale-105 transition-transform">
             Lumina
           </Link>
 
@@ -47,10 +47,10 @@ export function Navigation() {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`text-sm font-medium transition-colors ${
+                  className={`text-sm font-semibold transition-all hover:scale-105 ${
                     isActive
-                      ? 'text-blue-600 dark:text-blue-400'
-                      : 'text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white'
+                      ? 'text-blue-600'
+                      : 'text-gray-600 hover:text-gray-900'
                   }`}
                 >
                   {item.label}
@@ -67,7 +67,7 @@ export function Navigation() {
           {/* Mobile Menu Button */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden p-2 text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white"
+            className="md:hidden p-2 text-gray-600 hover:text-gray-900 transition-colors"
             aria-label="Toggle menu"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -82,7 +82,7 @@ export function Navigation() {
 
         {/* Mobile Menu */}
         {mobileMenuOpen && (
-          <div className="md:hidden py-4 border-t border-neutral-200 dark:border-neutral-800">
+          <div className="md:hidden py-4 border-t border-gray-200 bg-white/95 backdrop-blur-xl rounded-b-2xl">
             <div className="flex flex-col gap-4">
               {navItems.map((item) => {
                 const isActive = pathname === item.href;
@@ -91,17 +91,17 @@ export function Navigation() {
                     key={item.href}
                     href={item.href}
                     onClick={() => setMobileMenuOpen(false)}
-                    className={`text-sm font-medium ${
+                    className={`text-sm font-semibold transition-colors ${
                       isActive
-                        ? 'text-blue-600 dark:text-blue-400'
-                        : 'text-neutral-600 dark:text-neutral-400'
+                        ? 'text-blue-600'
+                        : 'text-gray-600 hover:text-gray-900'
                     }`}
                   >
                     {item.label}
                   </Link>
                 );
               })}
-              <div className="pt-4 border-t border-neutral-200 dark:border-neutral-800">
+              <div className="pt-4 border-t border-gray-200">
                 <ConnectButton />
               </div>
             </div>

@@ -22,10 +22,10 @@ export function Card({
   const baseStyles = 'rounded-xl transition-all duration-200';
   
   const variants = {
-    default: 'bg-white dark:bg-neutral-900 shadow-md',
-    glass: 'bg-white/80 dark:bg-neutral-900/80 backdrop-blur-xl border border-neutral-200/50 dark:border-neutral-800/50',
-    elevated: 'bg-white dark:bg-neutral-900 shadow-xl',
-    bordered: 'bg-white dark:bg-neutral-900 border-2 border-neutral-200 dark:border-neutral-800',
+    default: 'bg-white shadow-md',
+    glass: 'bg-white/80 backdrop-blur-xl border border-gray-200/50',
+    elevated: 'bg-white shadow-xl',
+    bordered: 'bg-white border-2 border-gray-200',
   };
 
   const paddings = {
@@ -69,7 +69,7 @@ export function CardHeader({ children, className }: { children: ReactNode; class
 
 export function CardTitle({ children, className }: { children: ReactNode; className?: string }) {
   return (
-    <h3 className={clsx('text-xl font-semibold text-neutral-900 dark:text-white', className)}>
+    <h3 className={clsx('text-xl font-semibold text-gray-900', className)}>
       {children}
     </h3>
   );
@@ -77,7 +77,7 @@ export function CardTitle({ children, className }: { children: ReactNode; classN
 
 export function CardDescription({ children, className }: { children: ReactNode; className?: string }) {
   return (
-    <p className={clsx('text-sm text-neutral-600 dark:text-neutral-400 mt-1', className)}>
+    <p className={clsx('text-sm text-gray-600 mt-1', className)}>
       {children}
     </p>
   );
@@ -93,7 +93,7 @@ export function CardContent({ children, className }: { children: ReactNode; clas
 
 export function CardFooter({ children, className }: { children: ReactNode; className?: string }) {
   return (
-    <div className={clsx('mt-6 pt-4 border-t border-neutral-200 dark:border-neutral-800', className)}>
+    <div className={clsx('mt-6 pt-4 border-t border-gray-200', className)}>
       {children}
     </div>
   );

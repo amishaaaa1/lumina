@@ -2,11 +2,12 @@
 
 import { useState } from 'react';
 import { Container } from '@/components/layout/Container';
+import { Navigation } from '@/components/layout/Navigation';
+import { Footer } from '@/components/layout/Footer';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Progress } from '@/components/ui/Progress';
-// Icons will be replaced with emoji for now
 import { useAccount } from 'wagmi';
 import { usePolling } from '@/hooks/usePolling';
 
@@ -101,7 +102,7 @@ export default function CryptoDashboardClient() {
   const pools: Pool[] = [
     {
       id: '1',
-      name: 'Stablecoin Pool (BNB Chain)',
+      name: 'Stablecoin Pool',
       share: '$7,500',
       sharePercent: '1.5%',
       tvl: '$500,000',
@@ -190,29 +191,34 @@ export default function CryptoDashboardClient() {
 
   if (!isConnected) {
     return (
-      <Container className="py-12">
-        <Card className="p-12 text-center">
-          <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
-            <svg className="w-8 h-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-            </svg>
-          </div>
-          <h2 className="text-2xl font-bold mb-2">Connect Wallet</h2>
-          <p className="text-gray-600 dark:text-gray-400 mb-6">
-            Connect to view your dashboard
-          </p>
-          <Button size="lg">Connect Wallet</Button>
-        </Card>
-      </Container>
+      <div className="min-h-screen bg-white">
+        <Navigation />
+        <Container className="py-12">
+          <Card className="p-12 text-center max-w-md mx-auto">
+            <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-100 flex items-center justify-center">
+              <svg className="w-8 h-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+              </svg>
+            </div>
+            <h2 className="text-2xl font-bold mb-2">Connect Wallet</h2>
+            <p className="text-gray-600 mb-6">
+              Connect to view your dashboard
+            </p>
+            <Button size="lg">Connect Wallet</Button>
+          </Card>
+        </Container>
+        <Footer />
+      </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen bg-white">
+      <Navigation />
       <Container className="py-8">
-        <div className="mb-8">
+        <div className="mb-6">
           <div className="flex items-center justify-between mb-2">
-            <h1 className="text-3xl font-bold flex items-center gap-2">
+            <h1 className="text-2xl font-bold">
               {getGreeting()}, {address ? formatAddress(address) : 'vitalik.eth'}
             </h1>
             {address && (
@@ -223,11 +229,11 @@ export default function CryptoDashboardClient() {
               </Button>
             )}
           </div>
-          <p className="text-gray-600 dark:text-gray-400">Your portfolio</p>
+          <p className="text-gray-600">Your portfolio overview</p>
         </div>
 
         {alerts.length > 0 && (
-          <Card className="p-4 mb-6 bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800">
+          <Card className="p-4 mb-6 bg-blue-50 border-blue-200">
             <div className="flex items-start gap-3">
               <div className="flex-1">
                 <h3 className="font-semibold mb-2 flex items-center gap-2">
@@ -250,45 +256,41 @@ export default function CryptoDashboardClient() {
           </Card>
         )}
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
           <StatCard
-            label="Active Coverage"
+            label="Active Policies"
             value={policies.length.toString()}
             subtitle={`$${totalCoverage.toLocaleString()} protected`}
-            color="blue"
           />
           <StatCard
-            label="Premiums"
+            label="Premiums Paid"
             value={`$${totalPremiums}`}
-            subtitle="paid so far"
-            color="purple"
+            subtitle="total spent"
           />
           <StatCard
             label="Pending Claims"
             value="1"
-            subtitle="$2k payout incoming"
-            color="orange"
+            subtitle="$2k payout"
           />
           <StatCard
             label="LP Earnings"
             value={`$${totalEarnings}`}
-            subtitle="from pools"
-            color="green"
+            subtitle="last 30 days"
           />
         </div>
 
-        <div className="grid lg:grid-cols-3 gap-6 mb-8">
+        <div className="grid lg:grid-cols-3 gap-4 mb-6">
           <div className="lg:col-span-2">
             <Card className="p-6">
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-bold">Active Coverage</h2>
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-lg font-bold">Your Policies</h2>
                 <div className="flex gap-2">
                   <Button variant="secondary" size="sm">View All</Button>
                   <Button size="sm">Buy Protection</Button>
                 </div>
               </div>
 
-              <div className="space-y-4">
+              <div className="space-y-3">
                 {policies.map((policy) => (
                   <PolicyRow key={policy.id} policy={policy} />
                 ))}
@@ -298,26 +300,26 @@ export default function CryptoDashboardClient() {
 
           <div>
             <Card className="p-6">
-              <h2 className="text-xl font-bold mb-6">Market Watch</h2>
+              <h2 className="text-lg font-bold mb-4">Market Watch</h2>
               <div className="space-y-4">
                 {cryptoPrices.map((price) => (
                   <CryptoPriceCard key={price.symbol} price={price} />
                 ))}
               </div>
               
-              <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
-                <h3 className="font-semibold mb-3 text-sm">Hot right now</h3>
+              <div className="mt-6 pt-6 border-t border-gray-200">
+                <h3 className="font-semibold mb-3 text-sm">Trending Markets</h3>
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between">
-                    <span className="text-gray-600 dark:text-gray-400">BlackRock ETH ETF</span>
+                    <span className="text-gray-600">BlackRock ETH ETF</span>
                     <span className="font-medium">3.2%</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-600 dark:text-gray-400">BNB Game Launch</span>
+                    <span className="text-gray-600">BNB Game Launch</span>
                     <span className="font-medium">5.1%</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-600 dark:text-gray-400">BTC Halving</span>
+                    <span className="text-gray-600">BTC Halving</span>
                     <span className="font-medium">4.8%</span>
                   </div>
                 </div>
@@ -326,35 +328,35 @@ export default function CryptoDashboardClient() {
           </div>
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-6 mb-8">
+        <div className="grid lg:grid-cols-2 gap-4 mb-6">
           <Card className="p-6">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-bold">LP Positions</h2>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-bold">Liquidity Pools</h2>
               <Button size="sm" variant="secondary">Deposit</Button>
             </div>
 
             {pools.length > 0 ? (
-              <div className="space-y-4">
+              <div className="space-y-3">
                 {pools.map((pool) => (
                   <PoolCard key={pool.id} pool={pool} />
                 ))}
               </div>
             ) : (
               <div className="text-center py-8">
-                <div className="w-12 h-12 mx-auto mb-3 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
+                <div className="w-12 h-12 mx-auto mb-3 rounded-full bg-gray-100 flex items-center justify-center">
                   <svg className="w-6 h-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
                   </svg>
                 </div>
-                <p className="text-gray-600 dark:text-gray-400 mb-4">No LP positions yet</p>
+                <p className="text-gray-600 mb-4">No LP positions yet</p>
                 <Button>Start earning yield</Button>
               </div>
             )}
           </Card>
 
           <Card className="p-6">
-            <h2 className="text-xl font-bold mb-6">Crypto Activity Feed</h2>
-            <div className="space-y-4">
+            <h2 className="text-lg font-bold mb-4">Recent Activity</h2>
+            <div className="space-y-3">
               {activities.map((activity) => (
                 <ActivityItem key={activity.id} activity={activity} />
               ))}
@@ -362,69 +364,43 @@ export default function CryptoDashboardClient() {
           </Card>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <Card className="p-6 text-center">
-            <div className="text-3xl font-bold text-blue-600 dark:text-blue-400 mb-2">65%</div>
-            <div className="text-sm text-gray-600 dark:text-gray-400">Win Rate</div>
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <Card className="p-4 text-center">
+            <div className="text-2xl font-bold text-blue-600 mb-1">65%</div>
+            <div className="text-sm text-gray-600">Win Rate</div>
             <div className="text-xs text-gray-500 mt-1">didn&apos;t need to claim</div>
           </Card>
-          <Card className="p-6 text-center">
-            <div className="text-3xl font-bold text-green-600 dark:text-green-400 mb-2">+$765</div>
-            <div className="text-sm text-gray-600 dark:text-gray-400">Net P&L</div>
+          <Card className="p-4 text-center">
+            <div className="text-2xl font-bold text-green-600 mb-1">+$765</div>
+            <div className="text-sm text-gray-600">Net P&L</div>
             <div className="text-xs text-gray-500 mt-1">payouts minus premiums</div>
           </Card>
-          <Card className="p-6 text-center">
-            <div className="text-3xl font-bold text-purple-600 dark:text-purple-400 mb-2">$2,833</div>
-            <div className="text-sm text-gray-600 dark:text-gray-400">Avg Coverage</div>
+          <Card className="p-4 text-center">
+            <div className="text-2xl font-bold text-purple-600 mb-1">$2,833</div>
+            <div className="text-sm text-gray-600">Avg Coverage</div>
             <div className="text-xs text-gray-500 mt-1">per policy</div>
           </Card>
-          <Card className="p-6 text-center">
-            <div className="text-3xl font-bold text-orange-600 dark:text-orange-400 mb-2">BTC</div>
-            <div className="text-sm text-gray-600 dark:text-gray-400">Top Asset</div>
+          <Card className="p-4 text-center">
+            <div className="text-2xl font-bold text-orange-600 mb-1">BTC</div>
+            <div className="text-sm text-gray-600">Top Asset</div>
             <div className="text-xs text-gray-500 mt-1">40% of coverage</div>
           </Card>
         </div>
-
-        <Card className="p-6">
-          <h2 className="text-xl font-bold mb-6">Quick Actions</h2>
-          <div className="grid md:grid-cols-3 lg:grid-cols-5 gap-4">
-            <QuickActionButton
-              label="Buy Coverage"
-              description="Protect a new position"
-            />
-            <QuickActionButton
-              label="Provide Liquidity"
-              description="Earn yield from premiums"
-            />
-            <QuickActionButton
-              label="Markets"
-              description="See all available bets"
-            />
-            <QuickActionButton
-              label="Claim Rewards"
-              description="Withdraw LP earnings"
-            />
-            <QuickActionButton
-              label="Bridge"
-              description="Move assets to BNB Chain"
-            />
-          </div>
-        </Card>
       </Container>
+      <Footer />
     </div>
   );
 }
 
-function StatCard({ label, value, subtitle, color }: {
+function StatCard({ label, value, subtitle }: {
   label: string;
   value: string;
   subtitle: string;
-  color: string;
 }) {
   return (
-    <Card className="p-6">
-      <div className="text-sm text-gray-600 dark:text-gray-400 mb-1">{label}</div>
-      <div className="text-2xl font-bold mb-1">{value}</div>
+    <Card className="p-4">
+      <div className="text-sm text-gray-600 mb-1">{label}</div>
+      <div className="text-xl font-bold mb-1">{value}</div>
       <div className="text-xs text-gray-500">{subtitle}</div>
     </Card>
   );
@@ -432,30 +408,30 @@ function StatCard({ label, value, subtitle, color }: {
 
 function PolicyRow({ policy }: { policy: Policy }) {
   const statusConfig = {
-    protected: { color: 'text-green-500', bg: 'bg-green-100 dark:bg-green-900/30', label: 'Protected' },
-    'claim-ready': { color: 'text-orange-500', bg: 'bg-orange-100 dark:bg-orange-900/30', label: 'Claim Ready' },
-    expired: { color: 'text-gray-500', bg: 'bg-gray-100 dark:bg-gray-900/30', label: 'Expired' },
+    protected: { color: 'text-green-600', bg: 'bg-green-50', label: 'Protected' },
+    'claim-ready': { color: 'text-orange-600', bg: 'bg-orange-50', label: 'Claim Ready' },
+    expired: { color: 'text-gray-600', bg: 'bg-gray-50', label: 'Expired' },
   };
 
   const config = statusConfig[policy.status];
 
   return (
-    <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
-      <div className="flex items-center gap-4 flex-1">
+    <div className="flex items-center justify-between p-3 border border-gray-200 rounded-lg">
+      <div className="flex items-center gap-3 flex-1">
         <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${config.bg}`}>
           <div className={`w-3 h-3 rounded-full ${config.color.replace('text-', 'bg-')}`} />
         </div>
         <div className="flex-1">
-          <div className="font-semibold">{policy.market}</div>
-          <div className="text-sm text-gray-600 dark:text-gray-400">
-            {policy.type} • Coverage: {policy.coverage} • Premium: {policy.premium}
+          <div className="font-semibold text-sm">{policy.market}</div>
+          <div className="text-xs text-gray-600">
+            {policy.type} • {policy.coverage} • {policy.premium}
           </div>
         </div>
       </div>
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-3">
         <div className="text-right">
-          <div className="text-sm text-gray-600 dark:text-gray-400">Expires</div>
-          <div className="font-medium">{policy.expires}</div>
+          <div className="text-xs text-gray-500">Expires</div>
+          <div className="text-sm font-medium">{policy.expires}</div>
         </div>
         <Badge variant={policy.status === 'protected' ? 'success' : policy.status === 'claim-ready' ? 'warning' : 'default'}>
           {config.label}
@@ -470,50 +446,50 @@ function CryptoPriceCard({ price }: { price: CryptoPrice }) {
   const progress = (price.current / price.target) * 100;
 
   return (
-    <div>
+    <div className="p-3 border border-gray-200 rounded-lg">
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-2">
-          <span className="font-bold">{price.symbol}</span>
-          <span className={`text-sm flex items-center gap-1 ${price.change24h >= 0 ? 'text-green-500' : 'text-red-500'}`}>
+          <span className="font-bold text-sm">{price.symbol}</span>
+          <span className={`text-xs flex items-center gap-1 ${price.change24h >= 0 ? 'text-green-600' : 'text-red-600'}`}>
             {price.change24h >= 0 ? '↑' : '↓'}
-            {Math.abs(price.change24h).toFixed(2)}%
+            {Math.abs(price.change24h).toFixed(1)}%
           </span>
         </div>
-        <span className="text-sm text-gray-600 dark:text-gray-400">{percentToTarget}% needed</span>
+        <span className="text-xs text-gray-500">{percentToTarget}% to target</span>
       </div>
-      <div className="flex items-center justify-between text-sm mb-2">
-        <span className="text-gray-600 dark:text-gray-400">${price.current.toLocaleString()}</span>
+      <div className="flex items-center justify-between text-xs mb-2">
+        <span className="text-gray-600">${price.current.toLocaleString()}</span>
         <span className="font-medium">→ ${price.target.toLocaleString()}</span>
       </div>
-      <Progress value={Math.min(progress, 100)} className="h-2" />
+      <Progress value={Math.min(progress, 100)} className="h-1.5" />
     </div>
   );
 }
 
 function PoolCard({ pool }: { pool: Pool }) {
   return (
-    <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+    <div className="p-3 border border-gray-200 rounded-lg">
       <div className="flex items-center justify-between mb-3">
-        <h3 className="font-semibold">{pool.name}</h3>
+        <h3 className="font-semibold text-sm">{pool.name}</h3>
         <Badge variant="success">{pool.apy} APY</Badge>
       </div>
       <div className="grid grid-cols-2 gap-3 text-sm mb-3">
         <div>
-          <div className="text-gray-600 dark:text-gray-400">Your Share</div>
-          <div className="font-medium">{pool.sharePercent} ({pool.share})</div>
+          <div className="text-gray-600">Your Share</div>
+          <div className="font-medium">{pool.sharePercent}</div>
         </div>
         <div>
-          <div className="text-gray-600 dark:text-gray-400">TVL</div>
+          <div className="text-gray-600">TVL</div>
           <div className="font-medium">{pool.tvl}</div>
         </div>
         <div className="col-span-2">
-          <div className="text-gray-600 dark:text-gray-400">Earnings (30d)</div>
-          <div className="font-medium text-green-600 dark:text-green-400">{pool.earnings30d}</div>
+          <div className="text-gray-600">Earnings (30d)</div>
+          <div className="font-medium text-green-600">{pool.earnings30d}</div>
         </div>
       </div>
       <div className="flex gap-2">
         <Button size="sm" variant="secondary" className="flex-1">Manage</Button>
-        <Button size="sm" className="flex-1">Add Funds</Button>
+        <Button size="sm" className="flex-1">Add</Button>
       </div>
     </div>
   );
@@ -525,39 +501,27 @@ function ActivityItem({ activity }: { activity: Activity }) {
       case 'claim': return 'bg-orange-500';
       case 'policy': return 'bg-blue-500';
       case 'deposit': return 'bg-green-500';
-      case 'expired': return 'bg-gray-500';
+      case 'expired': return 'bg-gray-400';
       case 'payout': return 'bg-green-500';
-      default: return 'bg-gray-500';
+      default: return 'bg-gray-400';
     }
   };
 
   return (
-    <div className="flex items-start gap-3 pb-4 border-b border-gray-200 dark:border-gray-700 last:border-0 last:pb-0">
-      <div className="w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center shrink-0">
+    <div className="flex items-start gap-3 pb-3 border-b border-gray-200 last:border-0 last:pb-0">
+      <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center shrink-0">
         <div className={`w-3 h-3 rounded-full ${getColor()}`} />
       </div>
       <div className="flex-1 min-w-0">
-        <div className="text-sm text-gray-600 dark:text-gray-400">{activity.timestamp}</div>
-        <div className="font-medium">{activity.description}</div>
+        <div className="text-xs text-gray-500">{activity.timestamp}</div>
+        <div className="font-medium text-sm">{activity.description}</div>
         {activity.amount && (
-          <div className="text-sm text-gray-600 dark:text-gray-400">Amount: {activity.amount}</div>
+          <div className="text-sm text-gray-600">{activity.amount}</div>
         )}
         {activity.status && (
           <Badge variant="default" className="mt-1">{activity.status}</Badge>
         )}
       </div>
     </div>
-  );
-}
-
-function QuickActionButton({ label, description }: {
-  label: string;
-  description: string;
-}) {
-  return (
-    <button className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors text-left">
-      <div className="font-semibold text-sm mb-1">{label}</div>
-      <div className="text-xs text-gray-600 dark:text-gray-400">{description}</div>
-    </button>
   );
 }
