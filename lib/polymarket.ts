@@ -33,7 +33,6 @@ export interface PolymarketMarket {
 }
 
 const POLYMARKET_API = 'https://gamma-api.polymarket.com';
-const CLOB_API = 'https://clob.polymarket.com';
 
 /**
  * Fetch trending markets from Polymarket
@@ -53,6 +52,7 @@ export async function fetchTrendingMarkets(limit = 10): Promise<PolymarketEvent[
 
     const data = await response.json();
     
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return data.map((event: any) => ({
       id: event.id,
       title: event.title,
@@ -129,11 +129,13 @@ export async function searchMarkets(query: string, limit = 20): Promise<Polymark
     const data = await response.json();
     
     // Filter by query
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const filtered = data.filter((event: any) => 
       event.title?.toLowerCase().includes(query.toLowerCase()) ||
       event.description?.toLowerCase().includes(query.toLowerCase())
     );
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return filtered.map((event: any) => ({
       id: event.id,
       title: event.title,
@@ -175,10 +177,12 @@ export async function fetchMarketsByCategory(category: string, limit = 20): Prom
     const data = await response.json();
     
     // Filter by category
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const filtered = data.filter((event: any) => 
       event.category?.toLowerCase() === category.toLowerCase()
     );
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return filtered.map((event: any) => ({
       id: event.id,
       title: event.title,
@@ -204,39 +208,51 @@ export async function fetchMarketsByCategory(category: string, limit = 20): Prom
 function getFallbackMarkets(): PolymarketEvent[] {
   return [
     {
-      id: 'btc-100k-2024',
-      title: 'Will Bitcoin reach $100,000 in 2024?',
-      description: 'Bitcoin to hit $100K by December 31, 2024',
-      endDate: '2024-12-31T23:59:59Z',
-      volume: 2500000,
-      liquidity: 450000,
+      id: 'btc-150k-2025',
+      title: 'Will Bitcoin reach $150,000 in 2025?',
+      description: 'Bitcoin to hit $150K by December 31, 2025',
+      endDate: '2025-12-31T23:59:59Z',
+      volume: 3200000,
+      liquidity: 580000,
       outcomes: ['Yes', 'No'],
-      outcomePrices: [0.35, 0.65],
+      outcomePrices: [0.42, 0.58],
       category: 'Crypto',
       active: true,
     },
     {
-      id: 'eth-etf-2024',
-      title: 'Ethereum ETF approved in 2024?',
-      description: 'Will SEC approve spot Ethereum ETF in 2024?',
-      endDate: '2024-12-31T23:59:59Z',
-      volume: 1800000,
-      liquidity: 320000,
+      id: 'eth-10k-2025',
+      title: 'Will Ethereum reach $10,000 in 2025?',
+      description: 'ETH to hit $10K by end of 2025',
+      endDate: '2025-12-31T23:59:59Z',
+      volume: 2100000,
+      liquidity: 420000,
       outcomes: ['Yes', 'No'],
-      outcomePrices: [0.72, 0.28],
+      outcomePrices: [0.38, 0.62],
       category: 'Crypto',
       active: true,
     },
     {
-      id: 'trump-2024',
-      title: 'Trump wins 2024 election?',
-      description: 'Donald Trump wins 2024 US Presidential Election',
-      endDate: '2024-11-05T23:59:59Z',
-      volume: 15000000,
-      liquidity: 2800000,
+      id: 'ai-agi-2026',
+      title: 'Will AGI be achieved by 2026?',
+      description: 'Artificial General Intelligence achieved by end of 2026',
+      endDate: '2026-12-31T23:59:59Z',
+      volume: 4500000,
+      liquidity: 890000,
       outcomes: ['Yes', 'No'],
-      outcomePrices: [0.48, 0.52],
-      category: 'Politics',
+      outcomePrices: [0.22, 0.78],
+      category: 'Tech',
+      active: true,
+    },
+    {
+      id: 'fed-rate-2025',
+      title: 'Fed rate below 3% by end of 2025?',
+      description: 'Federal Reserve interest rate drops below 3%',
+      endDate: '2025-12-31T23:59:59Z',
+      volume: 1900000,
+      liquidity: 340000,
+      outcomes: ['Yes', 'No'],
+      outcomePrices: [0.55, 0.45],
+      category: 'Finance',
       active: true,
     },
   ];

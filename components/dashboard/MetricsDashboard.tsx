@@ -39,7 +39,7 @@ export function MetricsDashboard() {
     avgApy: 42.5,
   });
 
-  const [topMarkets, setTopMarkets] = useState<MarketMetrics[]>([
+  const [topMarkets] = useState<MarketMetrics[]>([
     {
       id: '1',
       name: 'BTC > $50K by Dec 31',
@@ -313,7 +313,7 @@ export function MetricsDashboard() {
                 <div>
                   <p className="font-semibold text-gray-900">{market.name}</p>
                   <div className="flex items-center gap-2 mt-1">
-                    <Badge variant="outline">{market.category}</Badge>
+                    <Badge variant="default">{market.category}</Badge>
                     <span className="text-sm text-gray-500">
                       {market.policies} policies
                     </span>

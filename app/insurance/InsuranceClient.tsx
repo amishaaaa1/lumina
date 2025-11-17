@@ -12,54 +12,160 @@ import { cn } from '@/lib/utils';
 
 const MARKETS = [
   {
-    id: 'btc-150k-2025',
-    title: 'Bitcoin reaches $150k in 2025?',
+    id: '1',
+    token: 'Bitcoin',
+    symbol: 'BTC',
+    question: 'BTC hits $120K by Q2 2025?',
+    votes: 234,
+    poolLiquidity: '$18.4M',
+    currentPrice: '$91,234',
+    premium: '2.8%',
+    coverage: '$6.2M',
+    coingeckoId: 'bitcoin',
     category: 'Crypto',
-    odds: 45,
-    volume: '$3.2M',
-    ends: 'Dec 31, 2025',
-    hot: true,
   },
   {
-    id: 'eth-8k-2025',
-    title: 'Ethereum hits $8k in 2025?',
+    id: '2',
+    token: 'Ethereum',
+    symbol: 'ETH',
+    question: 'ETH flips $5K before June?',
+    votes: 187,
+    poolLiquidity: '$14.2M',
+    currentPrice: '$3,456',
+    premium: '3.4%',
+    coverage: '$4.8M',
+    coingeckoId: 'ethereum',
     category: 'Crypto',
-    odds: 38,
-    volume: '$2.1M',
-    ends: 'Dec 31, 2025',
   },
   {
-    id: 'trump-tariffs-2025',
-    title: 'Trump implements 25%+ tariffs in 2025?',
-    category: 'Politics',
-    odds: 62,
-    volume: '$4.5M',
-    ends: 'Jun 30, 2025',
-    hot: true,
-  },
-  {
-    id: 'ai-agi-2026',
-    title: 'AGI achieved by end of 2026?',
-    category: 'Tech',
-    odds: 18,
-    volume: '$1.8M',
-    ends: 'Dec 31, 2026',
-  },
-  {
-    id: 'fed-rate-2025',
-    title: 'Fed rate below 3% by end of 2025?',
-    category: 'Finance',
-    odds: 52,
-    volume: '$2.4M',
-    ends: 'Dec 31, 2025',
-  },
-  {
-    id: 'bnb-1000-2025',
-    title: 'BNB reaches $1000 in 2025?',
+    id: '3',
+    token: 'Cardano',
+    symbol: 'ADA',
+    question: 'ADA breaks $1.50 in 2025?',
+    votes: 142,
+    poolLiquidity: '$9.8M',
+    currentPrice: '$0.92',
+    premium: '4.6%',
+    coverage: '$2.3M',
+    coingeckoId: 'cardano',
     category: 'Crypto',
-    odds: 35,
-    volume: '$1.5M',
-    ends: 'Dec 31, 2025',
+  },
+  {
+    id: '4',
+    token: 'Astar Network',
+    symbol: 'ASTR',
+    question: 'ASTR reaches $0.35 this year?',
+    votes: 78,
+    poolLiquidity: '$3.4M',
+    currentPrice: '$0.089',
+    premium: '6.2%',
+    coverage: '$890K',
+    coingeckoId: 'astar',
+    category: 'Crypto',
+  },
+  {
+    id: '5',
+    token: 'Hyperliquid',
+    symbol: 'HYPE',
+    question: 'HYPE surpasses $75 in Q1?',
+    votes: 156,
+    poolLiquidity: '$7.6M',
+    currentPrice: '$32.10',
+    premium: '5.1%',
+    coverage: '$3.1M',
+    coingeckoId: 'hyperliquid',
+    category: 'Crypto',
+  },
+  {
+    id: '6',
+    token: 'Solana',
+    symbol: 'SOL',
+    question: 'SOL maintains above $200?',
+    votes: 203,
+    poolLiquidity: '$11.2M',
+    currentPrice: '$178',
+    premium: '3.9%',
+    coverage: '$3.7M',
+    coingeckoId: 'solana',
+    category: 'Crypto',
+  },
+  {
+    id: '7',
+    token: 'Polkadot',
+    symbol: 'DOT',
+    question: 'DOT hits $15 by March?',
+    votes: 91,
+    poolLiquidity: '$5.4M',
+    currentPrice: '$7.23',
+    premium: '5.4%',
+    coverage: '$1.8M',
+    coingeckoId: 'polkadot',
+    category: 'Crypto',
+  },
+  {
+    id: '8',
+    token: 'Chainlink',
+    symbol: 'LINK',
+    question: 'LINK reaches $40 in 2025?',
+    votes: 167,
+    poolLiquidity: '$8.9M',
+    currentPrice: '$18.45',
+    premium: '4.3%',
+    coverage: '$2.9M',
+    coingeckoId: 'chainlink',
+    category: 'Crypto',
+  },
+  {
+    id: '9',
+    token: 'Avalanche',
+    symbol: 'AVAX',
+    question: 'AVAX breaks $80 this quarter?',
+    votes: 124,
+    poolLiquidity: '$6.7M',
+    currentPrice: '$42.30',
+    premium: '4.8%',
+    coverage: '$2.1M',
+    coingeckoId: 'avalanche-2',
+    category: 'Crypto',
+  },
+  {
+    id: '10',
+    token: 'Polygon',
+    symbol: 'MATIC',
+    question: 'MATIC reaches $2 in 2025?',
+    votes: 98,
+    poolLiquidity: '$4.5M',
+    currentPrice: '$0.87',
+    premium: '5.7%',
+    coverage: '$1.5M',
+    coingeckoId: 'matic-network',
+    category: 'Crypto',
+  },
+  {
+    id: '11',
+    token: 'Cosmos',
+    symbol: 'ATOM',
+    question: 'ATOM hits $25 by summer?',
+    votes: 112,
+    poolLiquidity: '$5.8M',
+    currentPrice: '$9.12',
+    premium: '5.3%',
+    coverage: '$1.9M',
+    coingeckoId: 'cosmos',
+    category: 'Crypto',
+  },
+  {
+    id: '12',
+    token: 'Near Protocol',
+    symbol: 'NEAR',
+    question: 'NEAR surpasses $12 in Q2?',
+    votes: 87,
+    poolLiquidity: '$4.1M',
+    currentPrice: '$4.56',
+    premium: '6.1%',
+    coverage: '$1.3M',
+    coingeckoId: 'near',
+    category: 'Crypto',
   },
 ];
 
@@ -94,7 +200,8 @@ export default function InsuranceClient() {
   const filteredMarkets = useMemo(() => {
     return MARKETS.filter((m) => {
       const matchesSearch =
-        m.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        m.question.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        m.token.toLowerCase().includes(searchQuery.toLowerCase()) ||
         m.category.toLowerCase().includes(searchQuery.toLowerCase());
       const matchesCategory = categoryFilter === 'all' || m.category === categoryFilter;
       return matchesSearch && matchesCategory;
@@ -146,9 +253,9 @@ export default function InsuranceClient() {
                 />
               </svg>
             </div>
-            <h2 className="text-3xl font-bold mb-3">Connect Wallet</h2>
-            <p className="text-gray-600 mb-8">
-              Connect your wallet to buy insurance
+            <h2 className="text-2xl font-bold mb-2">Connect Wallet</h2>
+            <p className="text-gray-600 mb-6">
+              Connect to view and purchase insurance
             </p>
           </div>
         </div>
@@ -160,13 +267,80 @@ export default function InsuranceClient() {
     <>
       <Header />
       <main className="min-h-screen bg-gray-50 pt-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <div className="mb-8">
-            <h1 className="text-4xl font-bold mb-3">Buy Insurance</h1>
-            <p className="text-lg text-gray-600">
-              Hedge your prediction market bets
-            </p>
+        {/* Simple Header with Stats */}
+        <div className="bg-white border-b border-gray-200">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div className="mb-6">
+              <h1 className="text-3xl font-bold text-gray-900">Insurance Markets</h1>
+              <p className="text-gray-600 mt-1">Select a market to insure your position</p>
+            </div>
+
+            {/* Stats Grid */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+              <div className="group bg-white rounded-2xl p-6 border border-gray-200 hover:border-blue-300 hover:shadow-xl transition-all duration-300">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <div className="text-sm text-gray-600 mb-1">Total Protected</div>
+                    <div className="text-3xl font-bold text-gray-900">$42.8M</div>
+                  </div>
+                </div>
+                <div className="text-xs text-green-600 font-medium">↑ 12.5% this week</div>
+              </div>
+
+              <div className="group bg-white rounded-2xl p-6 border border-gray-200 hover:border-blue-300 hover:shadow-xl transition-all duration-300">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <div className="text-sm text-gray-600 mb-1">Active Policies</div>
+                    <div className="text-3xl font-bold text-gray-900">1,247</div>
+                  </div>
+                </div>
+                <div className="text-xs text-blue-600 font-medium">↑ 8.3% this week</div>
+              </div>
+
+              <div className="group bg-white rounded-2xl p-6 border border-gray-200 hover:border-blue-300 hover:shadow-xl transition-all duration-300">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <svg className="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <div className="text-sm text-gray-600 mb-1">Claims Paid</div>
+                    <div className="text-3xl font-bold text-gray-900">$3.2M</div>
+                  </div>
+                </div>
+                <div className="text-xs text-purple-600 font-medium">234 claims settled</div>
+              </div>
+
+              <div className="group bg-white rounded-2xl p-6 border border-gray-200 hover:border-blue-300 hover:shadow-xl transition-all duration-300">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-12 h-12 bg-yellow-100 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <svg className="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                    </svg>
+                  </div>
+                  <div>
+                    <div className="text-sm text-gray-600 mb-1">Avg Premium</div>
+                    <div className="text-3xl font-bold text-gray-900">4.2%</div>
+                  </div>
+                </div>
+                <div className="text-xs text-yellow-600 font-medium">Competitive rates</div>
+              </div>
+            </div>
           </div>
+        </div>
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
 
           {/* Search and Filter */}
           <div className="mb-8 flex flex-col sm:flex-row gap-4">
@@ -210,64 +384,97 @@ export default function InsuranceClient() {
             </div>
           </div>
 
-          <div className="grid lg:grid-cols-3 gap-8">
-            {/* Markets list */}
-            <div className="lg:col-span-2 space-y-4">
+          <div>
+            {/* Markets grid - Full Width */}
+            <div>
               {filteredMarkets.length === 0 ? (
                 <div className="bg-white rounded-xl p-12 text-center">
                   <p className="text-gray-600">No markets found</p>
                 </div>
               ) : (
-                filteredMarkets.map((m) => (
-                  <button
-                    key={m.id}
-                    onClick={() => {
-                      if (!isConnected) {
-                        openConnectModal?.();
-                        return;
-                      }
-                      setSelectedMarket(m.id);
-                    }}
-                    className={cn(
-                      'w-full p-6 bg-white rounded-xl border-2 transition-all text-left',
-                      selectedMarket === m.id
-                        ? 'border-blue-600 shadow-lg ring-2 ring-blue-100'
-                        : 'border-gray-200 hover:border-gray-300 hover:shadow-md'
-                    )}
-                  >
-                    <div className="flex justify-between items-start mb-3">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-2 flex-wrap">
-                          <span className="px-2 py-1 bg-gray-100 rounded text-xs font-medium text-gray-700">
-                            {m.category}
-                          </span>
-                          {m.hot && (
-                            <span className="px-2 py-1 bg-red-100 rounded text-xs font-medium text-red-700">
-                              🔥 Hot
-                            </span>
-                          )}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                  {filteredMarkets.map((m) => (
+                    <button
+                      key={m.id}
+                      onClick={() => {
+                        if (!isConnected) {
+                          openConnectModal?.();
+                          return;
+                        }
+                        setSelectedMarket(m.id);
+                      }}
+                      className={cn(
+                        'bg-white rounded-2xl p-6 hover:shadow-lg transition-all border-2 text-left',
+                        selectedMarket === m.id
+                          ? 'border-blue-600 shadow-lg'
+                          : 'border-gray-200 hover:border-gray-300'
+                      )}
+                    >
+                      <div className="space-y-4">
+                        {/* Token Header */}
+                        <div className="flex items-center gap-3">
+                          <div className="relative w-10 h-10 flex-shrink-0">
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img 
+                              src={`https://cryptologos.cc/logos/${m.token.toLowerCase().replace(' ', '-')}-${m.symbol.toLowerCase()}-logo.png`}
+                              alt={m.token}
+                              className="w-10 h-10 rounded-full object-cover"
+                              onError={(e) => {
+                                const target = e.target as HTMLImageElement;
+                                target.src = `https://via.placeholder.com/40/3B82F6/FFFFFF?text=${m.symbol}`;
+                              }}
+                            />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <h3 className="font-bold text-sm text-gray-900">{m.token}</h3>
+                            <p className="text-xs text-gray-500">{m.symbol}</p>
+                          </div>
                         </div>
-                        <h3 className="text-lg font-semibold mb-2">{m.title}</h3>
-                        <div className="flex flex-wrap gap-4 text-sm text-gray-600">
-                          <span>Volume: {m.volume}</span>
-                          <span>•</span>
-                          <span>Ends: {m.ends}</span>
+
+                        {/* Question */}
+                        <p className="text-sm font-semibold text-gray-900 min-h-[42px] leading-tight">
+                          {m.question}
+                        </p>
+
+                        {/* Stats */}
+                        <div className="space-y-2.5">
+                          <div className="flex justify-between items-center">
+                            <span className="text-xs text-gray-500">Votes</span>
+                            <span className="text-xs font-bold text-gray-900">{m.votes}</span>
+                          </div>
+                          <div className="flex justify-between items-center">
+                            <span className="text-xs text-gray-500">Pool liquidity</span>
+                            <span className="text-xs font-bold text-gray-900">{m.poolLiquidity}</span>
+                          </div>
+                          <div className="flex justify-between items-center">
+                            <span className="text-xs text-gray-500">Current price</span>
+                            <span className="text-xs font-bold text-gray-900">{m.currentPrice}</span>
+                          </div>
+                          <div className="flex justify-between items-center">
+                            <span className="text-xs text-gray-500">Premium</span>
+                            <span className="text-xs font-bold text-green-600">{m.premium}</span>
+                          </div>
+                          <div className="flex justify-between items-center">
+                            <span className="text-xs text-gray-500">Coverage</span>
+                            <span className="text-xs font-bold text-gray-900">{m.coverage}</span>
+                          </div>
+                        </div>
+
+                        {/* Insure Button */}
+                        <div className="w-full px-4 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg text-sm font-semibold hover:from-blue-700 hover:to-indigo-700 transition-all mt-2 text-center shadow-lg hover:shadow-xl">
+                          Insure Position
                         </div>
                       </div>
-                      <div className="text-right ml-4">
-                        <div className="text-xs text-gray-500 mb-1">Yes odds</div>
-                        <div className="text-2xl font-bold text-blue-600">{m.odds}%</div>
-                      </div>
-                    </div>
-                  </button>
-                ))
+                    </button>
+                  ))}
+                </div>
               )}
             </div>
 
             {/* Purchase form */}
             <div className="lg:sticky lg:top-24 h-fit">
               <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-lg">
-                <h2 className="text-xl font-bold mb-6">Insurance Details</h2>
+                <h2 className="text-lg font-semibold mb-6">Purchase Details</h2>
 
                 {!selectedMarket ? (
                   <div className="text-center py-12">
@@ -293,7 +500,7 @@ export default function InsuranceClient() {
                     {/* Selected market */}
                     <div className="p-4 bg-blue-50 rounded-lg border border-blue-100">
                       <div className="text-xs text-blue-600 font-medium mb-1">SELECTED MARKET</div>
-                      <div className="font-semibold text-sm">{market?.title}</div>
+                      <div className="font-semibold text-sm">{market?.question}</div>
                     </div>
 
                     {/* Coverage input */}
@@ -393,10 +600,9 @@ export default function InsuranceClient() {
                     </button>
 
                     {/* Info */}
-                    <div className="p-3 bg-blue-50 rounded-lg border border-blue-100">
-                      <p className="text-xs text-blue-700">
-                        💡 Your policy will be minted as an NFT. You can claim if the market resolves
-                        against you.
+                    <div className="p-3 bg-gray-50 rounded-lg border border-gray-200">
+                      <p className="text-xs text-gray-700">
+                        Your policy will be minted as an NFT. You can claim if the market resolves against you.
                       </p>
                     </div>
                   </div>

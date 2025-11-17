@@ -1,12 +1,11 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Container } from '@/components/layout/Container';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Badge } from '@/components/ui/Badge';
 import { Card } from '@/components/ui/Card';
-import { fetchTrendingMarkets, type PolymarketEvent, formatVolume, getDaysUntilClose, getRiskLevel } from '@/lib/polymarket';
 // Icons replaced with emoji
 
 type Category = 'all' | 'price' | 'etf' | 'protocol' | 'nft';

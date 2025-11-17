@@ -73,7 +73,7 @@ interface AppState {
 export const useStore = create<AppState>()(
   devtools(
     persist(
-      (set, get) => ({
+      (set) => ({
         // User data
         userPolicies: [],
         setUserPolicies: (policies) => set({ userPolicies: policies }),

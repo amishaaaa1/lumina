@@ -12,7 +12,7 @@ export function usePolling(
 ) {
   const { interval = 10000, enabled = true, onError } = options;
   const savedCallback = useRef(callback);
-  const timeoutRef = useRef<NodeJS.Timeout>();
+  const timeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
 
   useEffect(() => {
     savedCallback.current = callback;

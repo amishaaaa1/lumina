@@ -29,6 +29,7 @@
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
     "framer-motion": "^11.11.17",
+    "lightweight-charts": "^5.0.9",
     "lucide-react": "^0.553.0",
     "next": "16.0.3",
     "react": "19.2.0",

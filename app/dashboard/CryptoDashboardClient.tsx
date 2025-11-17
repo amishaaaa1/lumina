@@ -9,6 +9,8 @@ import { Badge } from '@/components/ui/Badge';
 import { Progress } from '@/components/ui/Progress';
 import { useAccount } from 'wagmi';
 import { usePolling } from '@/hooks/usePolling';
+import { TradingViewChart } from '@/components/dashboard/TradingViewChart';
+import { MarketDataGrid } from '@/components/dashboard/MarketDataGrid';
 
 interface Policy {
   id: string;
@@ -57,6 +59,12 @@ export default function CryptoDashboardClient() {
     if (hour < 18) return 'Good afternoon';
     return 'Good evening';
   };
+  
+  const [selectedCoin, setSelectedCoin] = useState({
+    id: 'bitcoin',
+    symbol: 'BTC',
+    name: 'Bitcoin',
+  });
   
   const [cryptoPrices, setCryptoPrices] = useState<CryptoPrice[]>([
     { symbol: 'BTC', current: 58240, target: 70000, change24h: 2.3 },
@@ -274,6 +282,20 @@ export default function CryptoDashboardClient() {
             label="LP Earnings"
             value={`$${totalEarnings}`}
             subtitle="last 30 days"
+          />
+        </div>
+
+        <div className="mb-6">
+          <TradingViewChart
+            coinSymbol={selectedCoin.symbol}
+            coinName={selectedCoin.name}
+          />
+        </div>
+
+        <div className="mb-6">
+          <MarketDataGrid
+            onCoinSelect={(id, symbol, name) => setSelectedCoin({ id, symbol, name })}
+            selectedCoinId={selectedCoin.id}
           />
         </div>
 

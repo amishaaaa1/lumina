@@ -1,17 +1,18 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { Navigation } from '@/components/layout/Navigation';
 import { Footer } from '@/components/layout/Footer';
 import { useState } from 'react';
 import { FeatureCard } from '@/components/landing/FeatureCard';
 import { StatCard } from '@/components/landing/StatCard';
-import { MarketCard } from '@/components/landing/MarketCard';
 import { PoolCard } from '@/components/landing/PoolCard';
 import { FAQAccordion } from '@/components/landing/FAQAccordion';
 import { BackToTop } from '@/components/landing/BackToTop';
 import { useLandingStats } from '@/hooks/useLandingStats';
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
+import { InsurableMarketsSection } from '@/components/landing/InsurableMarketsSection';
 
 function HowItWorksSection() {
   const [activeTab, setActiveTab] = useState<'traders' | 'lps'>('traders');
@@ -363,54 +364,7 @@ export default function Home() {
         {/* ============================================ */}
         {/* MARKETPLACE PREVIEW SECTION */}
         {/* ============================================ */}
-        <section className="relative px-6 py-24 bg-white overflow-hidden">
-          <div className="absolute top-20 right-10 w-24 h-24 bg-blue-200/20 rounded-full blur-xl animate-float-7s delay-0 will-change-transform" aria-hidden="true" />
-          <div className="absolute bottom-20 left-10 w-32 h-32 bg-purple-200/20 rounded-full blur-xl animate-float-9s delay-1s will-change-transform" aria-hidden="true" />
-          
-          <div className="max-w-6xl mx-auto relative">
-            <div className="text-center mb-16">
-              <h2 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6">
-                Insure Any Prediction Market
-              </h2>
-              <p className="text-xl text-gray-600">
-                Live markets from Polymarket and beyond
-              </p>
-            </div>
-
-            <div className="grid md:grid-cols-3 gap-6 mb-12">
-              <MarketCard
-                title="BTC hits $100K in 2024?"
-                premium="3.5%"
-                coverage="$2.1M"
-                color="blue"
-              />
-              <MarketCard
-                title="Trump wins 2024 election?"
-                premium="4.2%"
-                coverage="$1.9M"
-                color="purple"
-              />
-              <MarketCard
-                title="ETH reaches $5K in 2024?"
-                premium="5.8%"
-                coverage="$1.3M"
-                color="pink"
-              />
-            </div>
-
-            <div className="text-center">
-              <Link
-                href="/insurance"
-                className="group inline-flex items-center gap-2 px-8 py-4 bg-gray-900 text-white rounded-full font-semibold hover:bg-gray-800 transition-all hover:scale-105 shadow-lg hover:shadow-xl"
-              >
-                View All Markets
-                <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                </svg>
-              </Link>
-            </div>
-          </div>
-        </section>
+        <InsurableMarketsSection />
 
         <SectionDivider bgColor="bg-white" />
 
@@ -423,46 +377,46 @@ export default function Home() {
           <div className="max-w-6xl mx-auto relative">
             <div className="text-center mb-16">
               <h2 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6">
-                Provide Liquidity, Earn from Prediction Markets
+                Earn Yield by Backing Traders
               </h2>
               <p className="text-xl text-gray-600">
-                Back prediction market insurance pools and earn premiums
+                Deposit stablecoins, collect premiums, withdraw anytime
               </p>
             </div>
 
             <div className="grid md:grid-cols-3 gap-6 mb-12">
               <PoolCard
-                name="Crypto Markets Pool"
-                apy="41%"
-                tvl="$1.2M"
+                name="BTC Price Predictions"
+                apy="42%"
+                tvl="$3.2M"
                 color="blue"
               />
               <PoolCard
-                name="Politics Markets Pool"
+                name="ETH & Altcoin Markets"
                 apy="38%"
-                tvl="$890K"
+                tvl="$2.1M"
                 color="purple"
               />
               <PoolCard
-                name="Sports Markets Pool"
-                apy="35%"
-                tvl="$640K"
+                name="DeFi Protocol Events"
+                apy="45%"
+                tvl="$1.8M"
                 color="pink"
               />
             </div>
 
-            <div className="bg-gray-50 rounded-2xl p-8 mb-12 border-2 border-gray-200">
+            <div className="bg-white rounded-2xl p-8 mb-12 border-2 border-gray-200 shadow-sm">
               <div className="grid md:grid-cols-3 gap-8 text-center">
                 <div>
-                  <div className="text-4xl font-bold text-gray-900 mb-2">$2.7M</div>
+                  <div className="text-4xl font-bold text-gray-900 mb-2">$7.1M</div>
                   <div className="text-gray-600">Total Value Locked</div>
                 </div>
                 <div>
-                  <div className="text-4xl font-bold text-gray-900 mb-2">$387K</div>
-                  <div className="text-gray-600">Premiums Earned</div>
+                  <div className="text-4xl font-bold text-gray-900 mb-2">$892K</div>
+                  <div className="text-gray-600">Premiums Collected</div>
                 </div>
                 <div>
-                  <div className="text-4xl font-bold text-gray-900 mb-2">38%</div>
+                  <div className="text-4xl font-bold text-gray-900 mb-2">41%</div>
                   <div className="text-gray-600">Average APY</div>
                 </div>
               </div>
@@ -503,28 +457,28 @@ export default function Home() {
 
             <div className="relative overflow-hidden py-4">
               <div className="flex items-center">
-                <div className="flex items-center gap-20 px-8 animate-scroll-left">
+                <div className="flex items-center gap-32 px-8 animate-scroll-left">
                   {/* BNB Chain */}
                   <div className="flex items-center gap-4 whitespace-nowrap">
-                    <svg className="w-12 h-12" viewBox="0 0 2500 2500" fill="none" aria-hidden="true">
-                      <g clipPath="url(#clip1)">
-                        <path d="M764.48 1050.52L1250 565L1735.52 1050.52L2020.6 765.44L1250 0L479.4 765.44L764.48 1050.52Z" fill="#F3BA2F"/>
-                        <path d="M0 1250L285.08 964.92L570.16 1250L285.08 1535.08L0 1250Z" fill="#F3BA2F"/>
-                        <path d="M764.48 1449.48L1250 1935L1735.52 1449.48L2020.6 1734.56L1250 2500L479.4 1734.56L764.48 1449.48Z" fill="#F3BA2F"/>
-                        <path d="M1929.84 1250L2214.92 964.92L2500 1250L2214.92 1535.08L1929.84 1250Z" fill="#F3BA2F"/>
-                        <path d="M1530.28 1250L1250 969.72L1025.52 1194.2L969.72 1250L1250 1530.28L1530.28 1250Z" fill="#F3BA2F"/>
-                      </g>
-                    </svg>
+                    <Image 
+                      src="/image/bnb-chain/bnb/BNB Chain/BNB Chain_crypto-logo-svg_0.svg"
+                      alt="BNB Chain"
+                      width={48}
+                      height={48}
+                      className="w-12 h-12"
+                    />
                     <span className="text-2xl font-bold text-gray-900">BNB Chain</span>
                   </div>
 
                   {/* OpenZeppelin */}
                   <div className="flex items-center gap-4 whitespace-nowrap">
-                    <svg className="w-12 h-12" viewBox="0 0 72 80" fill="none" aria-hidden="true">
-                      <path d="M71.9467191,79.7449034 L71.9467191,58.9869035 L49.3413194,58.9869035 C43.1938864,58.9869035 37.4994627,62.2139743 34.3509334,67.4825142 L27.0223684,79.7449034 L71.9467191,79.7449034 Z" fill="#63D2F9"/>
-                      <polygon fill="#4E5EE4" points="0 0 0 20.7579998 59.5406738 20.7579998 71.946759 0"/>
-                      <path d="M28.495536,32.4415868 L0.0655576857,79.7449433 L24.2872287,79.7449433 L58.2844095,23.1531803 L44.9090947,23.1531803 C38.1814306,23.1531803 31.9486498,26.6803104 28.495536,32.4415868 Z" fill="#63B0F9"/>
-                    </svg>
+                    <Image 
+                      src="/image/openzeppelin/openzeppelin-seeklogo.svg"
+                      alt="OpenZeppelin"
+                      width={48}
+                      height={48}
+                      className="w-12 h-12"
+                    />
                     <span className="text-2xl font-bold text-gray-900">OpenZeppelin</span>
                   </div>
 
@@ -539,32 +493,36 @@ export default function Home() {
 
                   {/* Polymarket */}
                   <div className="flex items-center gap-4 whitespace-nowrap">
-                    <svg className="w-12 h-12" viewBox="0 0 200 200" fill="none" aria-hidden="true">
-                      <path d="M173.2,163.2L51.1,128.3v-83.7l122.1-34.9V163.2z M161.4,96.2l-89.8,25.6l89.8,25.6L161.4,96.2z M62.9,60.8v51.3l89.8-25.6L62.9,60.8z M161.4,25.3L71.6,51l89.8,25.6L161.4,25.3z" fill="#010202"/>
-                    </svg>
+                    <Image 
+                      src="/image/polymarket/polymarket-seeklogo.svg"
+                      alt="Polymarket"
+                      width={48}
+                      height={48}
+                      className="w-12 h-12"
+                    />
                     <span className="text-2xl font-bold text-gray-900">Polymarket</span>
                   </div>
 
                   {/* Duplicate for seamless loop */}
                   <div className="flex items-center gap-4 whitespace-nowrap">
-                    <svg className="w-12 h-12" viewBox="0 0 2500 2500" fill="none" aria-hidden="true">
-                      <g clipPath="url(#clip2)">
-                        <path d="M764.48 1050.52L1250 565L1735.52 1050.52L2020.6 765.44L1250 0L479.4 765.44L764.48 1050.52Z" fill="#F3BA2F"/>
-                        <path d="M0 1250L285.08 964.92L570.16 1250L285.08 1535.08L0 1250Z" fill="#F3BA2F"/>
-                        <path d="M764.48 1449.48L1250 1935L1735.52 1449.48L2020.6 1734.56L1250 2500L479.4 1734.56L764.48 1449.48Z" fill="#F3BA2F"/>
-                        <path d="M1929.84 1250L2214.92 964.92L2500 1250L2214.92 1535.08L1929.84 1250Z" fill="#F3BA2F"/>
-                        <path d="M1530.28 1250L1250 969.72L1025.52 1194.2L969.72 1250L1250 1530.28L1530.28 1250Z" fill="#F3BA2F"/>
-                      </g>
-                    </svg>
+                    <Image 
+                      src="/image/bnb-chain/bnb/BNB Chain/BNB Chain_crypto-logo-svg_0.svg"
+                      alt="BNB Chain"
+                      width={48}
+                      height={48}
+                      className="w-12 h-12"
+                    />
                     <span className="text-2xl font-bold text-gray-900">BNB Chain</span>
                   </div>
 
                   <div className="flex items-center gap-4 whitespace-nowrap">
-                    <svg className="w-12 h-12" viewBox="0 0 72 80" fill="none" aria-hidden="true">
-                      <path d="M71.9467191,79.7449034 L71.9467191,58.9869035 L49.3413194,58.9869035 C43.1938864,58.9869035 37.4994627,62.2139743 34.3509334,67.4825142 L27.0223684,79.7449034 L71.9467191,79.7449034 Z" fill="#63D2F9"/>
-                      <polygon fill="#4E5EE4" points="0 0 0 20.7579998 59.5406738 20.7579998 71.946759 0"/>
-                      <path d="M28.495536,32.4415868 L0.0655576857,79.7449433 L24.2872287,79.7449433 L58.2844095,23.1531803 L44.9090947,23.1531803 C38.1814306,23.1531803 31.9486498,26.6803104 28.495536,32.4415868 Z" fill="#63B0F9"/>
-                    </svg>
+                    <Image 
+                      src="/image/openzeppelin/openzeppelin-seeklogo.svg"
+                      alt="OpenZeppelin"
+                      width={48}
+                      height={48}
+                      className="w-12 h-12"
+                    />
                     <span className="text-2xl font-bold text-gray-900">OpenZeppelin</span>
                   </div>
 
@@ -577,9 +535,21 @@ export default function Home() {
                   </div>
 
                   <div className="flex items-center gap-4 whitespace-nowrap">
-                    <svg className="w-12 h-12" viewBox="0 0 200 200" fill="none" aria-hidden="true">
-                      <path d="M173.2,163.2L51.1,128.3v-83.7l122.1-34.9V163.2z M161.4,96.2l-89.8,25.6l89.8,25.6L161.4,96.2z M62.9,60.8v51.3l89.8-25.6L62.9,60.8z M161.4,25.3L71.6,51l89.8,25.6L161.4,25.3z" fill="#010202"/>
+                    <svg className="w-12 h-12" viewBox="0 0 397 397" fill="none" aria-hidden="true">
+                      <path d="M198.5 0L148.5 28.9L49.2 86.2L0 115.1V281.9L49.2 310.8L148.5 368.1L198.5 397L248.5 368.1L347.8 310.8L397 281.9V115.1L347.8 86.2L248.5 28.9L198.5 0Z" fill="#375BD2"/>
+                      <path d="M198.5 116.7L148.5 145.6L99.8 173.8V223.2L148.5 251.4L198.5 280.3L248.5 251.4L297.2 223.2V173.8L248.5 145.6L198.5 116.7Z" fill="white"/>
                     </svg>
+                    <span className="text-2xl font-bold text-gray-900">Chainlink</span>
+                  </div>
+
+                  <div className="flex items-center gap-4 whitespace-nowrap">
+                    <Image 
+                      src="/image/polymarket/polymarket-seeklogo.svg"
+                      alt="Polymarket"
+                      width={48}
+                      height={48}
+                      className="w-12 h-12"
+                    />
                     <span className="text-2xl font-bold text-gray-900">Polymarket</span>
                   </div>
                 </div>

@@ -5,7 +5,6 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Badge } from '@/components/ui/Badge';
 import { Progress } from '@/components/ui/Progress';
 import { formatEther } from 'viem';
-import { clsx } from 'clsx';
 
 interface EnhancedPoolCardProps {
   poolId: string;
@@ -30,7 +29,6 @@ export function EnhancedPoolCard({
   apy,
   isActive,
 }: EnhancedPoolCardProps) {
-  const utilization = (utilizationRate / 100);
   const available = Number(formatEther(availableLiquidity));
   const total = Number(formatEther(totalLiquidity));
 

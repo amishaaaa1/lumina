@@ -1,11 +1,11 @@
 import { Metadata } from 'next';
-import CryptoDashboardClient from './CryptoDashboardClient';
+import LuminaDashboardClient from './LuminaDashboardClient';
 
 export const metadata: Metadata = {
-  title: 'Your Crypto Protection Dashboard | Lumina',
-  description: 'Manage your crypto insurance policies and liquidity positions on BNB Chain',
+  title: 'Dashboard | Lumina Protocol - AI-Powered Prediction Market Insurance',
+  description: 'Manage your policies, LP positions, and view AI-powered insights on BNB Chain',
 };
 
 export default function DashboardPage() {
-  return <CryptoDashboardClient />;
+  return <LuminaDashboardClient />;
 }

@@ -8,6 +8,7 @@ import { useState, useEffect } from 'react';
 const navItems = [
   { href: '/insurance', label: 'Insurance' },
   { href: '/pools', label: 'Pools' },
+  { href: '/markets', label: 'Markets' },
   { href: '/dashboard', label: 'Dashboard' },
 ];
 

@@ -9,6 +9,13 @@ const nextConfig = {
     formats: ['image/avif', 'image/webp'],
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'assets.coingecko.com',
+        pathname: '/coins/images/**',
+      },
+    ],
   },
 
   // Security headers
@@ -54,11 +61,23 @@ const nextConfig = {
   turbopack: {},
 
   // Webpack configuration (fallback for production builds)
-  webpack: (config) => {
+  webpack: (config, { isServer }) => {
     config.resolve.fallback = { fs: false, net: false, tls: false };
     config.externals.push('pino-pretty', 'lokijs', 'encoding');
+    
+    // Exclude test files from build
+    config.module = config.module || {};
+    config.module.rules = config.module.rules || [];
+    config.module.rules.push({
+      test: /node_modules\/thread-stream\/(test|bench)/,
+      use: 'null-loader',
+    });
+    
     return config;
   },
+  
+  // Exclude problematic packages from server-side bundling
+  serverExternalPackages: ['thread-stream'],
 };
 
 module.exports = nextConfig;

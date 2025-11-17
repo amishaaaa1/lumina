@@ -2,6 +2,8 @@
  * Accessibility utilities and helpers
  */
 
+import React from 'react';
+
 // Keyboard navigation helpers
 export const KEYBOARD_KEYS = {
   ENTER: 'Enter',
