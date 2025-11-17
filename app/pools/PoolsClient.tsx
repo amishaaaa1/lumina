@@ -15,15 +15,11 @@ import {
   TrendingDown, 
   Search, 
   Droplet, 
-  BarChart3,
-  Shield,
-  Zap,
-  Users,
   DollarSign,
   Activity,
+  Users,
   ChevronDown,
-  ChevronUp,
-  Info
+  ChevronUp
 } from 'lucide-react';
 
 interface Pool {
@@ -111,7 +107,7 @@ const POOLS: Pool[] = [
 ];
 
 export default function PoolsClient() {
-  const { address, isConnected } = useAccount();
+  const { isConnected } = useAccount();
   const { openConnectModal } = useConnectModal();
   const { toasts, dismissToast } = useToast();
   
