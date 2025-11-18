@@ -1,5 +1,5 @@
 import { useSignTypedData, useAccount } from 'wagmi';
-import { encodeFunctionData } from 'viem';
+import { encodeFunctionData, Abi } from 'viem';
 
 export function useGaslessTransaction() {
   const { address } = useAccount();
@@ -7,8 +7,9 @@ export function useGaslessTransaction() {
   
   async function executeGasless(
     contractAddress: string,
+    abi: Abi,
     functionName: string,
-    args: any[]
+    args: unknown[]
   ) {
     if (!address) {
       throw new Error('Wallet not connected');
@@ -35,7 +36,7 @@ export function useGaslessTransaction() {
       
       // Encode function call
       const functionSignature = encodeFunctionData({
-        abi: [], // Would need actual ABI here
+        abi,
         functionName,
         args,
       });
