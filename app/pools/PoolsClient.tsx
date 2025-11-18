@@ -134,7 +134,7 @@ const FALLBACK_MARKETS: Market[] = [
 ];
 
 export default function PoolsClient() {
-  const { isConnected, address } = useAccount();
+  const { isConnected } = useAccount();
   const { openConnectModal } = useConnectModal();
   const { toasts, dismissToast } = useToast();
 
@@ -344,7 +344,7 @@ export default function PoolsClient() {
                         {market.icon}
                       </div>
                       <div>
-                        <Badge className={cn('text-xs font-medium', getStatusBadge(market.status))}>
+                        <Badge className={cn('text-xs font-medium', getStatusBadge(market.status as MarketStatus))}>
                           {market.status === 'in-progress' ? 'In progress' : market.status}
                         </Badge>
                       </div>

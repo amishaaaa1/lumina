@@ -143,7 +143,7 @@ export default function InsuranceClient() {
   const { write, isPending, isConfirming, isSuccess, error } = useContractWrite();
 
   const filteredMarkets = useMemo(() => {
-    let filtered = MARKETS.filter((m) => {
+    const filtered = MARKETS.filter((m) => {
       const matchesSearch =
         m.question.toLowerCase().includes(searchQuery.toLowerCase()) ||
         m.token.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -297,7 +297,7 @@ export default function InsuranceClient() {
                 </div>
                 <select
                   value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value as unknown)}
+                  onChange={(e) => setSortBy(e.target.value as 'premium-low' | 'premium-high' | 'liquidity')}
                   className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent bg-white"
                   aria-label="Sort markets"
                 >
