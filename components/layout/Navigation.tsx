@@ -42,24 +42,27 @@ export function Navigation() {
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-8">
-            {navItems.map((item) => {
-              const isActive = pathname === item.href;
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className={`text-sm font-semibold transition-all hover:scale-105 ${
-                    isActive
-                      ? 'text-blue-600'
-                      : 'text-gray-600 hover:text-gray-900'
-                  }`}
-                >
-                  {item.label}
-                </Link>
-              );
-            })}
-          </div>
+          <nav className="hidden md:block">
+            <ul className="flex items-center list-none m-0 p-0">
+              {navItems.map((item) => {
+                const isActive = pathname === item.href;
+                return (
+                  <li key={item.href} className="mx-4">
+                    <Link
+                      href={item.href}
+                      className={`text-sm font-semibold no-underline ${
+                        isActive
+                          ? 'text-blue-600'
+                          : 'text-gray-600 hover:text-gray-900'
+                      }`}
+                    >
+                      {item.label}
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
+          </nav>
 
           {/* Connect Button */}
           <div className="hidden md:block">

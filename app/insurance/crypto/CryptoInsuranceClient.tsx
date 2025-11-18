@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { Container } from '@/components/layout/Container';
+import { Navigation } from '@/components/layout/Navigation';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Badge } from '@/components/ui/Badge';
@@ -159,9 +160,21 @@ export default function CryptoInsuranceClient() {
   const regularMarkets = filteredMarkets.filter((m) => !m.featured);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-800">
-      {/* Header */}
-      <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-16">
+    <div className="min-h-screen bg-white">
+      <Navigation />
+      
+      {/* Background Effects - Same as Landing Page */}
+      <div className="relative">
+        {/* Animated Gradient Orb */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[800px] bg-gradient-to-br from-blue-400/30 via-purple-400/20 to-pink-400/30 rounded-full blur-3xl animate-orb-slow will-change-transform pointer-events-none" aria-hidden="true" />
+        
+        {/* Floating Elements */}
+        <div className="absolute top-20 left-10 w-20 h-20 bg-blue-200/30 rounded-full blur-xl animate-float-6s delay-0 will-change-transform pointer-events-none" aria-hidden="true" />
+        <div className="absolute top-40 right-20 w-32 h-32 bg-purple-200/30 rounded-full blur-xl animate-float-8s delay-1s will-change-transform pointer-events-none" aria-hidden="true" />
+        <div className="absolute bottom-40 left-1/4 w-24 h-24 bg-pink-200/30 rounded-full blur-xl animate-float-7s delay-2s will-change-transform pointer-events-none" aria-hidden="true" />
+        
+        {/* Header */}
+        <div className="relative bg-gradient-to-r from-blue-600 to-purple-600 text-white py-16">
         <Container>
           <div className="max-w-3xl">
             <h1 className="text-4xl md:text-5xl font-bold mb-4">
@@ -356,6 +369,7 @@ export default function CryptoInsuranceClient() {
             </div>
           </div>
         </Container>
+      </div>
       </div>
     </div>
   );

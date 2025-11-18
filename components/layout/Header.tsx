@@ -18,6 +18,8 @@ export function Header() {
   }, []);
 
   const navLinks = [
+    { href: '/predictions', label: 'Predictions' },
+    { href: '/markets', label: 'Markets' },
     { href: '/insurance', label: 'Insurance' },
     { href: '/pools', label: 'Pools' },
     { href: '/dashboard', label: 'Dashboard' },

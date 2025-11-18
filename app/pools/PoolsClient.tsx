@@ -3,7 +3,7 @@
 import { useState, useMemo, useEffect } from 'react';
 import { useAccount } from 'wagmi';
 import { useConnectModal } from '@rainbow-me/rainbowkit';
-import { Header } from '@/components/layout/Header';
+import { Navigation } from '@/components/layout/Navigation';
 import { Button } from '@/components/ui/Button';
 import { Modal } from '@/components/ui/Modal';
 import { Badge } from '@/components/ui/Badge';
@@ -211,28 +211,50 @@ export default function PoolsClient() {
 
   if (!isConnected) {
     return (
-      <>
-        <Header />
-        <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4 pt-16">
-          <div className="text-center max-w-md">
-            <div className="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
-              <VoteIcon className="w-10 h-10 text-blue-600" />
+      <div className="min-h-screen bg-white">
+        <Navigation />
+        
+        {/* Background Effects - Same as Landing Page */}
+        <div className="relative">
+          {/* Animated Gradient Orb */}
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[800px] bg-gradient-to-br from-blue-400/30 via-purple-400/20 to-pink-400/30 rounded-full blur-3xl animate-orb-slow will-change-transform pointer-events-none" aria-hidden="true" />
+          
+          {/* Floating Elements */}
+          <div className="absolute top-20 left-10 w-20 h-20 bg-blue-200/30 rounded-full blur-xl animate-float-6s delay-0 will-change-transform pointer-events-none" aria-hidden="true" />
+          <div className="absolute top-40 right-20 w-32 h-32 bg-purple-200/30 rounded-full blur-xl animate-float-8s delay-1s will-change-transform pointer-events-none" aria-hidden="true" />
+          
+          <div className="relative flex items-center justify-center px-4 py-32">
+            <div className="text-center max-w-md">
+              <div className="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                <VoteIcon className="w-10 h-10 text-blue-600" />
+              </div>
+              <h2 className="text-2xl font-bold mb-2">Connect Wallet</h2>
+              <p className="text-gray-600 mb-6">Connect your wallet to vote on prediction markets</p>
+              <Button onClick={openConnectModal} size="lg">
+                Connect Wallet
+              </Button>
             </div>
-            <h2 className="text-2xl font-bold mb-2">Connect Wallet</h2>
-            <p className="text-gray-600 mb-6">Connect your wallet to vote on prediction markets</p>
-            <Button onClick={openConnectModal} size="lg">
-              Connect Wallet
-            </Button>
           </div>
         </div>
-      </>
+      </div>
     );
   }
 
   return (
-    <>
-      <Header />
-      <main className="min-h-screen bg-gradient-to-b from-gray-50 to-white pt-16">
+    <div className="min-h-screen bg-white">
+      <Navigation />
+      
+      {/* Background Effects - Same as Landing Page */}
+      <div className="relative">
+        {/* Animated Gradient Orb */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[800px] bg-gradient-to-br from-blue-400/30 via-purple-400/20 to-pink-400/30 rounded-full blur-3xl animate-orb-slow will-change-transform pointer-events-none" aria-hidden="true" />
+        
+        {/* Floating Elements */}
+        <div className="absolute top-20 left-10 w-20 h-20 bg-blue-200/30 rounded-full blur-xl animate-float-6s delay-0 will-change-transform pointer-events-none" aria-hidden="true" />
+        <div className="absolute top-40 right-20 w-32 h-32 bg-purple-200/30 rounded-full blur-xl animate-float-8s delay-1s will-change-transform pointer-events-none" aria-hidden="true" />
+        <div className="absolute bottom-40 left-1/4 w-24 h-24 bg-pink-200/30 rounded-full blur-xl animate-float-7s delay-2s will-change-transform pointer-events-none" aria-hidden="true" />
+        
+        <main className="relative px-6 py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           {/* Header */}
           <div className="mb-6">
@@ -471,6 +493,7 @@ export default function PoolsClient() {
           )}
         </div>
       </main>
+      </div>
 
       {/* Vote Modal */}
       {showVoteModal && selectedMarket && voteChoice && (
@@ -581,6 +604,6 @@ export default function PoolsClient() {
           />
         ))}
       </div>
-    </>
+    </div>
   );
 }

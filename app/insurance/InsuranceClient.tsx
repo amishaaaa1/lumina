@@ -4,7 +4,7 @@ import { useState, useMemo, useEffect } from 'react';
 import { useAccount, useReadContract, useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
 import { parseUnits } from 'viem';
 import { useConnectModal } from '@rainbow-me/rainbowkit';
-import { Header } from '@/components/layout/Header';
+import { useSearchParams } from 'next/navigation';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { Modal } from '@/components/ui/Modal';
 import { useToast } from '@/hooks/useToast';
@@ -18,6 +18,8 @@ const MARKETS = [
     id: '1',
     token: 'Bitcoin',
     symbol: 'BTC',
+    logo: '₿',
+    logoColor: 'from-orange-500 to-yellow-500',
     question: 'BTC hits $120K by Q2 2025?',
     votes: 234,
     poolLiquidity: '$18.4M',
@@ -30,6 +32,8 @@ const MARKETS = [
     id: '2',
     token: 'Ethereum',
     symbol: 'ETH',
+    logo: 'Ξ',
+    logoColor: 'from-blue-500 to-purple-500',
     question: 'ETH flips $5K before June?',
     votes: 187,
     poolLiquidity: '$14.2M',
@@ -42,6 +46,8 @@ const MARKETS = [
     id: '3',
     token: 'Cardano',
     symbol: 'ADA',
+    logo: '₳',
+    logoColor: 'from-blue-600 to-cyan-500',
     question: 'ADA breaks $1.50 in 2025?',
     votes: 142,
     poolLiquidity: '$9.8M',
@@ -54,6 +60,8 @@ const MARKETS = [
     id: '4',
     token: 'Solana',
     symbol: 'SOL',
+    logo: '◎',
+    logoColor: 'from-purple-500 to-pink-500',
     question: 'SOL maintains above $200?',
     votes: 203,
     poolLiquidity: '$11.2M',
@@ -66,6 +74,8 @@ const MARKETS = [
     id: '5',
     token: 'Polkadot',
     symbol: 'DOT',
+    logo: '●',
+    logoColor: 'from-pink-500 to-rose-500',
     question: 'DOT hits $15 by March?',
     votes: 91,
     poolLiquidity: '$5.4M',
@@ -78,6 +88,8 @@ const MARKETS = [
     id: '6',
     token: 'Chainlink',
     symbol: 'LINK',
+    logo: '⬡',
+    logoColor: 'from-blue-600 to-indigo-600',
     question: 'LINK reaches $40 in 2025?',
     votes: 167,
     poolLiquidity: '$8.9M',
@@ -90,6 +102,8 @@ const MARKETS = [
     id: '7',
     token: 'US Election',
     symbol: 'VOTE',
+    logo: '🗳',
+    logoColor: 'from-red-500 to-blue-500',
     question: 'Democrats win 2024?',
     votes: 456,
     poolLiquidity: '$24.1M',
@@ -102,6 +116,8 @@ const MARKETS = [
     id: '8',
     token: 'Fed Rate',
     symbol: 'FED',
+    logo: '🏛',
+    logoColor: 'from-green-600 to-emerald-600',
     question: 'Rate cut by March 2025?',
     votes: 312,
     poolLiquidity: '$15.7M',
@@ -129,6 +145,7 @@ interface UserPolicy {
 export default function InsuranceClient() {
   const { address, isConnected } = useAccount();
   const { openConnectModal } = useConnectModal();
+  const searchParams = useSearchParams();
   const [activeTab, setActiveTab] = useState<'markets' | 'my-policies'>('markets');
   const [selectedMarket, setSelectedMarket] = useState<string | null>(null);
   const [showPurchaseModal, setShowPurchaseModal] = useState(false);
@@ -141,6 +158,18 @@ export default function InsuranceClient() {
   const [userPolicies, setUserPolicies] = useState<UserPolicy[]>([]);
 
   const market = MARKETS.find((m) => m.id === selectedMarket);
+
+  // Handle URL parameter to open modal automatically
+  useEffect(() => {
+    const marketParam = searchParams.get('market');
+    if (marketParam && isConnected) {
+      const marketExists = MARKETS.find((m) => m.id === marketParam);
+      if (marketExists) {
+        setSelectedMarket(marketParam);
+        setShowPurchaseModal(true);
+      }
+    }
+  }, [searchParams, isConnected]);
 
   const { data: premium, isLoading: premiumLoading } = useReadContract({
     ...CONTRACTS.PolicyManager,
@@ -366,33 +395,28 @@ export default function InsuranceClient() {
 
   if (!isConnected) {
     return (
-      <>
-        <Header />
-        <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4 pt-16">
-          <div className="text-center max-w-md">
-            <div className="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
-              <Shield className="w-10 h-10 text-blue-600" />
-            </div>
-            <h2 className="text-2xl font-bold mb-2">Connect Wallet</h2>
-            <p className="text-gray-600 mb-6">
-              Connect to view and purchase insurance
-            </p>
-            <button
-              onClick={openConnectModal}
-              className="px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700"
-            >
-              Connect Wallet
-            </button>
+      <div className="flex items-center justify-center px-4 py-32">
+        <div className="text-center max-w-md">
+          <div className="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
+            <Shield className="w-10 h-10 text-blue-600" />
           </div>
+          <h2 className="text-2xl font-bold mb-2">Connect Wallet</h2>
+          <p className="text-gray-600 mb-6">
+            Connect to view and purchase insurance
+          </p>
+          <button
+            onClick={openConnectModal}
+            className="px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700"
+          >
+            Connect Wallet
+          </button>
         </div>
-      </>
+      </div>
     );
   }
 
   return (
-    <>
-      <Header />
-      <main className="min-h-screen bg-gray-50 pt-16">
+    <main>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           
           {/* Header */}
@@ -547,8 +571,11 @@ export default function InsuranceClient() {
                 <div className="space-y-4">
                   {/* Token Header */}
                   <div className="flex items-center gap-3 mb-2">
-                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center text-white font-bold shadow-lg group-hover:scale-110 transition-transform">
-                      {m.symbol.substring(0, 2)}
+                    <div className={cn(
+                      "w-12 h-12 rounded-full bg-gradient-to-br flex items-center justify-center text-white font-bold text-xl shadow-lg group-hover:scale-110 transition-transform",
+                      m.logoColor
+                    )}>
+                      {m.logo}
                     </div>
                     <div className="flex-1 min-w-0">
                       <h3 className="font-bold text-sm text-gray-900">{m.token}</h3>
@@ -730,7 +757,6 @@ export default function InsuranceClient() {
           )}
 
         </div>
-      </main>
 
       {/* Purchase Modal */}
       {showPurchaseModal && selectedMarket && market && (
@@ -746,9 +772,19 @@ export default function InsuranceClient() {
           <div className="space-y-6">
             {/* Selected market */}
             <div className="p-4 bg-blue-50 rounded-lg border border-blue-100">
-              <div className="text-xs text-blue-600 font-medium mb-1">SELECTED MARKET</div>
-              <div className="font-semibold text-sm">{market.question}</div>
-              <div className="text-xs text-gray-600 mt-1">{market.token} ({market.symbol})</div>
+              <div className="text-xs text-blue-600 font-medium mb-2">SELECTED MARKET</div>
+              <div className="flex items-center gap-3 mb-2">
+                <div className={cn(
+                  "w-10 h-10 rounded-full bg-gradient-to-br flex items-center justify-center text-white font-bold text-lg shadow-md",
+                  market.logoColor
+                )}>
+                  {market.logo}
+                </div>
+                <div>
+                  <div className="font-semibold text-sm">{market.question}</div>
+                  <div className="text-xs text-gray-600 mt-0.5">{market.token} ({market.symbol})</div>
+                </div>
+              </div>
             </div>
 
             {/* Coverage input */}
@@ -884,6 +920,6 @@ export default function InsuranceClient() {
           </div>
         </Modal>
       )}
-    </>
+    </main>
   );
 }

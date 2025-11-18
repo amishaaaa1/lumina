@@ -193,11 +193,6 @@ export default function Home() {
           
           <div className="max-w-6xl mx-auto relative">
             <div className="text-center mb-16">
-              <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-50 rounded-full mb-8 hover:scale-105 transition-transform cursor-default border-2 border-blue-200">
-                <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse" aria-hidden="true" />
-                <span className="text-sm font-medium text-blue-700">Live on BNB Chain Testnet</span>
-              </div>
-
               <h1 className="text-6xl md:text-7xl lg:text-8xl font-bold mb-8 leading-tight">
                 <span className="block text-gray-900">Crypto Prediction</span>
                 <span className="block bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent animate-gradient">
@@ -205,31 +200,9 @@ export default function Home() {
                 </span>
               </h1>
 
-              <p className="text-xl md:text-2xl text-gray-600 mb-8 max-w-3xl mx-auto">
-                Hedge your Polymarket bets with Chainlink-secured insurance. Instant payouts, battle-tested oracles, zero complexity.
+              <p className="text-xl md:text-2xl text-gray-600 mb-12 max-w-3xl mx-auto">
+                Protect your crypto predictions. Get paid if you're wrong. Earn yield by backing traders.
               </p>
-              
-              {/* Trust Badges */}
-              <div className="flex flex-wrap items-center justify-center gap-6 mb-12 text-sm text-gray-500">
-                <div className="flex items-center gap-2 px-4 py-2 bg-white rounded-full border border-gray-200">
-                  <svg className="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
-                    <path fillRule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                  </svg>
-                  <span className="font-medium">Chainlink Secured</span>
-                </div>
-                <div className="flex items-center gap-2 px-4 py-2 bg-white rounded-full border border-gray-200">
-                  <svg className="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
-                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
-                  </svg>
-                  <span className="font-medium">Instant Resolution</span>
-                </div>
-                <div className="flex items-center gap-2 px-4 py-2 bg-white rounded-full border border-gray-200">
-                  <svg className="w-5 h-5 text-purple-600" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
-                    <path d="M10 3.5a1.5 1.5 0 013 0V4a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-.5a1.5 1.5 0 000 3h.5a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-.5a1.5 1.5 0 00-3 0v.5a1 1 0 01-1 1H6a1 1 0 01-1-1v-3a1 1 0 00-1-1h-.5a1.5 1.5 0 010-3H4a1 1 0 001-1V6a1 1 0 011-1h3a1 1 0 001-1v-.5z" />
-                  </svg>
-                  <span className="font-medium">Polymarket Native</span>
-                </div>
-              </div>
 
               <div className="flex flex-wrap gap-4 justify-center mb-20">
                 <Link
