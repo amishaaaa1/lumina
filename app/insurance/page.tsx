@@ -1,6 +1,8 @@
+import { Suspense } from 'react';
 import InsuranceClient from './InsuranceClient';
 import { Navigation } from '@/components/layout/Navigation';
 import { Footer } from '@/components/layout/Footer';
+import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 
 export const metadata = {
   title: 'Buy Insurance - Lumina',
@@ -24,7 +26,13 @@ export default function InsurancePage() {
         
         {/* Content */}
         <div className="relative px-6 py-24">
-          <InsuranceClient />
+          <Suspense fallback={
+            <div className="flex items-center justify-center py-32">
+              <LoadingSpinner size="lg" />
+            </div>
+          }>
+            <InsuranceClient />
+          </Suspense>
         </div>
       </div>
       

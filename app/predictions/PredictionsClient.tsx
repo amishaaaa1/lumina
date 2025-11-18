@@ -256,10 +256,10 @@ export default function PredictionsClient() {
       {/* Header */}
       <div className="text-center mb-12">
         <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-4">
-          Crypto Risk Predictions
+          Prediction Markets
         </h1>
         <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-          Predict protocol risks and earn rewards. Get insurance protection on your predictions.
+          Bet on crypto events. Win if you're right. Insure if you're not.
         </p>
       </div>
       
