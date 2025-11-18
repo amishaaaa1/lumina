@@ -4,7 +4,6 @@ import { useState, useMemo, useEffect } from 'react';
 import { useAccount, useReadContract, useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
 import { parseUnits } from 'viem';
 import { useConnectModal } from '@rainbow-me/rainbowkit';
-import { useSearchParams } from 'next/navigation';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { Modal } from '@/components/ui/Modal';
 import { useToast } from '@/hooks/useToast';
@@ -142,10 +141,13 @@ interface UserPolicy {
   marketOutcomeHash: string;
 }
 
-export default function InsuranceClient() {
+interface InsuranceClientProps {
+  marketParam?: string | null;
+}
+
+export default function InsuranceClient({ marketParam }: InsuranceClientProps) {
   const { address, isConnected } = useAccount();
   const { openConnectModal } = useConnectModal();
-  const searchParams = useSearchParams();
   const [activeTab, setActiveTab] = useState<'markets' | 'my-policies'>('markets');
   const [selectedMarket, setSelectedMarket] = useState<string | null>(null);
   const [showPurchaseModal, setShowPurchaseModal] = useState(false);
@@ -161,7 +163,6 @@ export default function InsuranceClient() {
 
   // Handle URL parameter to open modal automatically
   useEffect(() => {
-    const marketParam = searchParams.get('market');
     if (marketParam && isConnected) {
       const marketExists = MARKETS.find((m) => m.id === marketParam);
       if (marketExists) {
@@ -169,7 +170,7 @@ export default function InsuranceClient() {
         setShowPurchaseModal(true);
       }
     }
-  }, [searchParams, isConnected]);
+  }, [marketParam, isConnected]);
 
   const { data: premium, isLoading: premiumLoading } = useReadContract({
     ...CONTRACTS.PolicyManager,

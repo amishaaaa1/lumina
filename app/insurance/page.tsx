@@ -1,8 +1,8 @@
 import { Suspense } from 'react';
-import InsuranceClient from './InsuranceClient';
 import { Navigation } from '@/components/layout/Navigation';
 import { Footer } from '@/components/layout/Footer';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
+import InsuranceWrapper from './InsuranceWrapper';
 
 export const metadata = {
   title: 'Buy Insurance - Lumina',
@@ -31,7 +31,7 @@ export default function InsurancePage() {
               <LoadingSpinner size="lg" />
             </div>
           }>
-            <InsuranceClient />
+            <InsuranceWrapper />
           </Suspense>
         </div>
       </div>
