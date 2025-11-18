@@ -3,6 +3,99 @@
  */
 
 export const CONTRACTS = {
+  PredictionMarket: {
+    address: process.env.NEXT_PUBLIC_PREDICTION_MARKET_ADDRESS as `0x${string}`,
+    abi: [
+      {
+        type: 'function',
+        name: 'placeBet',
+        inputs: [
+          { name: 'marketId', type: 'uint256' },
+          { name: 'outcome', type: 'bool' },
+          { name: 'amount', type: 'uint256' },
+        ],
+        outputs: [{ name: 'shares', type: 'uint256' }],
+        stateMutability: 'nonpayable',
+      },
+      {
+        type: 'function',
+        name: 'claimWinnings',
+        inputs: [{ name: 'marketId', type: 'uint256' }],
+        outputs: [{ name: 'payout', type: 'uint256' }],
+        stateMutability: 'nonpayable',
+      },
+      {
+        type: 'function',
+        name: 'getMarket',
+        inputs: [{ name: 'marketId', type: 'uint256' }],
+        outputs: [
+          {
+            name: '',
+            type: 'tuple',
+            components: [
+              { name: 'marketId', type: 'string' },
+              { name: 'question', type: 'string' },
+              { name: 'protocol', type: 'string' },
+              { name: 'riskType', type: 'string' },
+              { name: 'deadline', type: 'uint256' },
+              { name: 'yesPool', type: 'uint256' },
+              { name: 'noPool', type: 'uint256' },
+              { name: 'totalVolume', type: 'uint256' },
+              { name: 'participantCount', type: 'uint256' },
+              { name: 'resolved', type: 'bool' },
+              { name: 'outcome', type: 'bool' },
+              { name: 'insuranceEnabled', type: 'bool' },
+            ],
+          },
+        ],
+        stateMutability: 'view',
+      },
+      {
+        type: 'function',
+        name: 'getPosition',
+        inputs: [
+          { name: 'marketId', type: 'uint256' },
+          { name: 'user', type: 'address' },
+        ],
+        outputs: [
+          {
+            name: '',
+            type: 'tuple',
+            components: [
+              { name: 'yesAmount', type: 'uint256' },
+              { name: 'noAmount', type: 'uint256' },
+              { name: 'claimed', type: 'bool' },
+            ],
+          },
+        ],
+        stateMutability: 'view',
+      },
+      {
+        type: 'function',
+        name: 'calculatePayout',
+        inputs: [
+          { name: 'marketId', type: 'uint256' },
+          { name: 'outcome', type: 'bool' },
+          { name: 'amount', type: 'uint256' },
+        ],
+        outputs: [
+          { name: 'shares', type: 'uint256' },
+          { name: 'potentialPayout', type: 'uint256' },
+        ],
+        stateMutability: 'view',
+      },
+      {
+        type: 'function',
+        name: 'getOdds',
+        inputs: [{ name: 'marketId', type: 'uint256' }],
+        outputs: [
+          { name: 'yesOdds', type: 'uint256' },
+          { name: 'noOdds', type: 'uint256' },
+        ],
+        stateMutability: 'view',
+      },
+    ] as const,
+  },
   InsurancePool: {
     address: process.env.NEXT_PUBLIC_POOL_ADDRESS as `0x${string}`,
     abi: [

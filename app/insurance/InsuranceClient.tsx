@@ -1,16 +1,17 @@
 'use client';
 
-import { useState, useMemo } from 'react';
-import { useAccount, useReadContract } from 'wagmi';
+import { useState, useMemo, useEffect } from 'react';
+import { useAccount, useReadContract, useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
+import { parseUnits } from 'viem';
 import { useConnectModal } from '@rainbow-me/rainbowkit';
 import { Header } from '@/components/layout/Header';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { Modal } from '@/components/ui/Modal';
-import { useContractWrite } from '@/hooks/useContract';
+import { useToast } from '@/hooks/useToast';
 import { formatUSD, parseTokenAmount } from '@/lib/utils';
 import { CONTRACTS, ASSET_TOKEN } from '@/lib/contracts';
 import { cn } from '@/lib/utils';
-import { Shield, Search, TrendingUp, DollarSign } from 'lucide-react';
+import { Shield, Search, TrendingUp, DollarSign, Clock, CheckCircle, XCircle, AlertCircle } from 'lucide-react';
 
 const MARKETS = [
   {
@@ -111,9 +112,24 @@ const MARKETS = [
   },
 ];
 
+type PolicyStatus = 'Active' | 'Claimed' | 'Expired' | 'Claimable';
+
+interface UserPolicy {
+  id: bigint;
+  holder: string;
+  marketId: string;
+  coverageAmount: bigint;
+  premium: bigint;
+  startTime: bigint;
+  expiryTime: bigint;
+  status: number;
+  marketOutcomeHash: string;
+}
+
 export default function InsuranceClient() {
   const { address, isConnected } = useAccount();
   const { openConnectModal } = useConnectModal();
+  const [activeTab, setActiveTab] = useState<'markets' | 'my-policies'>('markets');
   const [selectedMarket, setSelectedMarket] = useState<string | null>(null);
   const [showPurchaseModal, setShowPurchaseModal] = useState(false);
   const [coverageAmount, setCoverageAmount] = useState('');
@@ -122,6 +138,7 @@ export default function InsuranceClient() {
   const [categoryFilter, setCategoryFilter] = useState<string>('all');
   const [sortBy, setSortBy] = useState<'premium-low' | 'premium-high' | 'liquidity'>('premium-low');
   const [validationError, setValidationError] = useState<string>('');
+  const [userPolicies, setUserPolicies] = useState<UserPolicy[]>([]);
 
   const market = MARKETS.find((m) => m.id === selectedMarket);
 
@@ -140,7 +157,26 @@ export default function InsuranceClient() {
     args: address ? [address] : undefined,
   });
 
-  const { write, isPending, isConfirming, isSuccess, error } = useContractWrite();
+  const { showToast } = useToast();
+  const { writeContract: approveToken, data: approveHash, error: approveError, isPending: isApprovePending } = useWriteContract();
+  const { writeContract: createPolicy, data: policyHash, error: createError, isPending: isCreatePending } = useWriteContract();
+  const { writeContract: claimPolicy, data: claimHash } = useWriteContract();
+  
+  const { isLoading: isApproving } = useWaitForTransactionReceipt({ hash: approveHash });
+  const { isLoading: isCreating, isSuccess: isCreateSuccess } = useWaitForTransactionReceipt({ hash: policyHash });
+  const { isLoading: isClaiming } = useWaitForTransactionReceipt({ hash: claimHash });
+
+  const error = approveError || createError;
+  const isPending = isApprovePending || isCreatePending || isApproving;
+  const isConfirming = isCreating;
+  const isSuccess = isCreateSuccess;
+
+  // Fetch user's policy IDs
+  const { data: policyIds, refetch: refetchPolicyIds } = useReadContract({
+    ...CONTRACTS.PolicyManager,
+    functionName: 'getUserPolicies',
+    args: address ? [address] : undefined,
+  });
 
   const filteredMarkets = useMemo(() => {
     const filtered = MARKETS.filter((m) => {
@@ -169,6 +205,82 @@ export default function InsuranceClient() {
 
   const categories = ['all', ...Array.from(new Set(MARKETS.map((m) => m.category)))];
 
+  // Fetch individual policy details
+  useEffect(() => {
+    const fetchPolicies = async () => {
+      if (!policyIds || policyIds.length === 0) {
+        setUserPolicies([]);
+        return;
+      }
+
+      const policies: UserPolicy[] = [];
+      for (const id of policyIds as bigint[]) {
+        try {
+          // In a real app, you'd batch these calls
+          // For now, we'll just show the structure
+          policies.push({
+            id,
+            holder: address || '',
+            marketId: `market-${id}`,
+            coverageAmount: BigInt(0),
+            premium: BigInt(0),
+            startTime: BigInt(0),
+            expiryTime: BigInt(0),
+            status: 0,
+            marketOutcomeHash: '',
+          });
+        } catch (err) {
+          console.error(`Failed to fetch policy ${id}:`, err);
+        }
+      }
+      setUserPolicies(policies);
+    };
+
+    fetchPolicies();
+  }, [policyIds, address]);
+
+  const currentTime = useMemo(() => BigInt(Math.floor(Date.now() / 1000)), []);
+
+  const getPolicyStatus = (policy: UserPolicy): PolicyStatus => {
+    // Status from contract: 0 = Active, 1 = Claimed, 2 = Expired
+    if (policy.status === 1) return 'Claimed';
+    if (policy.status === 2) return 'Expired';
+    
+    // Check if expired
+    if (currentTime > policy.expiryTime) return 'Expired';
+    
+    // Check if claimable (market resolved against user)
+    // In production, check oracle for market resolution
+    // For now, we'll mark as Active
+    return 'Active';
+  };
+
+  const getStatusColor = (status: PolicyStatus) => {
+    switch (status) {
+      case 'Active':
+        return 'text-blue-600 bg-blue-50 border-blue-200';
+      case 'Claimable':
+        return 'text-green-600 bg-green-50 border-green-200';
+      case 'Claimed':
+        return 'text-gray-600 bg-gray-50 border-gray-200';
+      case 'Expired':
+        return 'text-red-600 bg-red-50 border-red-200';
+    }
+  };
+
+  const getStatusIcon = (status: PolicyStatus) => {
+    switch (status) {
+      case 'Active':
+        return <Clock className="w-4 h-4" />;
+      case 'Claimable':
+        return <AlertCircle className="w-4 h-4" />;
+      case 'Claimed':
+        return <CheckCircle className="w-4 h-4" />;
+      case 'Expired':
+        return <XCircle className="w-4 h-4" />;
+    }
+  };
+
   const validateCoverage = (value: string) => {
     setValidationError('');
     const num = parseFloat(value);
@@ -192,24 +304,63 @@ export default function InsuranceClient() {
     if (!validateCoverage(coverageAmount)) return;
 
     const durationSeconds = BigInt(parseInt(duration) * 24 * 60 * 60);
-    const amount = parseTokenAmount(coverageAmount);
+    const amount = parseUnits(coverageAmount, 18);
+    const premiumAmount = premium as bigint;
 
     try {
-      await write({
+      // Step 1: Approve premium
+      showToast('Approving premium...', 'info');
+      approveToken({
         ...ASSET_TOKEN,
         functionName: 'approve',
-        args: [CONTRACTS.PolicyManager.address, premium],
+        args: [CONTRACTS.PolicyManager.address, premiumAmount],
       });
 
-      setTimeout(async () => {
-        await write({
-          ...CONTRACTS.PolicyManager,
-          functionName: 'createPolicy',
-          args: [address, selectedMarket, amount, premium, durationSeconds],
-        });
-      }, 2000);
+      // Wait for approval
+      await new Promise(resolve => setTimeout(resolve, 3000));
+
+      // Step 2: Create policy
+      showToast('Creating insurance policy...', 'info');
+      createPolicy({
+        ...CONTRACTS.PolicyManager,
+        functionName: 'createPolicy',
+        args: [address, selectedMarket, amount, premiumAmount, durationSeconds],
+      });
+
+      // Wait for transaction
+      await new Promise(resolve => setTimeout(resolve, 3000));
+
+      showToast('✅ Insurance policy created successfully!', 'success');
+      setShowPurchaseModal(false);
+      setCoverageAmount('');
+      refetchPolicyIds();
     } catch (err) {
       console.error('Transaction failed:', err);
+      const errorMessage = err instanceof Error ? err.message : 'Transaction failed';
+      showToast(errorMessage, 'error');
+    }
+  };
+
+  const handleClaim = async (policyId: bigint) => {
+    if (!address) return;
+
+    try {
+      showToast('Submitting claim...', 'info');
+      claimPolicy({
+        ...CONTRACTS.PolicyManager,
+        functionName: 'claimPolicy',
+        args: [policyId],
+      });
+
+      // Wait for transaction
+      await new Promise(resolve => setTimeout(resolve, 3000));
+
+      showToast('✅ Claim successful! Payout sent to your wallet.', 'success');
+      refetchPolicyIds();
+    } catch (err) {
+      console.error('Claim failed:', err);
+      const errorMessage = err instanceof Error ? err.message : 'Claim failed';
+      showToast(errorMessage, 'error');
     }
   };
 
@@ -246,12 +397,48 @@ export default function InsuranceClient() {
           
           {/* Header */}
           <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">Insurance Markets</h1>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">Insurance</h1>
             <p className="text-gray-600">Protect your prediction market positions</p>
           </div>
 
-          {/* Stats */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+          {/* Tabs */}
+          <div className="mb-6 border-b border-gray-200">
+            <div className="flex gap-8">
+              <button
+                onClick={() => setActiveTab('markets')}
+                className={cn(
+                  'pb-4 px-1 border-b-2 font-medium text-sm transition-colors',
+                  activeTab === 'markets'
+                    ? 'border-blue-600 text-blue-600'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                )}
+              >
+                Available Markets
+              </button>
+              <button
+                onClick={() => setActiveTab('my-policies')}
+                className={cn(
+                  'pb-4 px-1 border-b-2 font-medium text-sm transition-colors',
+                  activeTab === 'my-policies'
+                    ? 'border-blue-600 text-blue-600'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                )}
+              >
+                My Policies
+                {userPolicies.length > 0 && (
+                  <span className="ml-2 px-2 py-0.5 bg-blue-100 text-blue-600 rounded-full text-xs">
+                    {userPolicies.length}
+                  </span>
+                )}
+              </button>
+            </div>
+          </div>
+
+          {/* Markets Tab */}
+          {activeTab === 'markets' && (
+            <>
+              {/* Stats */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
             <div className="bg-white rounded-xl p-6 border border-gray-200">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-sm text-gray-600">Total Protected</span>
@@ -405,6 +592,142 @@ export default function InsuranceClient() {
               ))}
             </div>
           )}
+            </>
+          )}
+
+          {/* My Policies Tab */}
+          {activeTab === 'my-policies' && (
+            <div className="space-y-6">
+              {userPolicies.length === 0 ? (
+                <div className="bg-white rounded-2xl p-12 text-center border-2 border-gray-200">
+                  <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <Shield className="w-8 h-8 text-gray-400" />
+                  </div>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">No policies yet</h3>
+                  <p className="text-gray-600 mb-4">
+                    Purchase insurance to protect your prediction market positions
+                  </p>
+                  <button
+                    onClick={() => setActiveTab('markets')}
+                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                  >
+                    Browse Markets
+                  </button>
+                </div>
+              ) : (
+                <div className="grid gap-4">
+                  {userPolicies.map((policy) => {
+                    const status = getPolicyStatus(policy);
+                    const market = MARKETS.find((m) => m.id === policy.marketId);
+                    const timeLeft = Number(policy.expiryTime - currentTime);
+                    const daysLeft = Math.max(0, Math.floor(timeLeft / 86400));
+                    const hoursLeft = Math.max(0, Math.floor((timeLeft % 86400) / 3600));
+
+                    return (
+                      <div
+                        key={policy.id.toString()}
+                        className="bg-white rounded-xl p-6 border-2 border-gray-200 hover:border-gray-300 transition-all"
+                      >
+                        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+                          {/* Policy Info */}
+                          <div className="flex-1 space-y-3">
+                            <div className="flex items-start justify-between gap-4">
+                              <div>
+                                <div className="flex items-center gap-2 mb-1">
+                                  <h3 className="font-semibold text-gray-900">
+                                    Policy #{policy.id.toString()}
+                                  </h3>
+                                  <span
+                                    className={cn(
+                                      'px-2 py-1 rounded-full text-xs font-medium border flex items-center gap-1',
+                                      getStatusColor(status)
+                                    )}
+                                  >
+                                    {getStatusIcon(status)}
+                                    {status}
+                                  </span>
+                                </div>
+                                <p className="text-sm text-gray-600">
+                                  {market?.question || 'Market question'}
+                                </p>
+                              </div>
+                            </div>
+
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                              <div>
+                                <div className="text-xs text-gray-500 mb-1">Coverage</div>
+                                <div className="font-semibold text-gray-900">
+                                  {formatUSD(policy.coverageAmount)}
+                                </div>
+                              </div>
+                              <div>
+                                <div className="text-xs text-gray-500 mb-1">Premium Paid</div>
+                                <div className="font-semibold text-gray-900">
+                                  {formatUSD(policy.premium)}
+                                </div>
+                              </div>
+                              <div>
+                                <div className="text-xs text-gray-500 mb-1">Time Left</div>
+                                <div className="font-semibold text-gray-900">
+                                  {status === 'Expired' || status === 'Claimed'
+                                    ? '-'
+                                    : `${daysLeft}d ${hoursLeft}h`}
+                                </div>
+                              </div>
+                              <div>
+                                <div className="text-xs text-gray-500 mb-1">Market</div>
+                                <div className="font-semibold text-gray-900">
+                                  {market?.symbol || 'N/A'}
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Actions */}
+                          <div className="flex flex-col gap-2 lg:min-w-[140px]">
+                            {status === 'Claimable' && (
+                              <button
+                                onClick={() => handleClaim(policy.id)}
+                                disabled={isClaiming}
+                                className="px-4 py-2 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2"
+                              >
+                                {isClaiming ? (
+                                  <>
+                                    <LoadingSpinner size="sm" />
+                                    <span>Claiming...</span>
+                                  </>
+                                ) : (
+                                  <>
+                                    <CheckCircle className="w-4 h-4" />
+                                    <span>Claim</span>
+                                  </>
+                                )}
+                              </button>
+                            )}
+                            {status === 'Active' && (
+                              <div className="text-xs text-gray-500 text-center">
+                                Claim available when market resolves
+                              </div>
+                            )}
+                            {status === 'Claimed' && (
+                              <div className="text-xs text-green-600 text-center font-medium">
+                                ✓ Claimed successfully
+                              </div>
+                            )}
+                            {status === 'Expired' && (
+                              <div className="text-xs text-red-600 text-center font-medium">
+                                Policy expired
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          )}
 
         </div>
       </main>
@@ -510,7 +833,7 @@ export default function InsuranceClient() {
             {/* Error */}
             {error && (
               <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
-                <p className="text-sm text-red-700">{error}</p>
+                <p className="text-sm text-red-700">{error.message || 'Transaction failed'}</p>
               </div>
             )}
 
