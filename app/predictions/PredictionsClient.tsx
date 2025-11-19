@@ -7,6 +7,7 @@ import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { useToast } from '@/hooks/useToast';
 import { formatDistanceToNow } from 'date-fns';
 import { CONTRACTS, ASSET_TOKEN } from '@/lib/contracts';
+// Removed MarketResolutionStatus - internal mechanism, not user-facing
 
 interface PredictionMarket {
   id: string;
@@ -38,6 +39,7 @@ export default function PredictionsClient() {
   const [selectedMarket, setSelectedMarket] = useState<PredictionMarket | null>(null);
   const [betAmount, setBetAmount] = useState('');
   const [betOutcome, setBetOutcome] = useState<'Yes' | 'No'>('Yes');
+  const [withInsurance, setWithInsurance] = useState(false);
   const [placing, setPlacing] = useState(false);
 
   useEffect(() => {
@@ -67,9 +69,9 @@ export default function PredictionsClient() {
         {
           id: '1',
           marketId: 1,
-          protocol: 'Uniswap',
-          question: 'Will Uniswap V4 experience a critical exploit by Q2 2026?',
-          riskType: 'Exploit',
+          protocol: 'Uniswap V4',
+          question: 'Will Uniswap V4 be exploited before Q2 2026?',
+          riskType: 'Exploit Risk',
           deadline: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
           status: 'Active',
           outcome: 'Unresolved',
@@ -107,9 +109,9 @@ export default function PredictionsClient() {
         {
           id: '3',
           marketId: 3,
-          protocol: 'Aave',
-          question: 'Will Aave V3 suffer a security breach before end of 2026?',
-          riskType: 'Security',
+          protocol: 'Aave V3',
+          question: 'Will Aave V3 be exploited before end of 2026?',
+          riskType: 'Exploit Risk',
           deadline: new Date(Date.now() + 45 * 24 * 60 * 60 * 1000).toISOString(),
           status: 'Active',
           outcome: 'Unresolved',
@@ -127,9 +129,9 @@ export default function PredictionsClient() {
         {
           id: '4',
           marketId: 4,
-          protocol: 'Curve',
-          question: 'Will Curve Finance pools be exploited in Q1 2026?',
-          riskType: 'Exploit',
+          protocol: 'Curve Finance',
+          question: 'Will Curve pools be exploited in Q1 2026?',
+          riskType: 'Exploit Risk',
           deadline: new Date(Date.now() + 20 * 24 * 60 * 60 * 1000).toISOString(),
           status: 'Active',
           outcome: 'Unresolved',
@@ -147,9 +149,9 @@ export default function PredictionsClient() {
         {
           id: '5',
           marketId: 5,
-          protocol: 'Lido',
-          question: 'Will stETH lose its peg to ETH by more than 5%?',
-          riskType: 'Depeg',
+          protocol: 'Lido stETH',
+          question: 'Will stETH depeg from ETH by more than 5%?',
+          riskType: 'Depeg Risk',
           deadline: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString(),
           status: 'Active',
           outcome: 'Unresolved',
@@ -168,8 +170,8 @@ export default function PredictionsClient() {
           id: '6',
           marketId: 6,
           protocol: 'MakerDAO',
-          question: 'Will MakerDAO smart contracts be compromised in 2026?',
-          riskType: 'Security',
+          question: 'Will MakerDAO be exploited in 2026?',
+          riskType: 'Exploit Risk',
           deadline: new Date(Date.now() + 75 * 24 * 60 * 60 * 1000).toISOString(),
           status: 'Active',
           outcome: 'Unresolved',
@@ -260,6 +262,19 @@ export default function PredictionsClient() {
     }
   };
 
+  const calculateInsurancePremium = () => {
+    if (!selectedMarket || !betAmount) return 0;
+    const amount = parseFloat(betAmount);
+    // Premium based on risk type: 8-15%
+    const premiumRate = selectedMarket.riskType === 'Stablecoin Depeg' ? 0.08 : 0.15;
+    return amount * premiumRate;
+  };
+
+  const calculateInsuranceRefund = () => {
+    if (!betAmount) return 0;
+    return parseFloat(betAmount) * 0.5; // 50% refund
+  };
+
   const calculatePotentialPayout = () => {
     if (!selectedMarket || !betAmount) return 0;
     const amount = parseFloat(betAmount);
@@ -284,10 +299,10 @@ export default function PredictionsClient() {
       {/* Header */}
       <div className="mb-12">
         <h1 className="text-4xl font-bold text-gray-900 mb-3">
-          Protocol Risk Markets
+          DeFi Risk Markets
         </h1>
         <p className="text-lg text-gray-600">
-          Predict DeFi protocol risks and earn rewards based on accurate forecasts
+          Predict protocol risks, protect your position with insurance
         </p>
       </div>
       
@@ -367,6 +382,15 @@ export default function PredictionsClient() {
               <p className="text-sm text-gray-700 leading-relaxed line-clamp-2">
                 {market.question}
               </p>
+              
+              {/* Insurance Info */}
+              {market.insuranceEnabled && (
+                <div className="mt-3 pt-3 border-t border-gray-100">
+                  <div className="text-xs text-gray-600">
+                    <span className="font-semibold">Insurance:</span> Get 50% back if wrong
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Market Stats */}
@@ -501,8 +525,8 @@ export default function PredictionsClient() {
             <div className="p-5 space-y-4 overflow-y-auto flex-1">
               {/* Outcome Selection */}
               <div>
-                <label className="block text-sm font-semibold text-gray-900 mb-2">
-                  Select Your Prediction
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Your prediction
                 </label>
                 <div className="grid grid-cols-2 gap-3">
                   <button
@@ -542,8 +566,8 @@ export default function PredictionsClient() {
 
               {/* Amount Input */}
               <div>
-                <label className="block text-sm font-semibold text-gray-900 mb-2">
-                  Amount (USDC)
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Amount
                 </label>
                 <div className="relative">
                   <input
@@ -570,47 +594,71 @@ export default function PredictionsClient() {
                 </div>
               </div>
 
-              {/* Insurance Notice */}
-              {selectedMarket.insuranceEnabled && (
-                <div className="bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-3">
-                  <div className="flex items-start gap-2">
-                    <div className="w-6 h-6 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                      <svg className="w-4 h-4 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                      </svg>
-                    </div>
+              {/* Insurance Checkbox */}
+              {selectedMarket.insuranceEnabled && betAmount && parseFloat(betAmount) > 0 && (
+                <div className="border border-gray-200 rounded-xl p-4">
+                  <label className="flex items-start gap-3 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={withInsurance}
+                      onChange={(e) => setWithInsurance(e.target.checked)}
+                      className="mt-0.5 w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                    />
                     <div className="flex-1">
-                      <div className="text-xs font-bold text-blue-900 mb-0.5">Insurance Protection Available</div>
-                      <div className="text-xs text-blue-700 leading-relaxed">
-                        Get 40-60% back if wrong. Premium: 5-20% based on risk.
+                      <div className="flex items-center gap-2 mb-1">
+                        <svg className="w-4 h-4 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                        </svg>
+                        <span className="text-sm font-medium text-gray-900">
+                          Add insurance (+${calculateInsurancePremium().toFixed(2)})
+                        </span>
                       </div>
+                      <p className="text-xs text-gray-600">
+                        Get ${calculateInsuranceRefund().toFixed(2)} back if you lose
+                      </p>
                     </div>
-                  </div>
+                  </label>
                 </div>
               )}
 
               {/* Potential Payout */}
               {betAmount && parseFloat(betAmount) > 0 && (
-                <div className="bg-gradient-to-br from-gray-50 to-gray-100 border border-gray-200 rounded-xl p-3 space-y-2">
-                  <div className="flex justify-between items-center">
-                    <span className="text-xs text-gray-600 font-medium">Your Stake</span>
-                    <span className="text-sm text-gray-900 font-bold">
+                <div className="bg-gray-50 border border-gray-200 rounded-xl p-3 space-y-2">
+                  <div className="flex justify-between items-center text-sm">
+                    <span className="text-gray-600">Bet amount</span>
+                    <span className="text-gray-900 font-medium">
                       ${parseFloat(betAmount).toFixed(2)}
                     </span>
                   </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-xs text-gray-600 font-medium">Potential Payout</span>
-                    <span className="text-sm text-gray-900 font-bold">
-                      ${calculatePotentialPayout().toFixed(2)}
-                    </span>
-                  </div>
-                  <div className="pt-2 border-t border-gray-300">
-                    <div className="flex justify-between items-center">
-                      <span className="text-xs text-gray-700 font-semibold">Potential Profit</span>
-                      <span className="text-base text-green-600 font-bold">
-                        +${(calculatePotentialPayout() - parseFloat(betAmount || '0')).toFixed(2)}
+                  {withInsurance && (
+                    <div className="flex justify-between items-center text-sm">
+                      <span className="text-gray-600">Insurance</span>
+                      <span className="text-gray-900 font-medium">
+                        +${calculateInsurancePremium().toFixed(2)}
                       </span>
                     </div>
+                  )}
+                  <div className="flex justify-between items-center text-sm pt-2 border-t border-gray-300">
+                    <span className="text-gray-700 font-medium">Total cost</span>
+                    <span className="text-gray-900 font-bold">
+                      ${(parseFloat(betAmount) + (withInsurance ? calculateInsurancePremium() : 0)).toFixed(2)}
+                    </span>
+                  </div>
+                  <div className="pt-2 border-t border-gray-300 space-y-1">
+                    <div className="flex justify-between items-center">
+                      <span className="text-xs text-gray-600">If you win</span>
+                      <span className="text-sm text-green-600 font-bold">
+                        +${(calculatePotentialPayout() - parseFloat(betAmount)).toFixed(2)}
+                      </span>
+                    </div>
+                    {withInsurance && (
+                      <div className="flex justify-between items-center">
+                        <span className="text-xs text-gray-600">If you lose</span>
+                        <span className="text-sm text-blue-600 font-bold">
+                          Get ${calculateInsuranceRefund().toFixed(2)} back
+                        </span>
+                      </div>
+                    )}
                   </div>
                 </div>
               )}
@@ -619,10 +667,10 @@ export default function PredictionsClient() {
               <button
                 onClick={placePrediction}
                 disabled={!betAmount || placing || parseFloat(betAmount) <= 0}
-                className={`w-full py-3 rounded-xl font-bold text-sm transition-all duration-200 ${
+                className={`w-full py-3 rounded-xl font-semibold text-sm transition-all duration-200 ${
                   !betAmount || placing || parseFloat(betAmount) <= 0
                     ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                    : 'bg-gray-900 text-white hover:bg-gray-800 hover:shadow-xl active:scale-[0.98]'
+                    : 'bg-gray-900 text-white hover:bg-gray-800 hover:shadow-lg active:scale-[0.98]'
                 }`}
               >
                 {placing ? (
@@ -634,14 +682,11 @@ export default function PredictionsClient() {
                     Processing...
                   </span>
                 ) : (
-                  `Place ${betAmount || '0'} USDC on ${betOutcome}`
+                  withInsurance 
+                    ? `Place Bet + Insurance (${(parseFloat(betAmount) + calculateInsurancePremium()).toFixed(0)} USDC)`
+                    : `Place Bet (${betAmount || '0'} USDC)`
                 )}
               </button>
-
-              {/* Disclaimer */}
-              <p className="text-xs text-gray-500 text-center leading-snug -mt-1">
-                By placing this prediction, you acknowledge the risks involved.
-              </p>
             </div>
           </div>
         </div>
