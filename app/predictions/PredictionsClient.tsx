@@ -39,7 +39,6 @@ export default function PredictionsClient() {
   const [selectedMarket, setSelectedMarket] = useState<PredictionMarket | null>(null);
   const [betAmount, setBetAmount] = useState('');
   const [betOutcome, setBetOutcome] = useState<'Yes' | 'No'>('Yes');
-  const [withInsurance, setWithInsurance] = useState(false);
   const [placing, setPlacing] = useState(false);
 
   useEffect(() => {
@@ -265,14 +264,29 @@ export default function PredictionsClient() {
   const calculateInsurancePremium = () => {
     if (!selectedMarket || !betAmount) return 0;
     const amount = parseFloat(betAmount);
-    // Premium based on risk type: 8-15%
-    const premiumRate = selectedMarket.riskType === 'Stablecoin Depeg' ? 0.08 : 0.15;
-    return amount * premiumRate;
+    
+    // Calculate market skew
+    const totalPool = selectedMarket.yesPool + selectedMarket.noPool;
+    const skew = Math.abs(selectedMarket.yesPool - selectedMarket.noPool) / totalPool;
+    
+    // Dynamic premium based on market skew
+    if (skew > 0.7) return amount * 0.30; // 30% for very skewed markets
+    if (skew > 0.5) return amount * 0.25; // 25% for moderate
+    return amount * 0.20; // 20% for balanced
   };
 
   const calculateInsuranceRefund = () => {
-    if (!betAmount) return 0;
-    return parseFloat(betAmount) * 0.5; // 50% refund
+    if (!selectedMarket || !betAmount) return 0;
+    const amount = parseFloat(betAmount);
+    
+    // Calculate market skew
+    const totalPool = selectedMarket.yesPool + selectedMarket.noPool;
+    const skew = Math.abs(selectedMarket.yesPool - selectedMarket.noPool) / totalPool;
+    
+    // Dynamic refund based on market skew
+    if (skew > 0.7) return amount * 0.70; // 70% refund for very skewed
+    if (skew > 0.5) return amount * 0.60; // 60% for moderate
+    return amount * 0.50; // 50% for balanced
   };
 
   const calculatePotentialPayout = () => {
@@ -284,6 +298,24 @@ export default function PredictionsClient() {
     if (myPool === 0) return amount * 2;
     const share = amount / (myPool + amount);
     return amount + (oppositePool * share);
+  };
+
+  const getRefundPercentage = (market: PredictionMarket) => {
+    const totalPool = market.yesPool + market.noPool;
+    const skew = Math.abs(market.yesPool - market.noPool) / totalPool;
+    
+    if (skew > 0.7) return 70;
+    if (skew > 0.5) return 60;
+    return 50;
+  };
+
+  const getPremiumPercentage = (market: PredictionMarket) => {
+    const totalPool = market.yesPool + market.noPool;
+    const skew = Math.abs(market.yesPool - market.noPool) / totalPool;
+    
+    if (skew > 0.7) return 30;
+    if (skew > 0.5) return 25;
+    return 20;
   };
 
   if (loading) {
@@ -299,10 +331,10 @@ export default function PredictionsClient() {
       {/* Header */}
       <div className="mb-12">
         <h1 className="text-4xl font-bold text-gray-900 mb-3">
-          DeFi Risk Markets
+          Protected DeFi Predictions
         </h1>
         <p className="text-lg text-gray-600">
-          Predict protocol risks, protect your position with insurance
+          Every bet is protected. Get 60-70% back if you&apos;re wrong.
         </p>
       </div>
       
@@ -384,13 +416,16 @@ export default function PredictionsClient() {
               </p>
               
               {/* Insurance Info */}
-              {market.insuranceEnabled && (
-                <div className="mt-3 pt-3 border-t border-gray-100">
-                  <div className="text-xs text-gray-600">
-                    <span className="font-semibold">Insurance:</span> Get 50% back if wrong
-                  </div>
+              <div className="mt-3 pt-3 border-t border-gray-100">
+                <div className="flex items-center gap-2 text-xs">
+                  <svg className="w-3.5 h-3.5 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                  </svg>
+                  <span className="text-gray-700 font-semibold">
+                    Protected: Get {getRefundPercentage(market)}% back if you lose
+                  </span>
                 </div>
-              )}
+              </div>
             </div>
 
             {/* Market Stats */}
@@ -594,34 +629,31 @@ export default function PredictionsClient() {
                 </div>
               </div>
 
-              {/* Insurance Checkbox */}
-              {selectedMarket.insuranceEnabled && betAmount && parseFloat(betAmount) > 0 && (
-                <div className="border border-gray-200 rounded-xl p-4">
-                  <label className="flex items-start gap-3 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={withInsurance}
-                      onChange={(e) => setWithInsurance(e.target.checked)}
-                      className="mt-0.5 w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                    />
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-1">
-                        <svg className="w-4 h-4 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
-                          <path fillRule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                        </svg>
-                        <span className="text-sm font-medium text-gray-900">
-                          Add insurance (+${calculateInsurancePremium().toFixed(2)})
-                        </span>
-                      </div>
-                      <p className="text-xs text-gray-600">
-                        Get ${calculateInsuranceRefund().toFixed(2)} back if you lose
-                      </p>
+              {/* Automatic Insurance Info */}
+              {betAmount && parseFloat(betAmount) > 0 && (
+                <div className="bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-200 rounded-xl p-4">
+                  <div className="flex items-start gap-3">
+                    <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center shrink-0">
+                      <svg className="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                      </svg>
                     </div>
-                  </label>
+                    <div className="flex-1">
+                      <div className="text-sm font-bold text-blue-900 mb-1">
+                        Protected Bet
+                      </div>
+                      <div className="text-xs text-blue-700 leading-relaxed">
+                        Get {getRefundPercentage(selectedMarket)}% back if you lose (${calculateInsuranceRefund().toFixed(2)})
+                      </div>
+                      <div className="text-xs text-blue-600 font-semibold mt-1">
+                        Insurance included • Premium: {getPremiumPercentage(selectedMarket)}%
+                      </div>
+                    </div>
+                  </div>
                 </div>
               )}
 
-              {/* Potential Payout */}
+              {/* Cost Breakdown */}
               {betAmount && parseFloat(betAmount) > 0 && (
                 <div className="bg-gray-50 border border-gray-200 rounded-xl p-3 space-y-2">
                   <div className="flex justify-between items-center text-sm">
@@ -630,18 +662,16 @@ export default function PredictionsClient() {
                       ${parseFloat(betAmount).toFixed(2)}
                     </span>
                   </div>
-                  {withInsurance && (
-                    <div className="flex justify-between items-center text-sm">
-                      <span className="text-gray-600">Insurance</span>
-                      <span className="text-gray-900 font-medium">
-                        +${calculateInsurancePremium().toFixed(2)}
-                      </span>
-                    </div>
-                  )}
+                  <div className="flex justify-between items-center text-sm">
+                    <span className="text-gray-600">Insurance premium</span>
+                    <span className="text-gray-900 font-medium">
+                      +${calculateInsurancePremium().toFixed(2)}
+                    </span>
+                  </div>
                   <div className="flex justify-between items-center text-sm pt-2 border-t border-gray-300">
                     <span className="text-gray-700 font-medium">Total cost</span>
                     <span className="text-gray-900 font-bold">
-                      ${(parseFloat(betAmount) + (withInsurance ? calculateInsurancePremium() : 0)).toFixed(2)}
+                      ${(parseFloat(betAmount) + calculateInsurancePremium()).toFixed(2)}
                     </span>
                   </div>
                   <div className="pt-2 border-t border-gray-300 space-y-1">
@@ -651,14 +681,12 @@ export default function PredictionsClient() {
                         +${(calculatePotentialPayout() - parseFloat(betAmount)).toFixed(2)}
                       </span>
                     </div>
-                    {withInsurance && (
-                      <div className="flex justify-between items-center">
-                        <span className="text-xs text-gray-600">If you lose</span>
-                        <span className="text-sm text-blue-600 font-bold">
-                          Get ${calculateInsuranceRefund().toFixed(2)} back
-                        </span>
-                      </div>
-                    )}
+                    <div className="flex justify-between items-center">
+                      <span className="text-xs text-gray-600">If you lose</span>
+                      <span className="text-sm text-blue-600 font-bold">
+                        Get ${calculateInsuranceRefund().toFixed(2)} back
+                      </span>
+                    </div>
                   </div>
                 </div>
               )}
@@ -682,9 +710,7 @@ export default function PredictionsClient() {
                     Processing...
                   </span>
                 ) : (
-                  withInsurance 
-                    ? `Place Bet + Insurance (${(parseFloat(betAmount) + calculateInsurancePremium()).toFixed(0)} USDC)`
-                    : `Place Bet (${betAmount || '0'} USDC)`
+                  `Place Protected Bet (${(parseFloat(betAmount) + calculateInsurancePremium()).toFixed(0)} USDC)`
                 )}
               </button>
             </div>
