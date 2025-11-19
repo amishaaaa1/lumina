@@ -560,27 +560,31 @@ export default function InsuranceClient({ marketParam }: InsuranceClientProps) {
                   </div>
 
                   {/* Question */}
-                  <p className="text-sm font-semibold text-gray-900 min-h-[44px] leading-snug">
+                  <p className="text-sm font-semibold text-gray-900 min-h-[44px] leading-snug mb-4">
                     {m.question}
                   </p>
 
-                  {/* Stats - 4 important ones */}
-                  <div className="space-y-2.5 pt-2">
-                    <div className="flex justify-between items-center">
-                      <span className="text-xs text-gray-500">Current Price</span>
-                      <span className="text-sm font-bold text-gray-900">{m.currentPrice}</span>
+                  {/* Stats - Simple List Style like reference */}
+                  <div className="space-y-2">
+                    <div className="flex justify-between items-center text-sm">
+                      <span className="text-gray-500">Votes</span>
+                      <span className="font-semibold text-gray-900">{m.votes}</span>
                     </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-xs text-gray-500">Premium</span>
-                      <span className="text-sm font-bold text-green-600">{m.premium}</span>
+                    <div className="flex justify-between items-center text-sm">
+                      <span className="text-gray-500">Pool liquidity</span>
+                      <span className="font-semibold text-gray-900">{m.poolLiquidity}</span>
                     </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-xs text-gray-500">Pool Liquidity</span>
-                      <span className="text-sm font-bold text-gray-900">{m.poolLiquidity}</span>
+                    <div className="flex justify-between items-center text-sm">
+                      <span className="text-gray-500">Current price</span>
+                      <span className="font-semibold text-gray-900">{m.currentPrice}</span>
                     </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-xs text-gray-500">Coverage Available</span>
-                      <span className="text-sm font-bold text-gray-900">{m.coverage}</span>
+                    <div className="flex justify-between items-center text-sm">
+                      <span className="text-gray-500">Premium</span>
+                      <span className="font-bold text-green-600">{m.premium}</span>
+                    </div>
+                    <div className="flex justify-between items-center text-sm">
+                      <span className="text-gray-500">Coverage</span>
+                      <span className="font-semibold text-gray-900">{m.coverage}</span>
                     </div>
                   </div>
 

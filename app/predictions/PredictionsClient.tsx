@@ -7,6 +7,7 @@ import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { useToast } from '@/hooks/useToast';
 import { formatDistanceToNow } from 'date-fns';
 import { CONTRACTS, ASSET_TOKEN } from '@/lib/contracts';
+import { LeaderboardSection } from '@/components/leaderboard/LeaderboardSection';
 // Removed MarketResolutionStatus - internal mechanism, not user-facing
 
 interface PredictionMarket {
@@ -520,6 +521,9 @@ export default function PredictionsClient() {
           </p>
         </div>
       )}
+
+      {/* Leaderboard Section */}
+      <LeaderboardSection />
 
       {/* Bet Modal */}
       {selectedMarket && (
