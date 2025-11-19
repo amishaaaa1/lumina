@@ -1,7 +1,5 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-
 interface LandingStats {
   totalProtected: string;
   avgAPY: string;
@@ -10,43 +8,18 @@ interface LandingStats {
   error: Error | null;
 }
 
+/**
+ * Landing page statistics hook
+ * Uses mock data for demo purposes
+ * TODO: Connect to real contract data when backend is ready
+ */
 export function useLandingStats(): LandingStats {
-  const [stats, setStats] = useState<LandingStats>({
-    totalProtected: '$2.1M',
-    avgAPY: '42%',
-    activePolicies: '127',
-    isLoading: true,
+  // Mock data - consistent with pools and insurance pages
+  return {
+    totalProtected: '$16.2M',  // Total TVL across all pools
+    avgAPY: '21.3%',           // Average APY from all pools
+    activePolicies: '342',     // Active insurance policies
+    isLoading: false,
     error: null,
-  });
-
-  useEffect(() => {
-    async function fetchStats() {
-      try {
-        // TODO: Fetch real data from contracts when available
-        // For now, use mock data for demo
-        await new Promise(resolve => setTimeout(resolve, 500)); // Simulate API call
-        
-        setStats({
-          totalProtected: '$2.1M',
-          avgAPY: '42%',
-          activePolicies: '127',
-          isLoading: false,
-          error: null,
-        });
-      } catch (error) {
-        console.error('Error fetching landing stats:', error);
-        setStats({
-          totalProtected: '$2.1M',
-          avgAPY: '42%',
-          activePolicies: '127',
-          isLoading: false,
-          error: error as Error,
-        });
-      }
-    }
-
-    fetchStats();
-  }, []);
-
-  return stats;
+  };
 }

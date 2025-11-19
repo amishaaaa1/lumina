@@ -7,70 +7,153 @@ import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Progress } from '@/components/ui/Progress';
-import { useAccount, useReadContract, useReadContracts } from 'wagmi';
-import { CONTRACTS } from '@/lib/contracts';
-import { PolicyStatus, PoolInfo } from '@/lib/types';
-import { formatUnits } from 'viem';
+import { useAccount } from 'wagmi';
+
+// Helper function to calculate days until expiry
+const getDaysUntilExpiry = (expiryTime: number) => {
+  const now = new Date().getTime();
+  return Math.ceil((expiryTime - now) / (1000 * 60 * 60 * 24));
+};
+
+interface Policy {
+  id: string;
+  marketId: string;
+  marketName: string;
+  coverageAmount: string;
+  premium: string;
+  expiryTime: number;
+  status: 'Active' | 'Expired' | 'Claimed';
+}
+
+interface Activity {
+  type: 'insured' | 'claimed' | 'deposit' | 'withdraw';
+  description: string;
+  amount: string;
+  timestamp: string;
+  isPositive?: boolean;
+}
 
 interface DashboardStats {
-  totalCoverage: bigint;
-  totalPremiumsPaid: bigint;
+  totalCoverage: string;
+  totalPremiumsPaid: string;
   activePolicies: number;
   claimablePolicies: number;
-  lpEarnings: bigint;
-  lpShares: bigint;
-  portfolioValue: bigint;
+  lpEarnings: string;
+  lpShares: string;
+  portfolioValue: string;
+  totalExposure: string;
 }
+
+// Mock data for demo - consistent with other pages
+const MOCK_POLICIES: Policy[] = [
+  {
+    id: '1',
+    marketId: 'btc-120k-q2',
+    marketName: 'BTC hits $120K by Q2 2025',
+    coverageAmount: '$5,000',
+    premium: '$140',
+    expiryTime: Date.now() + 45 * 24 * 60 * 60 * 1000,
+    status: 'Active',
+  },
+  {
+    id: '2',
+    marketId: 'eth-5k-june',
+    marketName: 'ETH flips $5K before June',
+    coverageAmount: '$3,000',
+    premium: '$102',
+    expiryTime: Date.now() + 60 * 24 * 60 * 60 * 1000,
+    status: 'Active',
+  },
+  {
+    id: '3',
+    marketId: 'sol-200-q1',
+    marketName: 'SOL maintains above $200',
+    coverageAmount: '$2,000',
+    premium: '$78',
+    expiryTime: Date.now() + 30 * 24 * 60 * 60 * 1000,
+    status: 'Active',
+  },
+  {
+    id: '4',
+    marketId: 'ada-1.5-2025',
+    marketName: 'ADA breaks $1.50 in 2025',
+    coverageAmount: '$1,500',
+    premium: '$69',
+    expiryTime: Date.now() + 90 * 24 * 60 * 60 * 1000,
+    status: 'Active',
+  },
+  {
+    id: '5',
+    marketId: 'link-40-2025',
+    marketName: 'LINK reaches $40 in 2025',
+    coverageAmount: '$1,000',
+    premium: '$43',
+    expiryTime: Date.now() + 75 * 24 * 60 * 60 * 1000,
+    status: 'Active',
+  },
+];
+
+const MOCK_ACTIVITIES: Activity[] = [
+  {
+    type: 'insured',
+    description: 'Insured BTC position',
+    amount: '$5,000',
+    timestamp: '2 hours ago',
+  },
+  {
+    type: 'claimed',
+    description: 'Claimed ETH policy',
+    amount: '$2,500',
+    timestamp: '1 day ago',
+    isPositive: true,
+  },
+  {
+    type: 'deposit',
+    description: 'LP deposit to USDT pool',
+    amount: '$10,000',
+    timestamp: '3 days ago',
+  },
+  {
+    type: 'insured',
+    description: 'Insured SOL position',
+    amount: '$2,000',
+    timestamp: '5 days ago',
+  },
+  {
+    type: 'withdraw',
+    description: 'LP withdrawal from ETH pool',
+    amount: '$5,000',
+    timestamp: '1 week ago',
+  },
+];
+
+const MOCK_STATS: DashboardStats = {
+  totalCoverage: '$12,500',
+  totalPremiumsPaid: '$432',
+  activePolicies: 5,
+  claimablePolicies: 2,
+  lpEarnings: '$1,847',
+  lpShares: '$15,000',
+  portfolioValue: '$16,847',
+  totalExposure: '$50,000',
+};
+
+// Mock pool stats
+const MOCK_POOL = {
+  totalLiquidity: 16200000,
+  availableLiquidity: 13500000,
+  utilizationRate: 16.7,
+};
 
 export default function LuminaDashboardClient() {
   const { address, isConnected } = useAccount();
 
-  const { data: policyIds } = useReadContract({
-    ...CONTRACTS.PolicyManager,
-    functionName: 'getUserPolicies',
-    args: address ? [address] : undefined,
-    query: { enabled: !!address },
-  });
-
-  const { data: poolInfo } = useReadContract({
-    ...CONTRACTS.InsurancePool,
-    functionName: 'getPoolInfo',
-  });
-
-  const { data: providerInfo } = useReadContract({
-    ...CONTRACTS.InsurancePool,
-    functionName: 'getProviderInfo',
-    args: address ? [address] : undefined,
-    query: { enabled: !!address },
-  });
-
-  const policyContracts = (policyIds as bigint[] || []).map((id) => ({
-    ...CONTRACTS.PolicyManager,
-    functionName: 'getPolicy' as const,
-    args: [id],
-  }));
-
-  const { data: policiesData } = useReadContracts({
-    contracts: policyContracts,
-    query: { enabled: policyContracts.length > 0 },
-  });
-
-  const policies = (policiesData || [])
-    .filter((p) => p.status === 'success')
-    .map((p) => p.result as any);
-
-  const stats: DashboardStats = {
-    totalCoverage: policies.reduce((sum: bigint, p: any) => sum + (p?.coverageAmount || 0n), 0n),
-    totalPremiumsPaid: policies.reduce((sum: bigint, p: any) => sum + (p?.premium || 0n), 0n),
-    activePolicies: policies.filter((p: any) => p?.status === PolicyStatus.Active).length,
-    claimablePolicies: policies.filter((p: any) => p?.status === PolicyStatus.Active && Date.now() / 1000 < Number(p?.expiryTime)).length,
-    lpEarnings: (providerInfo as any)?.earnedPremiums || 0n,
-    lpShares: (providerInfo as any)?.shares || 0n,
-    portfolioValue: ((providerInfo as any)?.depositedAmount || 0n) + ((providerInfo as any)?.earnedPremiums || 0n),
-  };
-
-  const pool = poolInfo as PoolInfo | undefined;
-  const utilizationRate = pool ? Number(pool.utilizationRate) / 100 : 0;
+  // Use mock data for demo
+  const policies = MOCK_POLICIES;
+  const stats = MOCK_STATS;
+  const activities = MOCK_ACTIVITIES;
+  const pool = MOCK_POOL;
+  const utilizationRate = pool.utilizationRate;
 
   const formatAddress = (addr: string) => {
     return `${addr.slice(0, 6)}...${addr.slice(-4)}`;
@@ -92,9 +175,11 @@ export default function LuminaDashboardClient() {
     );
   }
 
-  const totalExposure = stats.totalCoverage + BigInt(50000) * BigInt(10**18);
-  const coveragePercentage = Number((stats.totalCoverage * 100n) / totalExposure);
-  const uninsuredAmount = totalExposure - stats.totalCoverage;
+  // Calculate coverage percentage (mock calculation)
+  const totalExposureValue = 50000;
+  const coverageValue = 12500;
+  const coveragePercentage = (coverageValue / totalExposureValue) * 100;
+  const uninsuredAmount = totalExposureValue - coverageValue;
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -121,15 +206,15 @@ export default function LuminaDashboardClient() {
               <div className="grid md:grid-cols-3 gap-4 mb-6">
                 <div>
                   <div className="text-sm text-gray-600 mb-1">Total Exposure</div>
-                  <div className="text-2xl font-bold">{formatUnits(totalExposure, 18)}</div>
+                  <div className="text-2xl font-bold">{stats.totalExposure}</div>
                 </div>
                 <div>
                   <div className="text-sm text-gray-600 mb-1">Insured</div>
-                  <div className="text-2xl font-bold text-green-600">{formatUnits(stats.totalCoverage, 18)}</div>
+                  <div className="text-2xl font-bold text-green-600">{stats.totalCoverage}</div>
                 </div>
                 <div>
                   <div className="text-sm text-gray-600 mb-1">Uninsured</div>
-                  <div className="text-2xl font-bold text-red-600">{formatUnits(uninsuredAmount, 18)}</div>
+                  <div className="text-2xl font-bold text-red-600">${uninsuredAmount.toLocaleString()}</div>
                 </div>
               </div>
 
@@ -162,33 +247,33 @@ export default function LuminaDashboardClient() {
 
               {policies.length > 0 ? (
                 <div className="space-y-3">
-                  {policies.slice(0, 5).map((policy: any) => (
-                    <div key={policy.id?.toString()} className="p-4 border border-gray-200 rounded-lg">
+                  {policies.slice(0, 5).map((policy) => (
+                    <div key={policy.id} className="p-4 border border-gray-200 rounded-lg">
                       <div className="flex items-start justify-between mb-3">
                         <div>
-                          <div className="font-medium mb-1">{policy?.marketId || 'Market'}</div>
-                          <div className="text-sm text-gray-600">Policy #{policy?.id?.toString() || '0'}</div>
+                          <div className="font-medium mb-1">{policy.marketName}</div>
+                          <div className="text-sm text-gray-600">Policy #{policy.id}</div>
                         </div>
                         <div className="text-right">
-                          <div className="font-bold">{formatUnits(policy?.coverageAmount || 0n, 18)}</div>
+                          <div className="font-bold">{policy.coverageAmount}</div>
                           <div className="text-xs text-gray-500">coverage</div>
                         </div>
                       </div>
                       <div className="grid grid-cols-3 gap-3 text-sm">
                         <div>
                           <div className="text-gray-600 text-xs">Premium</div>
-                          <div className="font-medium">{formatUnits(policy?.premium || 0n, 18)}</div>
+                          <div className="font-medium">{policy.premium}</div>
                         </div>
                         <div>
                           <div className="text-gray-600 text-xs">Expires</div>
                           <div className="font-medium">
-                            {Math.ceil((new Date(Number(policy?.expiryTime || 0) * 1000).getTime() - Date.now()) / (1000 * 60 * 60 * 24))}d
+                            {getDaysUntilExpiry(policy.expiryTime)}d
                           </div>
                         </div>
                         <div>
                           <div className="text-gray-600 text-xs">Status</div>
-                          <Badge variant={policy?.status === PolicyStatus.Active ? 'success' : 'default'} className="text-xs">
-                            {policy?.status === PolicyStatus.Active ? 'Active' : 'Expired'}
+                          <Badge variant={policy.status === 'Active' ? 'success' : 'default'} className="text-xs">
+                            {policy.status}
                           </Badge>
                         </div>
                       </div>
@@ -213,27 +298,17 @@ export default function LuminaDashboardClient() {
             <Card className="p-6">
               <h2 className="text-lg font-semibold mb-4">Recent Activity</h2>
               <div className="space-y-3">
-                <div className="flex items-center justify-between py-3 border-b border-gray-100">
-                  <div>
-                    <div className="font-medium text-sm">Insured BTC position</div>
-                    <div className="text-xs text-gray-500">2 hours ago</div>
+                {activities.map((activity, idx) => (
+                  <div key={idx} className={`flex items-center justify-between py-3 ${idx < activities.length - 1 ? 'border-b border-gray-100' : ''}`}>
+                    <div>
+                      <div className="font-medium text-sm">{activity.description}</div>
+                      <div className="text-xs text-gray-500">{activity.timestamp}</div>
+                    </div>
+                    <div className={`font-medium text-sm ${activity.isPositive ? 'text-green-600' : ''}`}>
+                      {activity.isPositive ? '+' : ''}{activity.amount}
+                    </div>
                   </div>
-                  <div className="font-medium text-sm">$5,000</div>
-                </div>
-                <div className="flex items-center justify-between py-3 border-b border-gray-100">
-                  <div>
-                    <div className="font-medium text-sm">Claimed ETH policy</div>
-                    <div className="text-xs text-gray-500">1 day ago</div>
-                  </div>
-                  <div className="font-medium text-sm text-green-600">+$2,500</div>
-                </div>
-                <div className="flex items-center justify-between py-3">
-                  <div>
-                    <div className="font-medium text-sm">LP deposit</div>
-                    <div className="text-xs text-gray-500">3 days ago</div>
-                  </div>
-                  <div className="font-medium text-sm">$10,000</div>
-                </div>
+                ))}
               </div>
             </Card>
           </div>
@@ -250,7 +325,7 @@ export default function LuminaDashboardClient() {
                 </div>
                 <div>
                   <div className="text-sm text-gray-600 mb-1">Total Premiums Paid</div>
-                  <div className="text-2xl font-bold">{formatUnits(stats.totalPremiumsPaid, 18)}</div>
+                  <div className="text-2xl font-bold">{stats.totalPremiumsPaid}</div>
                 </div>
                 <div>
                   <div className="text-sm text-gray-600 mb-1">Claimable Policies</div>
@@ -262,20 +337,20 @@ export default function LuminaDashboardClient() {
             {/* LP Position */}
             <Card className="p-6">
               <h3 className="font-semibold mb-4">Liquidity Position</h3>
-              {stats.lpShares > 0n ? (
+              {stats.lpShares !== '$0' ? (
                 <div className="space-y-4">
                   <div>
                     <div className="text-sm text-gray-600 mb-1">Portfolio Value</div>
-                    <div className="text-2xl font-bold">{formatUnits(stats.portfolioValue, 18)}</div>
+                    <div className="text-2xl font-bold">{stats.portfolioValue}</div>
                   </div>
                   <div className="grid grid-cols-2 gap-3">
                     <div>
                       <div className="text-xs text-gray-600">Shares</div>
-                      <div className="font-medium">{formatUnits(stats.lpShares, 18)}</div>
+                      <div className="font-medium">{stats.lpShares}</div>
                     </div>
                     <div>
                       <div className="text-xs text-gray-600">Earned</div>
-                      <div className="font-medium text-green-600">{formatUnits(stats.lpEarnings, 18)}</div>
+                      <div className="font-medium text-green-600">{stats.lpEarnings}</div>
                     </div>
                   </div>
                   <Link href="/pools">
@@ -329,11 +404,11 @@ export default function LuminaDashboardClient() {
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-600">Total Liquidity</span>
-                    <span className="font-medium">{formatUnits(pool.totalLiquidity, 18)}</span>
+                    <span className="font-medium">${(pool.totalLiquidity / 1000000).toFixed(1)}M</span>
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-600">Available</span>
-                    <span className="font-medium text-green-600">{formatUnits(pool.availableLiquidity, 18)}</span>
+                    <span className="font-medium text-green-600">${(pool.availableLiquidity / 1000000).toFixed(1)}M</span>
                   </div>
                 </div>
               </Card>

@@ -10,7 +10,7 @@ import { useToast } from '@/hooks/useToast';
 import { formatUSD, parseTokenAmount } from '@/lib/utils';
 import { CONTRACTS, ASSET_TOKEN } from '@/lib/contracts';
 import { cn } from '@/lib/utils';
-import { Shield, Search, TrendingUp, DollarSign, Clock, CheckCircle, XCircle, AlertCircle } from 'lucide-react';
+import { Shield, Search, TrendingUp, DollarSign } from 'lucide-react';
 
 const MARKETS = [
   {
@@ -127,19 +127,20 @@ const MARKETS = [
   },
 ];
 
-type PolicyStatus = 'Active' | 'Claimed' | 'Expired' | 'Claimable';
+// Type definitions for future use when policies are displayed
+// type PolicyStatus = 'Active' | 'Claimed' | 'Expired' | 'Claimable';
 
-interface UserPolicy {
-  id: bigint;
-  holder: string;
-  marketId: string;
-  coverageAmount: bigint;
-  premium: bigint;
-  startTime: bigint;
-  expiryTime: bigint;
-  status: number;
-  marketOutcomeHash: string;
-}
+// interface UserPolicy {
+//   id: bigint;
+//   holder: string;
+//   marketId: string;
+//   coverageAmount: bigint;
+//   premium: bigint;
+//   startTime: bigint;
+//   expiryTime: bigint;
+//   status: number;
+//   marketOutcomeHash: string;
+// }
 
 interface InsuranceClientProps {
   marketParam?: string | null;
@@ -157,7 +158,8 @@ export default function InsuranceClient({ marketParam }: InsuranceClientProps) {
   const [categoryFilter, setCategoryFilter] = useState<string>('all');
   const [sortBy, setSortBy] = useState<'premium-low' | 'premium-high' | 'liquidity'>('premium-low');
   const [validationError, setValidationError] = useState<string>('');
-  const [userPolicies, setUserPolicies] = useState<UserPolicy[]>([]);
+  // User policies will be fetched from backend when available
+  // const [userPolicies, setUserPolicies] = useState<UserPolicy[]>([]);
 
   const market = MARKETS.find((m) => m.id === selectedMarket);
 
@@ -166,8 +168,11 @@ export default function InsuranceClient({ marketParam }: InsuranceClientProps) {
     if (marketParam && isConnected) {
       const marketExists = MARKETS.find((m) => m.id === marketParam);
       if (marketExists) {
-        setSelectedMarket(marketParam);
-        setShowPurchaseModal(true);
+        // Use setTimeout to avoid setState during render
+        setTimeout(() => {
+          setSelectedMarket(marketParam);
+          setShowPurchaseModal(true);
+        }, 0);
       }
     }
   }, [marketParam, isConnected]);
@@ -190,19 +195,21 @@ export default function InsuranceClient({ marketParam }: InsuranceClientProps) {
   const { showToast } = useToast();
   const { writeContract: approveToken, data: approveHash, error: approveError, isPending: isApprovePending } = useWriteContract();
   const { writeContract: createPolicy, data: policyHash, error: createError, isPending: isCreatePending } = useWriteContract();
-  const { writeContract: claimPolicy, data: claimHash } = useWriteContract();
+  // Claim contract write - will be used when claim feature is implemented
+  // const { writeContract: claimPolicy, data: claimHash } = useWriteContract();
   
   const { isLoading: isApproving } = useWaitForTransactionReceipt({ hash: approveHash });
   const { isLoading: isCreating, isSuccess: isCreateSuccess } = useWaitForTransactionReceipt({ hash: policyHash });
-  const { isLoading: isClaiming } = useWaitForTransactionReceipt({ hash: claimHash });
+  // Claim transaction receipt - will be used when claim feature is implemented
+  // const { isLoading: isClaiming } = useWaitForTransactionReceipt({ hash: claimHash });
 
   const error = approveError || createError;
   const isPending = isApprovePending || isCreatePending || isApproving;
   const isConfirming = isCreating;
   const isSuccess = isCreateSuccess;
 
-  // Fetch user's policy IDs
-  const { data: policyIds, refetch: refetchPolicyIds } = useReadContract({
+  // Fetch user's policy IDs - will be used when displaying user policies
+  const { refetch: refetchPolicyIds } = useReadContract({
     ...CONTRACTS.PolicyManager,
     functionName: 'getUserPolicies',
     args: address ? [address] : undefined,
@@ -235,81 +242,82 @@ export default function InsuranceClient({ marketParam }: InsuranceClientProps) {
 
   const categories = ['all', ...Array.from(new Set(MARKETS.map((m) => m.category)))];
 
-  // Fetch individual policy details
-  useEffect(() => {
-    const fetchPolicies = async () => {
-      if (!policyIds || policyIds.length === 0) {
-        setUserPolicies([]);
-        return;
-      }
+  // Fetch individual policy details - will be implemented when backend is ready
+  // useEffect(() => {
+  //   const fetchPolicies = async () => {
+  //     if (!policyIds || policyIds.length === 0) {
+  //       setUserPolicies([]);
+  //       return;
+  //     }
 
-      const policies: UserPolicy[] = [];
-      for (const id of policyIds as bigint[]) {
-        try {
-          // In a real app, you'd batch these calls
-          // For now, we'll just show the structure
-          policies.push({
-            id,
-            holder: address || '',
-            marketId: `market-${id}`,
-            coverageAmount: BigInt(0),
-            premium: BigInt(0),
-            startTime: BigInt(0),
-            expiryTime: BigInt(0),
-            status: 0,
-            marketOutcomeHash: '',
-          });
-        } catch (err) {
-          console.error(`Failed to fetch policy ${id}:`, err);
-        }
-      }
-      setUserPolicies(policies);
-    };
+  //     const policies: UserPolicy[] = [];
+  //     for (const id of policyIds as bigint[]) {
+  //       try {
+  //         // In a real app, you'd batch these calls
+  //         // For now, we'll just show the structure
+  //         policies.push({
+  //           id,
+  //           holder: address || '',
+  //           marketId: `market-${id}`,
+  //           coverageAmount: BigInt(0),
+  //           premium: BigInt(0),
+  //           startTime: BigInt(0),
+  //           expiryTime: BigInt(0),
+  //           status: 0,
+  //           marketOutcomeHash: '',
+  //         });
+  //       } catch (err) {
+  //         console.error(`Failed to fetch policy ${id}:`, err);
+  //       }
+  //     }
+  //     setUserPolicies(policies);
+  //   };
 
-    fetchPolicies();
-  }, [policyIds, address]);
+  //   fetchPolicies();
+  // }, [policyIds, address]);
 
-  const currentTime = useMemo(() => BigInt(Math.floor(Date.now() / 1000)), []);
+  // Helper functions for policy status - will be used when policies are displayed
+  // const currentTime = useMemo(() => BigInt(Math.floor(Date.now() / 1000)), []);
 
-  const getPolicyStatus = (policy: UserPolicy): PolicyStatus => {
-    // Status from contract: 0 = Active, 1 = Claimed, 2 = Expired
-    if (policy.status === 1) return 'Claimed';
-    if (policy.status === 2) return 'Expired';
+  // const getPolicyStatus = (policy: UserPolicy): PolicyStatus => {
+  //   // Status from contract: 0 = Active, 1 = Claimed, 2 = Expired
+  //   if (policy.status === 1) return 'Claimed';
+  //   if (policy.status === 2) return 'Expired';
     
-    // Check if expired
-    if (currentTime > policy.expiryTime) return 'Expired';
+  //   // Check if expired
+  //   if (currentTime > policy.expiryTime) return 'Expired';
     
-    // Check if claimable (market resolved against user)
-    // In production, check oracle for market resolution
-    // For now, we'll mark as Active
-    return 'Active';
-  };
+  //   // Check if claimable (market resolved against user)
+  //   // In production, check oracle for market resolution
+  //   // For now, we'll mark as Active
+  //   return 'Active';
+  // };
 
-  const getStatusColor = (status: PolicyStatus) => {
-    switch (status) {
-      case 'Active':
-        return 'text-blue-600 bg-blue-50 border-blue-200';
-      case 'Claimable':
-        return 'text-green-600 bg-green-50 border-green-200';
-      case 'Claimed':
-        return 'text-gray-600 bg-gray-50 border-gray-200';
-      case 'Expired':
-        return 'text-red-600 bg-red-50 border-red-200';
-    }
-  };
+  // const getStatusColor = (status: PolicyStatus) => {
+  //   switch (status) {
+  //     case 'Active':
+  //       return 'text-blue-600 bg-blue-50 border-blue-200';
+  //     case 'Claimable':
+  //       return 'text-green-600 bg-green-50 border-green-200';
+  //     case 'Claimed':
+  //       return 'text-gray-600 bg-gray-50 border-gray-200';
+  //     case 'Expired':
+  //       return 'text-red-600 bg-red-50 border-red-200';
+  //   }
+  // };
 
-  const getStatusIcon = (status: PolicyStatus) => {
-    switch (status) {
-      case 'Active':
-        return <Clock className="w-4 h-4" />;
-      case 'Claimable':
-        return <AlertCircle className="w-4 h-4" />;
-      case 'Claimed':
-        return <CheckCircle className="w-4 h-4" />;
-      case 'Expired':
-        return <XCircle className="w-4 h-4" />;
-    }
-  };
+  // const getStatusIcon = (status: PolicyStatus) => {
+  //   switch (status) {
+  //     case 'Active':
+  //       return <Clock className="w-4 h-4" />;
+  //     case 'Claimable':
+  //       return <AlertCircle className="w-4 h-4" />;
+  //     case 'Claimed':
+  //       return <CheckCircle className="w-4 h-4" />;
+  //     case 'Expired':
+  //       return <XCircle className="w-4 h-4" />;
+  //   }
+  // };
 
   const validateCoverage = (value: string) => {
     setValidationError('');
@@ -371,28 +379,29 @@ export default function InsuranceClient({ marketParam }: InsuranceClientProps) {
     }
   };
 
-  const handleClaim = async (policyId: bigint) => {
-    if (!address) return;
+  // Claim function - will be used when claim feature is implemented
+  // const handleClaim = async (policyId: bigint) => {
+  //   if (!address) return;
 
-    try {
-      showToast('Submitting claim...', 'info');
-      claimPolicy({
-        ...CONTRACTS.PolicyManager,
-        functionName: 'claimPolicy',
-        args: [policyId],
-      });
+  //   try {
+  //     showToast('Submitting claim...', 'info');
+  //     claimPolicy({
+  //       ...CONTRACTS.PolicyManager,
+  //       functionName: 'claimPolicy',
+  //       args: [policyId],
+  //     });
 
-      // Wait for transaction
-      await new Promise(resolve => setTimeout(resolve, 3000));
+  //     // Wait for transaction
+  //     await new Promise(resolve => setTimeout(resolve, 3000));
 
-      showToast('✅ Claim successful! Payout sent to your wallet.', 'success');
-      refetchPolicyIds();
-    } catch (err) {
-      console.error('Claim failed:', err);
-      const errorMessage = err instanceof Error ? err.message : 'Claim failed';
-      showToast(errorMessage, 'error');
-    }
-  };
+  //     showToast('✅ Claim successful! Payout sent to your wallet.', 'success');
+  //     refetchPolicyIds();
+  //   } catch (err) {
+  //     console.error('Claim failed:', err);
+  //     const errorMessage = err instanceof Error ? err.message : 'Claim failed';
+  //     showToast(errorMessage, 'error');
+  //   }
+  // };
 
   if (!isConnected) {
     return (

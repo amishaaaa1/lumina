@@ -201,7 +201,7 @@ export default function Home() {
               </h1>
 
               <p className="text-xl md:text-2xl text-gray-600 mb-12 max-w-3xl mx-auto">
-                Protect your crypto predictions. Get paid if you're wrong. Earn yield by backing traders.
+                Protect your crypto predictions. Get paid if you&apos;re wrong. Earn yield by backing traders.
               </p>
 
               <div className="flex flex-wrap gap-4 justify-center mb-20">
@@ -381,21 +381,21 @@ export default function Home() {
 
             <div className="grid md:grid-cols-3 gap-6 mb-12">
               <PoolCard
-                name="BTC Price Predictions"
-                apy="42%"
-                tvl="$3.2M"
+                name="USDT Insurance Pool"
+                apy="18.5%"
+                tvl="$2.5M"
                 color="blue"
               />
               <PoolCard
-                name="ETH & Altcoin Markets"
-                apy="38%"
-                tvl="$2.1M"
+                name="ETH Insurance Pool"
+                apy="22.4%"
+                tvl="$3.2M"
                 color="purple"
               />
               <PoolCard
-                name="DeFi Protocol Events"
-                apy="45%"
-                tvl="$1.8M"
+                name="BTC Insurance Pool"
+                apy="24.7%"
+                tvl="$4.5M"
                 color="pink"
               />
             </div>
@@ -403,15 +403,15 @@ export default function Home() {
             <div className="bg-white rounded-2xl p-8 mb-12 border-2 border-gray-200 shadow-sm">
               <div className="grid md:grid-cols-3 gap-8 text-center">
                 <div>
-                  <div className="text-4xl font-bold text-gray-900 mb-2">$7.1M</div>
+                  <div className="text-4xl font-bold text-gray-900 mb-2">$16.2M</div>
                   <div className="text-gray-600">Total Value Locked</div>
                 </div>
                 <div>
-                  <div className="text-4xl font-bold text-gray-900 mb-2">$892K</div>
+                  <div className="text-4xl font-bold text-gray-900 mb-2">$1.1M</div>
                   <div className="text-gray-600">Premiums Collected</div>
                 </div>
                 <div>
-                  <div className="text-4xl font-bold text-gray-900 mb-2">41%</div>
+                  <div className="text-4xl font-bold text-gray-900 mb-2">21.3%</div>
                   <div className="text-gray-600">Average APY</div>
                 </div>
               </div>

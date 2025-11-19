@@ -52,12 +52,12 @@ export function Modal({ isOpen, onClose, title, children, size = 'md' }: ModalPr
       <div
         ref={modalRef}
         className={cn(
-          'bg-white rounded-xl shadow-2xl w-full animate-slide-up',
+          'bg-white rounded-xl shadow-2xl w-full animate-slide-up max-h-[90vh] flex flex-col',
           sizes[size]
         )}
       >
         {title && (
-          <div className="flex items-center justify-between p-6 border-b border-gray-200">
+          <div className="flex items-center justify-between p-6 border-b border-gray-200 flex-shrink-0">
             <h2 id="modal-title" className="text-xl font-semibold text-gray-900">
               {title}
             </h2>
@@ -72,7 +72,7 @@ export function Modal({ isOpen, onClose, title, children, size = 'md' }: ModalPr
             </button>
           </div>
         )}
-        <div className="p-6">{children}</div>
+        <div className="p-6 overflow-y-auto">{children}</div>
       </div>
     </div>
   );
