@@ -8,6 +8,7 @@ import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Progress } from '@/components/ui/Progress';
 import { useAccount } from 'wagmi';
+import { useState } from 'react';
 
 // Helper function to calculate days until expiry
 const getDaysUntilExpiry = (expiryTime: number) => {

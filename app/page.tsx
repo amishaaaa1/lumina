@@ -203,11 +203,8 @@ export default function Home() {
                 </span>
               </h1>
 
-              <p className="text-xl md:text-2xl text-gray-600 mb-4 max-w-3xl mx-auto">
-                Protect your crypto predictions. Get paid from insurance pool if you&apos;re wrong. Stake & earn by backing traders.
-              </p>
-              <p className="text-lg text-blue-600 font-semibold mb-12">
-                Works with Polymarket, Hyperliquid, HL Arena & more
+              <p className="text-xl md:text-2xl text-gray-600 mb-12 max-w-3xl mx-auto">
+                The first AI-powered insurance layer for prediction markets. Trade with confidence, never lose everything.
               </p>
 
               <div className="flex flex-wrap gap-4 justify-center mb-20">
@@ -316,18 +313,9 @@ export default function Home() {
               <h2 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6">
                 How Lumina Works
               </h2>
-              <p className="text-xl text-gray-600 mb-4">
+              <p className="text-xl text-gray-600 mb-8">
                 Add-on insurance layer for any prediction market
               </p>
-              <div className="flex items-center justify-center gap-3 text-sm text-blue-600 font-semibold">
-                <span className="px-3 py-1 bg-blue-50 rounded-full border border-blue-200">Polymarket</span>
-                <span>•</span>
-                <span className="px-3 py-1 bg-blue-50 rounded-full border border-blue-200">Hyperliquid</span>
-                <span>•</span>
-                <span className="px-3 py-1 bg-blue-50 rounded-full border border-blue-200">HL Arena</span>
-                <span>•</span>
-                <span className="px-3 py-1 bg-blue-50 rounded-full border border-blue-200">Seedify</span>
-              </div>
             </div>
 
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">

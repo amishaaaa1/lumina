@@ -219,19 +219,6 @@ export default function InsuranceClient({ marketParam }: InsuranceClientProps) {
   });
 
   // Transform Polymarket data to display format
-  const transformedMarkets = useMemo(() => {
-    return polymarketData.map((market) => ({
-      ...market,
-      icon: getCategoryIcon(market.category, market.title),
-      logoColor: getLogoColor(market.category),
-      poolLiquidity: `$${(market.liquidity / 1000000).toFixed(1)}M`,
-      votes: market.insuredCount,
-      // AI will calculate premium dynamically
-      premium: market.premium,
-      coverage: `$${(market.volume * 0.3 / 1000000).toFixed(1)}M`,
-    }));
-  }, [polymarketData]);
-
   const filteredMarkets = useMemo(() => {
     const filtered = transformedMarkets.filter((m) => {
       const matchesSearch =
@@ -378,7 +365,7 @@ export default function InsuranceClient({ marketParam }: InsuranceClientProps) {
       createPolicy({
         ...CONTRACTS.PolicyManager,
         functionName: 'createPolicy',
-        args: [address, selectedMarket, amount, premiumAmount, durationSeconds],
+        args: [address, selectedMarket.id, amount, premiumAmount, durationSeconds],
       });
 
       // Wait for transaction
