@@ -9,6 +9,7 @@ import { formatDistanceToNow } from 'date-fns';
 import { CONTRACTS, ASSET_TOKEN } from '@/lib/contracts';
 import { LeaderboardSection } from '@/components/leaderboard/LeaderboardSection';
 import { usePolymarketData } from '@/hooks/usePolymarketData';
+import { AnimatedPrice } from '@/components/ui/AnimatedPrice';
 // Removed MarketResolutionStatus - internal mechanism, not user-facing
 
 interface PredictionMarket {
@@ -37,43 +38,91 @@ export default function PredictionsClient() {
   const { showToast } = useToast();
   const [markets, setMarkets] = useState<PredictionMarket[]>([]);
   const [filter, setFilter] = useState<'all' | 'active' | 'resolved'>('active');
+  const [categoryFilter, setCategoryFilter] = useState<string>('all');
   const [selectedMarket, setSelectedMarket] = useState<PredictionMarket | null>(null);
   const [betAmount, setBetAmount] = useState('');
   const [betOutcome, setBetOutcome] = useState<'Yes' | 'No'>('Yes');
   const [placing, setPlacing] = useState(false);
   const [insuranceEnabled, setInsuranceEnabled] = useState(true); // Toggle for insurance
 
-  // Use Polymarket data
-  const { markets: polymarketData, loading, error } = usePolymarketData();
+  // Use Polymarket data with category filter
+  const { markets: polymarketData, loading, error } = usePolymarketData(categoryFilter === 'all' ? undefined : categoryFilter);
 
   useEffect(() => {
     console.log('🔍 Polymarket Data:', { 
       count: polymarketData.length, 
       loading, 
       error,
+      categoryFilter,
       sample: polymarketData[0] 
     });
     
     if (polymarketData.length > 0) {
       // Transform Polymarket data to PredictionMarket format
       const transformedMarkets: PredictionMarket[] = polymarketData.map((market, index) => {
-        const yesPrice = market.sentiment.bullish / 100;
-        const noPrice = market.sentiment.bearish / 100;
+        // Sentiment is already in percentage (0-100), no need to divide
+        const yesPrice = market.sentiment.bullish;
+        const noPrice = market.sentiment.bearish;
+        
+        // Use category from API (already normalized)
+        const normalizedCategory = market.category || 'Other';
+        
+        // Extract protocol/subject from title more intelligently
+        const titleLower = market.title.toLowerCase();
+        const titleWords = market.title.split(' ');
+        let protocol = normalizedCategory; // Default to category name
+        
+        // Look for recognizable entities in the title
+        if (titleLower.includes('bitcoin') || titleLower.includes('btc')) {
+          protocol = 'Bitcoin';
+        } else if (titleLower.includes('ethereum') || titleLower.includes('eth')) {
+          protocol = 'Ethereum';
+        } else if (titleLower.includes('solana') || titleLower.includes('sol')) {
+          protocol = 'Solana';
+        } else if (titleLower.includes('fed') || titleLower.includes('federal reserve')) {
+          protocol = 'Fed';
+        } else if (titleLower.includes('trump')) {
+          protocol = 'Trump';
+        } else if (titleLower.includes('biden')) {
+          protocol = 'Biden';
+        } else if (titleLower.includes('lakers')) {
+          protocol = 'Lakers';
+        } else if (titleLower.includes('warriors')) {
+          protocol = 'Warriors';
+        } else if (titleLower.includes('real madrid')) {
+          protocol = 'Real Madrid';
+        } else if (titleLower.includes('barcelona')) {
+          protocol = 'Barcelona';
+        } else if (titleLower.includes('manchester')) {
+          protocol = 'Man United';
+        } else if (titleLower.includes('premier league')) {
+          protocol = 'Premier League';
+        } else if (titleLower.includes('champions league') || titleLower.includes('ucl')) {
+          protocol = 'Champions League';
+        } else if (titleLower.includes('nba')) {
+          protocol = 'NBA';
+        } else if (titleLower.includes('nfl')) {
+          protocol = 'NFL';
+        } else if (titleWords.length > 0) {
+          // Use first meaningful word (not "Will", "How", "Which", etc.)
+          const skipWords = ['will', 'how', 'which', 'when', 'who', 'what', 'is', 'are', 'the', 'a', 'an', 'does', 'do', 'can'];
+          protocol = titleWords.find(word => !skipWords.includes(word.toLowerCase())) || normalizedCategory;
+        }
         
         return {
           id: market.id,
           marketId: index + 1,
-          protocol: market.title.split(' ')[0] || 'Market',
+          protocol: protocol,
           question: market.title,
-          icon: getCategoryIcon(market.category),
-          riskType: market.category,
+          icon: getCategoryIcon(normalizedCategory, market.title),
+          riskType: normalizedCategory,
           deadline: market.endDate,
           status: market.active ? 'Active' : 'Resolved',
           outcome: 'Unresolved',
-          yesVotes: Math.floor(market.volume * yesPrice / 1000),
-          noVotes: Math.floor(market.volume * noPrice / 1000),
-          yesPool: market.volume * yesPrice,
-          noPool: market.volume * noPrice,
+          yesVotes: Math.floor(market.volume * (yesPrice / 100) / 1000),
+          noVotes: Math.floor(market.volume * (noPrice / 100) / 1000),
+          yesPool: market.volume * (yesPrice / 100),
+          noPool: market.volume * (noPrice / 100),
           yesOdds: market.sentiment.bullish.toString(),
           noOdds: market.sentiment.bearish.toString(),
           totalVolume: market.volume,
@@ -82,7 +131,7 @@ export default function PredictionsClient() {
         };
       });
 
-      // Apply filter
+      // Apply status filter
       const filtered = transformedMarkets.filter(m => {
         if (filter === 'all') return true;
         if (filter === 'active') return m.status === 'Active';
@@ -92,7 +141,7 @@ export default function PredictionsClient() {
 
       setMarkets(filtered);
     }
-  }, [polymarketData, filter, loading, error]);
+  }, [polymarketData, filter, loading, error, categoryFilter]);
 
   useEffect(() => {
     if (error) {
@@ -100,19 +149,48 @@ export default function PredictionsClient() {
     }
   }, [error, showToast]);
 
-  // Helper function to get icon based on category
-  const getCategoryIcon = (category: string): string => {
+  // Helper function to get icon based on category and title
+  const getCategoryIcon = (category: string, title?: string): string => {
+    const categoryLower = category.toLowerCase();
+    const titleLower = title?.toLowerCase() || '';
+    
+    // Check title for specific icons first
+    if (titleLower.includes('bitcoin') || titleLower.includes('btc')) return '₿';
+    if (titleLower.includes('ethereum') || titleLower.includes('eth')) return '⟠';
+    if (titleLower.includes('solana') || titleLower.includes('sol')) return '◎';
+    if (titleLower.includes('fed') || titleLower.includes('federal reserve')) return '🏦';
+    if (titleLower.includes('trump')) return '🇺🇸';
+    if (titleLower.includes('biden')) return '🇺🇸';
+    if (titleLower.includes('election')) return '🗳️';
+    if (titleLower.includes('lakers')) return '🏀';
+    if (titleLower.includes('warriors')) return '🏀';
+    if (titleLower.includes('nba')) return '🏀';
+    if (titleLower.includes('nfl')) return '🏈';
+    if (titleLower.includes('football') && !titleLower.includes('american')) return '⚽';
+    if (titleLower.includes('soccer')) return '⚽';
+    if (titleLower.includes('real madrid') || titleLower.includes('barcelona')) return '⚽';
+    if (titleLower.includes('premier league') || titleLower.includes('champions league')) return '⚽';
+    
+    // Fallback to category icons
     const icons: Record<string, string> = {
-      'Crypto': '₿',
-      'Politics': '🗳️',
-      'Sports': '⚽',
-      'Tech': '💻',
-      'Finance': '💰',
-      'Science': '🔬',
-      'Entertainment': '🎬',
-      'Other': '📊',
+      'crypto': '₿',
+      'cryptocurrency': '₿',
+      'politics': '🗳️',
+      'sports': '⚽',
+      'football': '⚽',
+      'soccer': '⚽',
+      'basketball': '🏀',
+      'tech': '💻',
+      'technology': '💻',
+      'ai': '🤖',
+      'finance': '💰',
+      'business': '💼',
+      'science': '🔬',
+      'entertainment': '🎬',
+      'pop culture': '🎬',
+      'other': '📊',
     };
-    return icons[category] || '📊';
+    return icons[categoryLower] || '📊';
   };
 
   // Contract interactions
@@ -265,10 +343,36 @@ export default function PredictionsClient() {
           Protected DeFi Predictions
         </h1>
         <p className="text-lg text-gray-600">
-          Every bet is protected. Get 60-70% back if you&apos;re wrong.
+          Every bet is protected. Get 20-70% back if you&apos;re wrong.
         </p>
       </div>
       
+      {/* Category Filter */}
+      <div className="mb-6">
+        <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide">
+          {['all', 'crypto', 'politics', 'sports', 'tech', 'finance', 'science', 'entertainment'].map((cat) => (
+            <button
+              key={cat}
+              onClick={() => setCategoryFilter(cat)}
+              className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-all ${
+                categoryFilter === cat
+                  ? 'bg-gray-900 text-white shadow-lg'
+                  : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-200'
+              }`}
+            >
+              {cat === 'all' ? '🌐 All' : 
+               cat === 'crypto' ? '₿ Crypto' :
+               cat === 'politics' ? '🗳️ Politics' :
+               cat === 'sports' ? '⚽ Sports' :
+               cat === 'tech' ? '💻 Tech' :
+               cat === 'finance' ? '💰 Finance' :
+               cat === 'science' ? '🔬 Science' :
+               cat === 'entertainment' ? '🎬 Entertainment' : cat}
+            </button>
+          ))}
+        </div>
+      </div>
+
       {/* Filter Tabs */}
       <div className="flex gap-3 mb-8 border-b border-gray-200">
         <button
@@ -323,12 +427,11 @@ export default function PredictionsClient() {
             <div className="p-6 bg-gradient-to-br from-gray-50 to-white border-b border-gray-100 flex-shrink-0">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 bg-white rounded-xl shadow-sm flex items-center justify-center text-2xl border border-gray-100">
+                  <div className="w-10 h-10 bg-white rounded-xl shadow-sm flex items-center justify-center text-xl border border-gray-100">
                     {market.icon}
                   </div>
                   <div>
-                    <h3 className="text-lg font-bold text-gray-900">{market.protocol}</h3>
-                    <span className="text-xs text-gray-500 font-medium">{market.riskType} Risk</span>
+                    <span className="text-xs text-gray-500 font-medium uppercase tracking-wide">{market.riskType}</span>
                   </div>
                 </div>
                 {market.insuranceEnabled && (
@@ -342,9 +445,9 @@ export default function PredictionsClient() {
               </div>
 
               {/* Question */}
-              <p className="text-sm text-gray-700 leading-relaxed line-clamp-2">
+              <h3 className="text-base font-bold text-gray-900 leading-snug line-clamp-3 mb-3">
                 {market.question}
-              </p>
+              </h3>
               
               {/* Insurance Info */}
               <div className="mt-3 pt-3 border-t border-gray-100">
@@ -381,12 +484,16 @@ export default function PredictionsClient() {
               <div className="grid grid-cols-2 gap-3">
                 <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-4 border border-green-100">
                   <div className="text-xs font-semibold text-green-700 mb-1">YES</div>
-                  <div className="text-2xl font-bold text-green-600">{market.yesOdds}%</div>
+                  <div className="text-2xl font-bold">
+                    <AnimatedPrice value={parseFloat(market.yesOdds)} decimals={1} suffix="%" className="text-green-600" />
+                  </div>
                   <div className="text-xs text-green-600 mt-1">${(market.yesPool / 1000).toFixed(1)}K</div>
                 </div>
                 <div className="bg-gradient-to-br from-red-50 to-rose-50 rounded-xl p-4 border border-red-100">
                   <div className="text-xs font-semibold text-red-700 mb-1">NO</div>
-                  <div className="text-2xl font-bold text-red-600">{market.noOdds}%</div>
+                  <div className="text-2xl font-bold">
+                    <AnimatedPrice value={parseFloat(market.noOdds)} decimals={1} suffix="%" className="text-red-600" />
+                  </div>
                   <div className="text-xs text-red-600 mt-1">${(market.noPool / 1000).toFixed(1)}K</div>
                 </div>
               </div>
@@ -508,8 +615,8 @@ export default function PredictionsClient() {
                     }`}
                   >
                     <div className="text-xs font-semibold text-gray-600 mb-1">YES</div>
-                    <div className="text-2xl font-bold text-green-600 mb-1">
-                      {selectedMarket.yesOdds}%
+                    <div className="text-2xl font-bold mb-1">
+                      <AnimatedPrice value={parseFloat(selectedMarket.yesOdds)} decimals={1} suffix="%" className="text-green-600" />
                     </div>
                     <div className="text-xs text-gray-500">
                       ${(selectedMarket.yesPool / 1000).toFixed(1)}K pool
@@ -524,8 +631,8 @@ export default function PredictionsClient() {
                     }`}
                   >
                     <div className="text-xs font-semibold text-gray-600 mb-1">NO</div>
-                    <div className="text-2xl font-bold text-red-600 mb-1">
-                      {selectedMarket.noOdds}%
+                    <div className="text-2xl font-bold mb-1">
+                      <AnimatedPrice value={parseFloat(selectedMarket.noOdds)} decimals={1} suffix="%" className="text-red-600" />
                     </div>
                     <div className="text-xs text-gray-500">
                       ${(selectedMarket.noPool / 1000).toFixed(1)}K pool

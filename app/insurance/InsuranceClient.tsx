@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useMemo, useEffect } from 'react';
-import { useAccount, useReadContract, useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
+import { useAccount, useReadContract, useWriteContract, useWaitForTransactionReceipt, useBalance } from 'wagmi';
 import { parseUnits } from 'viem';
 import { useConnectModal } from '@rainbow-me/rainbowkit';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
@@ -195,10 +195,16 @@ export default function InsuranceClient({ marketParam }: InsuranceClientProps) {
         : undefined,
   });
 
-  const { data: balance } = useReadContract({
+  // Fetch USDT token balance
+  const { data: usdtBalance, isLoading: isUsdtBalanceLoading } = useReadContract({
     ...ASSET_TOKEN,
     functionName: 'balanceOf',
     args: address ? [address] : undefined,
+  });
+
+  // Fetch native BNB balance
+  const { data: nativeBalance, isLoading: isNativeBalanceLoading } = useBalance({
+    address: address,
   });
 
   const { showToast } = useToast();
@@ -790,8 +796,53 @@ export default function InsuranceClient({ marketParam }: InsuranceClientProps) {
             )}
 
             {/* Balance */}
-            <div className="text-xs text-gray-500">
-              Your balance: {balance ? formatUSD(balance) : '$0.00'}
+            <div className="p-3 bg-gray-50 rounded-lg border border-gray-200 space-y-2">
+              {/* Native BNB Balance */}
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-gray-600">Your BNB Balance:</span>
+                <span className="text-sm font-semibold text-gray-900">
+                  {isNativeBalanceLoading ? (
+                    <span className="flex items-center gap-2">
+                      <LoadingSpinner size="sm" />
+                    </span>
+                  ) : nativeBalance ? (
+                    <span>{parseFloat(nativeBalance.formatted).toFixed(4)} {nativeBalance.symbol}</span>
+                  ) : (
+                    <span className="text-gray-500">0.0000 BNB</span>
+                  )}
+                </span>
+              </div>
+
+              {/* USDT Balance */}
+              <div className="flex items-center justify-between pt-2 border-t border-gray-200">
+                <span className="text-sm text-gray-600">Your USDT Balance:</span>
+                <span className="text-sm font-semibold text-gray-900">
+                  {isUsdtBalanceLoading ? (
+                    <span className="flex items-center gap-2">
+                      <LoadingSpinner size="sm" />
+                    </span>
+                  ) : usdtBalance && usdtBalance > 0n ? (
+                    formatUSD(usdtBalance)
+                  ) : (
+                    <span className="text-gray-500">$0.00</span>
+                  )}
+                </span>
+              </div>
+
+              {/* Help message if no USDT */}
+              {!isUsdtBalanceLoading && (!usdtBalance || usdtBalance === 0n) && (
+                <div className="pt-2 border-t border-gray-200">
+                  <p className="text-xs text-amber-600 mb-1">⚠️ You need USDT to purchase insurance</p>
+                  <a
+                    href="https://testnet.bnbchain.org/faucet-smart"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-xs text-blue-600 hover:text-blue-700 underline"
+                  >
+                    Get testnet tokens →
+                  </a>
+                </div>
+              )}
             </div>
 
             {/* Error */}
