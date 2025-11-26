@@ -1,6 +1,5 @@
 import { Suspense } from 'react';
 import { Navigation } from '@/components/layout/Navigation';
-import { Footer } from '@/components/layout/Footer';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import InsuranceWrapper from './InsuranceWrapper';
 
@@ -35,8 +34,6 @@ export default function InsurancePage() {
           </Suspense>
         </div>
       </div>
-      
-      <Footer />
     </div>
   );
 }

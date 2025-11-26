@@ -8,6 +8,7 @@ import { useToast } from '@/hooks/useToast';
 import { formatDistanceToNow } from 'date-fns';
 import { CONTRACTS, ASSET_TOKEN } from '@/lib/contracts';
 import { LeaderboardSection } from '@/components/leaderboard/LeaderboardSection';
+import { usePolymarketData } from '@/hooks/usePolymarketData';
 // Removed MarketResolutionStatus - internal mechanism, not user-facing
 
 interface PredictionMarket {
@@ -35,166 +36,83 @@ export default function PredictionsClient() {
   const { address } = useAccount();
   const { showToast } = useToast();
   const [markets, setMarkets] = useState<PredictionMarket[]>([]);
-  const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<'all' | 'active' | 'resolved'>('active');
   const [selectedMarket, setSelectedMarket] = useState<PredictionMarket | null>(null);
   const [betAmount, setBetAmount] = useState('');
   const [betOutcome, setBetOutcome] = useState<'Yes' | 'No'>('Yes');
   const [placing, setPlacing] = useState(false);
+  const [insuranceEnabled, setInsuranceEnabled] = useState(true); // Toggle for insurance
+
+  // Use Polymarket data
+  const { markets: polymarketData, loading, error } = usePolymarketData();
 
   useEffect(() => {
-    loadMarkets();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filter]);
+    console.log('🔍 Polymarket Data:', { 
+      count: polymarketData.length, 
+      loading, 
+      error,
+      sample: polymarketData[0] 
+    });
+    
+    if (polymarketData.length > 0) {
+      // Transform Polymarket data to PredictionMarket format
+      const transformedMarkets: PredictionMarket[] = polymarketData.map((market, index) => {
+        const yesPrice = market.sentiment.bullish / 100;
+        const noPrice = market.sentiment.bearish / 100;
+        
+        return {
+          id: market.id,
+          marketId: index + 1,
+          protocol: market.title.split(' ')[0] || 'Market',
+          question: market.title,
+          icon: getCategoryIcon(market.category),
+          riskType: market.category,
+          deadline: market.endDate,
+          status: market.active ? 'Active' : 'Resolved',
+          outcome: 'Unresolved',
+          yesVotes: Math.floor(market.volume * yesPrice / 1000),
+          noVotes: Math.floor(market.volume * noPrice / 1000),
+          yesPool: market.volume * yesPrice,
+          noPool: market.volume * noPrice,
+          yesOdds: market.sentiment.bullish.toString(),
+          noOdds: market.sentiment.bearish.toString(),
+          totalVolume: market.volume,
+          participantCount: market.insuredCount,
+          insuranceEnabled: true,
+        };
+      });
 
-  const loadMarkets = async () => {
-    try {
-      setLoading(true);
-      const statusParam = filter === 'all' ? '' : `?status=${filter === 'active' ? 'Active' : 'Resolved'}`;
-      
-      // Try to fetch from API, fallback to mock data
-      try {
-        const response = await fetch(`/api/predictions${statusParam}`);
-        if (response.ok) {
-          const data = await response.json();
-          setMarkets(data);
-          return;
-        }
-      } catch {
-        console.log('API not available, using mock data');
-      }
-      
-      // Fallback to mock data
-      const mockMarkets: PredictionMarket[] = [
-        {
-          id: '1',
-          marketId: 1,
-          protocol: 'Uniswap V4',
-          question: 'Will Uniswap V4 be exploited before Q2 2026?',
-          riskType: 'Exploit Risk',
-          deadline: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
-          status: 'Active',
-          outcome: 'Unresolved',
-          yesVotes: 105,
-          noVotes: 129,
-          yesPool: 45000,
-          noPool: 55000,
-          totalVolume: 100000,
-          yesOdds: '45',
-          noOdds: '55',
-          participantCount: 234,
-          insuranceEnabled: true,
-          icon: '🦄',
-        },
-        {
-          id: '2',
-          marketId: 2,
-          protocol: 'Circle',
-          question: 'Will USDC depeg below $0.95 in the next 90 days?',
-          riskType: 'Depeg',
-          deadline: new Date(Date.now() + 60 * 24 * 60 * 60 * 1000).toISOString(),
-          status: 'Active',
-          outcome: 'Unresolved',
-          yesVotes: 68,
-          noVotes: 499,
-          yesPool: 12000,
-          noPool: 88000,
-          totalVolume: 100000,
-          yesOdds: '12',
-          noOdds: '88',
-          participantCount: 567,
-          insuranceEnabled: true,
-          icon: '💵',
-        },
-        {
-          id: '3',
-          marketId: 3,
-          protocol: 'Aave V3',
-          question: 'Will Aave V3 be exploited before end of 2026?',
-          riskType: 'Exploit Risk',
-          deadline: new Date(Date.now() + 45 * 24 * 60 * 60 * 1000).toISOString(),
-          status: 'Active',
-          outcome: 'Unresolved',
-          yesVotes: 34,
-          noVotes: 389,
-          yesPool: 8000,
-          noPool: 92000,
-          totalVolume: 100000,
-          yesOdds: '8',
-          noOdds: '92',
-          participantCount: 423,
-          insuranceEnabled: true,
-          icon: '👻',
-        },
-        {
-          id: '4',
-          marketId: 4,
-          protocol: 'Curve Finance',
-          question: 'Will Curve pools be exploited in Q1 2026?',
-          riskType: 'Exploit Risk',
-          deadline: new Date(Date.now() + 20 * 24 * 60 * 60 * 1000).toISOString(),
-          status: 'Active',
-          outcome: 'Unresolved',
-          yesVotes: 66,
-          noVotes: 123,
-          yesPool: 35000,
-          noPool: 65000,
-          totalVolume: 100000,
-          yesOdds: '35',
-          noOdds: '65',
-          participantCount: 189,
-          insuranceEnabled: true,
-          icon: '🌊',
-        },
-        {
-          id: '5',
-          marketId: 5,
-          protocol: 'Lido stETH',
-          question: 'Will stETH depeg from ETH by more than 5%?',
-          riskType: 'Depeg Risk',
-          deadline: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString(),
-          status: 'Active',
-          outcome: 'Unresolved',
-          yesVotes: 102,
-          noVotes: 576,
-          yesPool: 15000,
-          noPool: 85000,
-          totalVolume: 100000,
-          yesOdds: '15',
-          noOdds: '85',
-          participantCount: 678,
-          insuranceEnabled: true,
-          icon: '🏛️',
-        },
-        {
-          id: '6',
-          marketId: 6,
-          protocol: 'MakerDAO',
-          question: 'Will MakerDAO be exploited in 2026?',
-          riskType: 'Exploit Risk',
-          deadline: new Date(Date.now() + 75 * 24 * 60 * 60 * 1000).toISOString(),
-          status: 'Active',
-          outcome: 'Unresolved',
-          yesVotes: 45,
-          noVotes: 847,
-          yesPool: 5000,
-          noPool: 95000,
-          totalVolume: 100000,
-          yesOdds: '5',
-          noOdds: '95',
-          participantCount: 892,
-          insuranceEnabled: true,
-          icon: '🏦',
-        },
-      ];
-      
-      setMarkets(filter === 'active' ? mockMarkets : filter === 'resolved' ? [] : mockMarkets);
-    } catch (error) {
-      console.error('Failed to load markets:', error);
-      showToast('Failed to load prediction markets', 'error');
-    } finally {
-      setLoading(false);
+      // Apply filter
+      const filtered = transformedMarkets.filter(m => {
+        if (filter === 'all') return true;
+        if (filter === 'active') return m.status === 'Active';
+        if (filter === 'resolved') return m.status === 'Resolved';
+        return true;
+      });
+
+      setMarkets(filtered);
     }
+  }, [polymarketData, filter, loading, error]);
+
+  useEffect(() => {
+    if (error) {
+      showToast('Failed to load markets from Polymarket', 'error');
+    }
+  }, [error, showToast]);
+
+  // Helper function to get icon based on category
+  const getCategoryIcon = (category: string): string => {
+    const icons: Record<string, string> = {
+      'Crypto': '₿',
+      'Politics': '🗳️',
+      'Sports': '⚽',
+      'Tech': '💻',
+      'Finance': '💰',
+      'Science': '🔬',
+      'Entertainment': '🎬',
+      'Other': '📊',
+    };
+    return icons[category] || '📊';
   };
 
   // Contract interactions
@@ -219,40 +137,52 @@ export default function PredictionsClient() {
     try {
       setPlacing(true);
       
-      const amount = parseUnits(betAmount, 18); // USDC has 18 decimals on testnet
+      const betAmountParsed = parseUnits(betAmount, 18);
+      const totalAmount = insuranceEnabled 
+        ? parseUnits((parseFloat(betAmount) + calculateInsurancePremium()).toFixed(2), 18)
+        : betAmountParsed;
+      
       const marketId = BigInt(selectedMarket.marketId);
       
       // Check if approval needed
       const currentAllowance = allowance as bigint || 0n;
-      if (currentAllowance < amount) {
+      if (currentAllowance < totalAmount) {
         showToast('Approving USDC...', 'info');
         
         approveToken({
           ...ASSET_TOKEN,
           functionName: 'approve',
-          args: [CONTRACTS.PredictionMarket.address, amount],
+          args: [CONTRACTS.PredictionMarket.address, totalAmount],
         });
         
         // Wait for approval
         await new Promise(resolve => setTimeout(resolve, 3000));
       }
       
-      // Place bet
-      showToast('Placing bet...', 'info');
+      // Place bet (with or without insurance)
+      const message = insuranceEnabled 
+        ? 'Placing protected bet...' 
+        : 'Placing bet...';
+      showToast(message, 'info');
+      
+      // Place bet (insurance handled by premium in amount)
       placeBet({
         ...CONTRACTS.PredictionMarket,
         functionName: 'placeBet',
-        args: [marketId, betOutcome === 'Yes', amount],
+        args: [marketId, betOutcome === 'Yes', betAmountParsed],
       });
       
       // Wait for transaction
       await new Promise(resolve => setTimeout(resolve, 3000));
       
-      showToast(`✅ Placed ${betAmount} USDC on ${betOutcome}!`, 'success');
+      const successMsg = insuranceEnabled
+        ? `✅ Placed protected bet: ${betAmount} USDC on ${betOutcome}!`
+        : `✅ Placed ${betAmount} USDC on ${betOutcome}!`;
+      showToast(successMsg, 'success');
       
       setSelectedMarket(null);
       setBetAmount('');
-      loadMarkets();
+      setInsuranceEnabled(true); // Reset to default
     } catch (error) {
       console.error('Failed to place prediction:', error);
       const errorMessage = error instanceof Error ? error.message : 'Failed to place prediction';
@@ -466,25 +396,26 @@ export default function PredictionsClient() {
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
-                <span>Closes {formatDistanceToNow(new Date(market.deadline), { addSuffix: true })}</span>
+                <span>
+                  {market.deadline && !isNaN(new Date(market.deadline).getTime())
+                    ? `Closes ${formatDistanceToNow(new Date(market.deadline), { addSuffix: true })}`
+                    : 'Closing date TBA'
+                  }
+                </span>
               </div>
 
               {/* Action Button */}
               {market.status === 'Active' && (
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    if (address) setSelectedMarket(market);
-                  }}
-                  className={`w-full py-3 rounded-xl font-semibold transition-all duration-200 ${
-                    address
-                      ? 'bg-gray-900 text-white hover:bg-gray-800 group-hover:shadow-lg'
-                      : 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                  }`}
-                  disabled={!address}
+                <a
+                  href={`/predictions/${market.id}`}
+                  className="w-full py-3 rounded-xl font-semibold transition-all duration-200 bg-gray-900 text-white hover:bg-gray-800 group-hover:shadow-lg flex items-center justify-center gap-2"
+                  onClick={(e) => e.stopPropagation()}
                 >
-                  {address ? 'Vote' : 'Connect Wallet'}
-                </button>
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                  </svg>
+                  Trade Now
+                </a>
               )}
 
               {market.status === 'Resolved' && (
@@ -633,27 +564,57 @@ export default function PredictionsClient() {
                 </div>
               </div>
 
-              {/* Automatic Insurance Info */}
+              {/* Insurance Toggle */}
               {betAmount && parseFloat(betAmount) > 0 && (
-                <div className="bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-200 rounded-xl p-4">
-                  <div className="flex items-start gap-3">
-                    <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center shrink-0">
-                      <svg className="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                <div className="space-y-3">
+                  {/* Toggle Switch */}
+                  <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl border border-gray-200">
+                    <div className="flex items-center gap-3">
+                      <svg className="w-5 h-5 text-gray-700" fill="currentColor" viewBox="0 0 20 20">
                         <path fillRule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                       </svg>
-                    </div>
-                    <div className="flex-1">
-                      <div className="text-sm font-bold text-blue-900 mb-1">
-                        Protected Bet
-                      </div>
-                      <div className="text-xs text-blue-700 leading-relaxed">
-                        Get {getRefundPercentage(selectedMarket)}% back if you lose (${calculateInsuranceRefund().toFixed(2)})
-                      </div>
-                      <div className="text-xs text-blue-600 font-semibold mt-1">
-                        Insurance included • Premium: {getPremiumPercentage(selectedMarket)}%
+                      <div>
+                        <div className="text-sm font-semibold text-gray-900">Add Insurance Protection</div>
+                        <div className="text-xs text-gray-600">Get {getRefundPercentage(selectedMarket)}% back if you lose</div>
                       </div>
                     </div>
+                    <button
+                      onClick={() => setInsuranceEnabled(!insuranceEnabled)}
+                      className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                        insuranceEnabled ? 'bg-blue-600' : 'bg-gray-300'
+                      }`}
+                    >
+                      <span
+                        className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                          insuranceEnabled ? 'translate-x-6' : 'translate-x-1'
+                        }`}
+                      />
+                    </button>
                   </div>
+
+                  {/* Insurance Details (when enabled) */}
+                  {insuranceEnabled && (
+                    <div className="bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-200 rounded-xl p-4 animate-in fade-in duration-200">
+                      <div className="flex items-start gap-3">
+                        <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center shrink-0">
+                          <svg className="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                          </svg>
+                        </div>
+                        <div className="flex-1">
+                          <div className="text-sm font-bold text-blue-900 mb-1">
+                            Protected Bet
+                          </div>
+                          <div className="text-xs text-blue-700 leading-relaxed">
+                            Get {getRefundPercentage(selectedMarket)}% back if you lose (${calculateInsuranceRefund().toFixed(2)})
+                          </div>
+                          <div className="text-xs text-blue-600 font-semibold mt-1">
+                            Premium: {getPremiumPercentage(selectedMarket)}% (+${calculateInsurancePremium().toFixed(2)})
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
 
@@ -666,16 +627,18 @@ export default function PredictionsClient() {
                       ${parseFloat(betAmount).toFixed(2)}
                     </span>
                   </div>
-                  <div className="flex justify-between items-center text-sm">
-                    <span className="text-gray-600">Insurance premium</span>
-                    <span className="text-gray-900 font-medium">
-                      +${calculateInsurancePremium().toFixed(2)}
-                    </span>
-                  </div>
+                  {insuranceEnabled && (
+                    <div className="flex justify-between items-center text-sm">
+                      <span className="text-gray-600">Insurance premium</span>
+                      <span className="text-gray-900 font-medium">
+                        +${calculateInsurancePremium().toFixed(2)}
+                      </span>
+                    </div>
+                  )}
                   <div className="flex justify-between items-center text-sm pt-2 border-t border-gray-300">
                     <span className="text-gray-700 font-medium">Total cost</span>
                     <span className="text-gray-900 font-bold">
-                      ${(parseFloat(betAmount) + calculateInsurancePremium()).toFixed(2)}
+                      ${(parseFloat(betAmount) + (insuranceEnabled ? calculateInsurancePremium() : 0)).toFixed(2)}
                     </span>
                   </div>
                   <div className="pt-2 border-t border-gray-300 space-y-1">
@@ -687,8 +650,11 @@ export default function PredictionsClient() {
                     </div>
                     <div className="flex justify-between items-center">
                       <span className="text-xs text-gray-600">If you lose</span>
-                      <span className="text-sm text-blue-600 font-bold">
-                        Get ${calculateInsuranceRefund().toFixed(2)} back
+                      <span className={`text-sm font-bold ${insuranceEnabled ? 'text-blue-600' : 'text-red-600'}`}>
+                        {insuranceEnabled 
+                          ? `Get $${calculateInsuranceRefund().toFixed(2)} back`
+                          : 'Lose all'
+                        }
                       </span>
                     </div>
                   </div>
@@ -713,8 +679,10 @@ export default function PredictionsClient() {
                     </svg>
                     Processing...
                   </span>
-                ) : (
+                ) : insuranceEnabled ? (
                   `Place Protected Bet (${(parseFloat(betAmount) + calculateInsurancePremium()).toFixed(0)} USDC)`
+                ) : (
+                  `Place Bet (${parseFloat(betAmount).toFixed(0)} USDC)`
                 )}
               </button>
             </div>

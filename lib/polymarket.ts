@@ -39,11 +39,16 @@ const POLYMARKET_API = 'https://gamma-api.polymarket.com';
  */
 export async function fetchTrendingMarkets(limit = 10): Promise<PolymarketEvent[]> {
   try {
-    const response = await fetch(`${POLYMARKET_API}/events?limit=${limit}&active=true&closed=false`, {
+    // Use Next.js API route to bypass CORS
+    const apiUrl = typeof window !== 'undefined' 
+      ? `/api/polymarket?limit=${limit}`
+      : `${POLYMARKET_API}/events?limit=${limit}&active=true&closed=false`;
+    
+    const response = await fetch(apiUrl, {
       headers: {
         'Accept': 'application/json',
       },
-      next: { revalidate: 60 } // Cache for 1 minute
+      cache: 'no-store' // Force fresh data for client-side
     });
 
     if (!response.ok) {

@@ -152,7 +152,8 @@ export default function InsuranceClient({ marketParam }: InsuranceClientProps) {
   // Removed my-policies tab - now in dashboard
   const [selectedMarket, setSelectedMarket] = useState<string | null>(null);
   const [showPurchaseModal, setShowPurchaseModal] = useState(false);
-  const [coverageAmount, setCoverageAmount] = useState('');
+  const [betAmount, setBetAmount] = useState('');
+  const [coveragePercentage, setCoveragePercentage] = useState(50); // Default 50%
   const [duration, setDuration] = useState('30');
   const [searchQuery, setSearchQuery] = useState('');
   const [categoryFilter, setCategoryFilter] = useState<string>('all');
@@ -162,6 +163,14 @@ export default function InsuranceClient({ marketParam }: InsuranceClientProps) {
   // const [userPolicies, setUserPolicies] = useState<UserPolicy[]>([]);
 
   const market = MARKETS.find((m) => m.id === selectedMarket);
+
+  // Calculate coverage amount based on bet amount and percentage
+  const coverageAmount = useMemo(() => {
+    if (!betAmount || parseFloat(betAmount) <= 0) return '0';
+    const bet = parseFloat(betAmount);
+    const coverage = (bet * coveragePercentage) / 100;
+    return coverage.toFixed(2);
+  }, [betAmount, coveragePercentage]);
 
   // Handle URL parameter to open modal automatically
   useEffect(() => {
@@ -319,27 +328,28 @@ export default function InsuranceClient({ marketParam }: InsuranceClientProps) {
   //   }
   // };
 
-  const validateCoverage = (value: string) => {
+  const validateBetAmount = (value: string) => {
     setValidationError('');
     const num = parseFloat(value);
     if (isNaN(num) || num <= 0) {
-      setValidationError('Please enter a valid amount');
+      setValidationError('Please enter a valid bet amount');
       return false;
     }
-    if (num < 0.01) {
-      setValidationError('Minimum coverage is 0.01 USDT');
+    if (num < 1) {
+      setValidationError('Minimum bet amount is 1 USDT');
       return false;
     }
-    if (num > 100) {
-      setValidationError('Maximum coverage is 100 USDT');
+    if (num > 10000) {
+      setValidationError('Maximum bet amount is 10,000 USDT');
       return false;
     }
     return true;
   };
 
   const handleBuy = async () => {
-    if (!selectedMarket || !premium || !address || !coverageAmount) return;
-    if (!validateCoverage(coverageAmount)) return;
+    if (!selectedMarket || !premium || !address || !betAmount || !coverageAmount) return;
+    if (!validateBetAmount(betAmount)) return;
+    if (!validateBetAmount(betAmount)) return;
 
     const durationSeconds = BigInt(parseInt(duration) * 24 * 60 * 60);
     const amount = parseUnits(coverageAmount, 18);
@@ -370,7 +380,9 @@ export default function InsuranceClient({ marketParam }: InsuranceClientProps) {
 
       showToast('✅ Insurance policy created successfully!', 'success');
       setShowPurchaseModal(false);
-      setCoverageAmount('');
+      setBetAmount('');
+      setCoveragePercentage(50);
+      setValidationError('');
       refetchPolicyIds();
     } catch (err) {
       console.error('Transaction failed:', err);
@@ -610,7 +622,8 @@ export default function InsuranceClient({ marketParam }: InsuranceClientProps) {
           onClose={() => {
             setShowPurchaseModal(false);
             setSelectedMarket(null);
-            setCoverageAmount('');
+            setBetAmount('');
+            setValidationError('');
           }}
           title="Purchase Insurance"
         >
@@ -632,32 +645,98 @@ export default function InsuranceClient({ marketParam }: InsuranceClientProps) {
               </div>
             </div>
 
-            {/* Coverage input */}
+            {/* Bet Amount input */}
             <div>
-              <label className="block text-sm font-medium mb-2">Coverage Amount (USDT)</label>
+              <label className="block text-sm font-medium mb-2">Your Bet Amount (USDT)</label>
               <input
                 type="number"
-                value={coverageAmount}
+                value={betAmount}
                 onChange={(e) => {
-                  setCoverageAmount(e.target.value);
-                  if (e.target.value) validateCoverage(e.target.value);
+                  setBetAmount(e.target.value);
+                  if (e.target.value) validateBetAmount(e.target.value);
                 }}
-                placeholder="100"
-                min="0.01"
-                max="100"
-                step="0.01"
+                placeholder="1000"
+                min="1"
+                max="10000"
+                step="1"
                 className={cn(
                   "w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-colors",
                   validationError ? "border-red-500" : "border-gray-300"
                 )}
-                aria-label="Coverage amount"
+                aria-label="Bet amount"
                 aria-invalid={!!validationError}
-                aria-describedby={validationError ? "coverage-error" : undefined}
+                aria-describedby={validationError ? "bet-error" : undefined}
               />
               {validationError ? (
-                <p id="coverage-error" className="text-xs text-red-600 mt-1">{validationError}</p>
+                <p id="bet-error" className="text-xs text-red-600 mt-1">{validationError}</p>
               ) : (
-                <p className="text-xs text-gray-500 mt-1">Min: 0.01 USDT • Max: 100 USDT</p>
+                <p className="text-xs text-gray-500 mt-1">Min: 1 USDT • Max: 10,000 USDT</p>
+              )}
+            </div>
+
+            {/* Coverage Percentage Slider */}
+            <div>
+              <div className="flex items-center justify-between mb-3">
+                <label className="block text-sm font-medium">Coverage Level</label>
+                <div className="flex items-center gap-2">
+                  <span className="text-2xl font-bold text-blue-600">{coveragePercentage}%</span>
+                  {coveragePercentage === 50 && (
+                    <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full font-medium">
+                      Most Popular
+                    </span>
+                  )}
+                </div>
+              </div>
+              
+              {/* Slider */}
+              <div className="relative">
+                <input
+                  type="range"
+                  min="20"
+                  max="70"
+                  step="5"
+                  value={coveragePercentage}
+                  onChange={(e) => setCoveragePercentage(parseInt(e.target.value))}
+                  className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider-thumb"
+                  style={{
+                    background: `linear-gradient(to right, #2563eb 0%, #2563eb ${((coveragePercentage - 20) / 50) * 100}%, #e5e7eb ${((coveragePercentage - 20) / 50) * 100}%, #e5e7eb 100%)`
+                  }}
+                  aria-label="Coverage percentage slider"
+                />
+                <div className="flex justify-between text-xs text-gray-500 mt-2">
+                  <span className="flex flex-col items-start">
+                    <span className="font-medium">20%</span>
+                    <span className="text-[10px]">Lower cost</span>
+                  </span>
+                  <span className="flex flex-col items-center">
+                    <span className="font-medium">45%</span>
+                    <span className="text-[10px]">Balanced</span>
+                  </span>
+                  <span className="flex flex-col items-end">
+                    <span className="font-medium">70%</span>
+                    <span className="text-[10px]">Max protection</span>
+                  </span>
+                </div>
+              </div>
+
+              {/* Coverage Info */}
+              {betAmount && parseFloat(betAmount) > 0 && (
+                <div className="mt-4 p-3 bg-blue-50 rounded-lg border border-blue-100">
+                  <div className="flex items-start gap-2">
+                    <Shield className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
+                    <div className="flex-1 space-y-1">
+                      <p className="text-sm font-semibold text-blue-900">
+                        Protects ${coverageAmount} ({coveragePercentage}% of your bet)
+                      </p>
+                      <p className="text-xs text-blue-700">
+                        If you lose, you&apos;ll get ${coverageAmount} back
+                      </p>
+                      <p className="text-xs text-blue-600">
+                        Your max loss: ${(parseFloat(betAmount) - parseFloat(coverageAmount)).toFixed(2)}
+                      </p>
+                    </div>
+                  </div>
+                </div>
               )}
             </div>
 
@@ -685,10 +764,14 @@ export default function InsuranceClient({ marketParam }: InsuranceClientProps) {
               </div>
             )}
 
-            {premium && coverageAmount && !premiumLoading && (
+            {premium && betAmount && !premiumLoading && (
               <div className="p-4 bg-gray-50 rounded-lg space-y-2">
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-600">Coverage</span>
+                  <span className="text-gray-600">Your Bet</span>
+                  <span className="font-semibold">${betAmount}</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-600">Coverage ({coveragePercentage}%)</span>
                   <span className="font-semibold">${coverageAmount}</span>
                 </div>
                 <div className="flex justify-between text-sm">
@@ -729,7 +812,7 @@ export default function InsuranceClient({ marketParam }: InsuranceClientProps) {
             <div className="flex gap-3">
               <button
                 onClick={handleBuy}
-                disabled={!coverageAmount || !!validationError || isPending || isConfirming || premiumLoading}
+                disabled={!betAmount || !!validationError || isPending || isConfirming || premiumLoading}
                 className="flex-1 px-6 py-4 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2 focus:ring-2 focus:ring-blue-600 focus:ring-offset-2"
                 aria-label="Buy insurance"
               >
@@ -746,7 +829,8 @@ export default function InsuranceClient({ marketParam }: InsuranceClientProps) {
                 onClick={() => {
                   setShowPurchaseModal(false);
                   setSelectedMarket(null);
-                  setCoverageAmount('');
+                  setBetAmount('');
+                  setCoveragePercentage(50);
                   setValidationError('');
                 }}
                 className="px-6 py-4 bg-gray-200 text-gray-700 rounded-lg font-semibold hover:bg-gray-300 transition-all focus:ring-2 focus:ring-gray-400 focus:ring-offset-2"

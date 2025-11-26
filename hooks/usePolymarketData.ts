@@ -19,7 +19,9 @@ export function usePolymarketData() {
     async function loadMarkets() {
       try {
         setLoading(true);
+        console.log('🔄 Fetching markets from Polymarket API...');
         const data = await fetchTrendingMarkets(20);
+        console.log('✅ Received markets:', data.length);
         
         const enriched = data.map(market => {
           const yesPrice = market.outcomePrices[0] || 0.5;
@@ -42,8 +44,8 @@ export function usePolymarketData() {
         setMarkets(enriched);
         setError(null);
       } catch (err) {
+        console.error('❌ Failed to load markets from Polymarket:', err);
         setError('Failed to load markets');
-        console.error(err);
       } finally {
         setLoading(false);
       }

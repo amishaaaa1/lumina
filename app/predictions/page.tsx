@@ -1,6 +1,5 @@
 import PredictionsClient from './PredictionsClient';
 import { Navigation } from '@/components/layout/Navigation';
-import { Footer } from '@/components/layout/Footer';
 
 export const metadata = {
   title: 'Crypto Risk Predictions | Lumina',
@@ -27,8 +26,6 @@ export default function PredictionsPage() {
           <PredictionsClient />
         </div>
       </div>
-      
-      <Footer />
     </div>
   );
 }
