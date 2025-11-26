@@ -110,30 +110,33 @@ function HowItWorksSection() {
               <div className="bg-white rounded-2xl p-10 md:p-12 shadow-lg">
                 <div className="text-center mb-12">
                   <h3 className="text-3xl font-bold text-gray-900 mb-3">
-                    Earn Yield on Stablecoins
+                    Stake & Earn from Insurance Pool
                   </h3>
-                  <p className="text-lg text-gray-600">
-                    Deposit USDT/USDC. Collect premiums. Earn up to 42% APY.
+                  <p className="text-lg text-gray-600 mb-2">
+                    Stake USDT/USDC in insurance pool. Earn up to 24% APY.
+                  </p>
+                  <p className="text-sm text-blue-600 font-semibold">
+                    Your stake backs insurance payouts • Earn from premiums
                   </p>
                 </div>
                 
                 <div className="grid md:grid-cols-3 gap-6 mb-10">
                   <FeatureCard
                     step="STEP 1"
-                    title="Deposit funds"
-                    description="Add USDT or USDC to any pool"
+                    title="Stake in pool"
+                    description="Stake USDT/USDC to insurance pool"
                     color="purple"
                   />
                   <FeatureCard
                     step="STEP 2"
-                    title="Earn premiums"
-                    description="Collect fees from every policy sold"
+                    title="Back payouts"
+                    description="Your stake funds insurance claims"
                     color="pink"
                   />
                   <FeatureCard
                     step="STEP 3"
-                    title="Withdraw anytime"
-                    description="No lock-ups, pull out whenever"
+                    title="Earn premiums"
+                    description="Collect fees from every policy sold"
                     color="blue"
                   />
                 </div>
@@ -200,8 +203,11 @@ export default function Home() {
                 </span>
               </h1>
 
-              <p className="text-xl md:text-2xl text-gray-600 mb-12 max-w-3xl mx-auto">
-                Protect your crypto predictions. Get paid if you&apos;re wrong. Earn yield by backing traders.
+              <p className="text-xl md:text-2xl text-gray-600 mb-4 max-w-3xl mx-auto">
+                Protect your crypto predictions. Get paid from insurance pool if you&apos;re wrong. Stake & earn by backing traders.
+              </p>
+              <p className="text-lg text-blue-600 font-semibold mb-12">
+                Works with Polymarket, Hyperliquid, HL Arena & more
               </p>
 
               <div className="flex flex-wrap gap-4 justify-center mb-20">
@@ -310,30 +316,39 @@ export default function Home() {
               <h2 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6">
                 How Lumina Works
               </h2>
-              <p className="text-xl text-gray-600">
-                Two-sided marketplace for prediction market risk
+              <p className="text-xl text-gray-600 mb-4">
+                Add-on insurance layer for any prediction market
               </p>
+              <div className="flex items-center justify-center gap-3 text-sm text-blue-600 font-semibold">
+                <span className="px-3 py-1 bg-blue-50 rounded-full border border-blue-200">Polymarket</span>
+                <span>•</span>
+                <span className="px-3 py-1 bg-blue-50 rounded-full border border-blue-200">Hyperliquid</span>
+                <span>•</span>
+                <span className="px-3 py-1 bg-blue-50 rounded-full border border-blue-200">HL Arena</span>
+                <span>•</span>
+                <span className="px-3 py-1 bg-blue-50 rounded-full border border-blue-200">Seedify</span>
+              </div>
             </div>
 
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
               <FeatureCard
                 title="Traders Buy Coverage"
-                description="Pay 2-10% premium to hedge your bet"
+                description="Pay 20-30% premium to hedge your bet on any platform"
                 color="blue"
               />
               <FeatureCard
-                title="LPs Provide Capital"
-                description="Deposit stables, earn from premiums"
+                title="LPs Stake & Earn"
+                description="Stake stables in insurance pool, earn from premiums"
                 color="blue"
               />
               <FeatureCard
-                title="Chainlink Resolves"
-                description="Oracle verifies market outcomes"
+                title="AI Risk Oracle"
+                description="Gemini 3 Pro calculates optimal pricing"
                 color="purple"
               />
               <FeatureCard
-                title="Auto Payouts"
-                description="Claims processed in seconds"
+                title="Pool Pays Claims"
+                description="Get 50-70% back from insurance pool if you lose"
                 color="pink"
               />
             </div>
@@ -372,10 +387,13 @@ export default function Home() {
           <div className="max-w-6xl mx-auto relative">
             <div className="text-center mb-16">
               <h2 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6">
-                Earn Yield by Backing Traders
+                Stake in Insurance Pool & Earn
               </h2>
-              <p className="text-xl text-gray-600">
-                Deposit stablecoins, collect premiums, withdraw anytime
+              <p className="text-xl text-gray-600 mb-3">
+                Stake stablecoins in insurance pool, earn from premiums
+              </p>
+              <p className="text-base text-blue-600 font-semibold">
+                Your stake backs insurance payouts • Earn 14-24% APY
               </p>
             </div>
 

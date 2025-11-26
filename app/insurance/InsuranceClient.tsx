@@ -77,6 +77,25 @@ const getLogoColor = (category: string): string => {
 //   marketOutcomeHash: string;
 // }
 
+interface MarketWithSentiment {
+  id: string;
+  title: string;
+  category: string;
+  sentiment: {
+    bullish: number;
+    bearish: number;
+  };
+  volume: number;
+  liquidity: number;
+  endDate: string;
+  icon: string;
+  logoColor: string;
+  poolLiquidity: string;
+  votes: number;
+  premium: string;
+  coverage: string;
+}
+
 interface InsuranceClientProps {
   marketParam?: string | null;
 }
@@ -84,7 +103,7 @@ interface InsuranceClientProps {
 export default function InsuranceClient({ marketParam }: InsuranceClientProps) {
   const { address, isConnected } = useAccount();
   const { openConnectModal } = useConnectModal();
-  const [selectedMarket, setSelectedMarket] = useState<any>(null);
+  const [selectedMarket, setSelectedMarket] = useState<MarketWithSentiment | null>(null);
   const [showPurchaseModal, setShowPurchaseModal] = useState(false);
   const [betAmount, setBetAmount] = useState('');
   const [coveragePercentage, setCoveragePercentage] = useState(50);
@@ -96,6 +115,19 @@ export default function InsuranceClient({ marketParam }: InsuranceClientProps) {
 
   // Use Polymarket data with category filter
   const { markets: polymarketData, loading: marketsLoading, error: marketsError } = usePolymarketData(categoryFilter === 'all' ? undefined : categoryFilter);
+
+  // Transform Polymarket data to display format
+  const transformedMarkets = useMemo(() => {
+    return polymarketData.map((market) => ({
+      ...market,
+      icon: getCategoryIcon(market.category, market.title),
+      logoColor: getLogoColor(market.category),
+      poolLiquidity: `$${(market.liquidity / 1000000).toFixed(1)}M`,
+      votes: market.insuredCount,
+      premium: market.premium,
+      coverage: `$${(market.volume * 0.3 / 1000000).toFixed(1)}M`,
+    }));
+  }, [polymarketData]);
 
   // AI Risk Oracle for selected market
   const riskOracleData = selectedMarket ? {
@@ -421,10 +453,8 @@ export default function InsuranceClient({ marketParam }: InsuranceClientProps) {
             <p className="text-gray-600">Protect your prediction market positions</p>
           </div>
 
-          {/* Markets Section */}
-          <>
-              {/* Stats */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+          {/* Stats */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
             <div className="bg-white rounded-xl p-6 border border-gray-200">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-sm text-gray-600">Total Protected</span>
@@ -900,8 +930,11 @@ export default function InsuranceClient({ marketParam }: InsuranceClientProps) {
 
             {/* Info */}
             <div className="p-3 bg-gray-50 rounded-lg border border-gray-200">
-              <p className="text-xs text-gray-700">
-                Your policy will be minted as an NFT. You can claim if the market resolves against you.
+              <p className="text-xs text-gray-700 mb-2">
+                <strong>How it works:</strong> Your premium goes to insurance pool. If you lose, you get paid from the pool (backed by LP stakes).
+              </p>
+              <p className="text-xs text-gray-500">
+                Policy minted as NFT • Claim automatically if market resolves against you
               </p>
             </div>
           </div>

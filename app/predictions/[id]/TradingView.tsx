@@ -8,6 +8,7 @@ import { useToast } from '@/hooks/useToast';
 import { CONTRACTS, ASSET_TOKEN } from '@/lib/contracts';
 import { PriceChart } from '@/components/charts/PriceChart';
 import { AnimatedPrice } from '@/components/ui/AnimatedPrice';
+import { useRiskOracle } from '@/hooks/useRiskOracle';
 
 interface TradingViewProps {
   marketId: string;
@@ -33,6 +34,7 @@ export default function TradingView({ marketId }: TradingViewProps) {
   const [tradeType, setTradeType] = useState<'yes' | 'no'>('yes');
   const [amount, setAmount] = useState('');
   const [timeRange, setTimeRange] = useState<'past' | '1d' | '7d' | '30d' | 'all'>('past');
+  const [insuranceEnabled, setInsuranceEnabled] = useState(true); // Insurance toggle
 
   const [marketData, setMarketData] = useState<MarketData | null>(null);
   const [prevOdds, setPrevOdds] = useState<{ yes: number; no: number } | null>(null);
@@ -40,6 +42,21 @@ export default function TradingView({ marketId }: TradingViewProps) {
   const [loading, setLoading] = useState(true);
   const [trading, setTrading] = useState(false);
   const { showToast } = useToast();
+
+  // AI Risk Oracle integration
+  const riskOracleData = marketData ? {
+    marketId: marketId,
+    question: marketData.title,
+    yesOdds: marketData.yesOdds,
+    noOdds: marketData.noOdds,
+    totalVolume: marketData.volume,
+    liquidity: marketData.volume * 0.5, // Estimate
+    timeToExpiry: marketData.endDate ? 
+      Math.max(0, (new Date(marketData.endDate).getTime() - Date.now()) / (1000 * 60 * 60)) : 24,
+    category: 'Crypto',
+  } : null;
+  
+  const { assessment: riskAssessment, loading: riskLoading } = useRiskOracle(riskOracleData);
 
   // Helper to manage timeout
   const clearTradeTimeout = () => {
@@ -509,6 +526,78 @@ export default function TradingView({ marketId }: TradingViewProps) {
                   </div>
                 </div>
 
+                {/* Insurance Toggle */}
+                {amount && parseFloat(amount) > 0 && (
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between p-4 bg-blue-50 rounded-xl border border-blue-200">
+                      <div className="flex items-center gap-3">
+                        <svg className="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                        </svg>
+                        <div>
+                          <div className="text-sm font-semibold text-blue-900">Add Insurance Protection</div>
+                          <div className="text-xs text-blue-700">
+                            {riskAssessment && !riskLoading 
+                              ? `Get ${riskAssessment.payoutRate.toFixed(0)}% back if you lose`
+                              : 'Get 50-70% back if you lose'
+                            }
+                          </div>
+                        </div>
+                      </div>
+                      <button
+                        onClick={() => setInsuranceEnabled(!insuranceEnabled)}
+                        className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                          insuranceEnabled ? 'bg-blue-600' : 'bg-gray-300'
+                        }`}
+                      >
+                        <span
+                          className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                            insuranceEnabled ? 'translate-x-6' : 'translate-x-1'
+                          }`}
+                        />
+                      </button>
+                    </div>
+
+                    {/* AI Risk Assessment */}
+                    {insuranceEnabled && riskAssessment && !riskLoading && (
+                      <div className="p-3 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg border border-blue-200">
+                        <div className="flex items-center gap-2 mb-2">
+                          <svg className="w-4 h-4 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z" />
+                          </svg>
+                          <span className="text-xs font-bold text-blue-900">AI Risk Analysis (Gemini 3 Pro)</span>
+                        </div>
+                        <div className="text-xs text-blue-700 space-y-1">
+                          <div className="flex justify-between">
+                            <span>Premium:</span>
+                            <span className="font-semibold">{riskAssessment.premiumRate.toFixed(1)}% (+${(parseFloat(amount) * riskAssessment.premiumRate / 100).toFixed(2)})</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span>Refund if lose:</span>
+                            <span className="font-semibold">{riskAssessment.payoutRate.toFixed(0)}% (${(parseFloat(amount) * riskAssessment.payoutRate / 100).toFixed(2)})</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span>Risk Score:</span>
+                            <span className="font-semibold">{riskAssessment.riskScore}/100</span>
+                          </div>
+                        </div>
+                        <div className="mt-2 pt-2 border-t border-blue-200">
+                          <p className="text-xs text-blue-600 italic">
+                            🤖 {riskAssessment.reasoning}
+                          </p>
+                        </div>
+                      </div>
+                    )}
+
+                    {insuranceEnabled && riskLoading && (
+                      <div className="flex items-center justify-center py-3 bg-blue-50 rounded-lg border border-blue-100">
+                        <LoadingSpinner size="sm" />
+                        <span className="ml-2 text-xs text-blue-700 font-medium">🤖 AI calculating risk...</span>
+                      </div>
+                    )}
+                  </div>
+                )}
+
                 {/* Trade Button */}
                 <button
                   onClick={handleTrade}
@@ -516,7 +605,7 @@ export default function TradingView({ marketId }: TradingViewProps) {
                   className={`w-full py-4 rounded-lg font-semibold text-sm transition-all ${
                     !address || !amount || parseFloat(amount) <= 0 || trading || isApprovePending || isApproveConfirming || isTradePending || isTradeConfirming
                       ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                      : 'bg-blue-500 text-white hover:bg-blue-600 shadow-lg'
+                      : insuranceEnabled ? 'bg-blue-600 text-white hover:bg-blue-700 shadow-lg' : 'bg-gray-900 text-white hover:bg-gray-800 shadow-lg'
                   }`}
                 >
                   {isApprovePending || isApproveConfirming ? (
@@ -545,12 +634,22 @@ export default function TradingView({ marketId }: TradingViewProps) {
                     </span>
                   ) : !address ? (
                     'Connect Wallet'
+                  ) : insuranceEnabled ? (
+                    `Trade with Insurance ($${(parseFloat(amount) * (1 + (riskAssessment?.premiumRate || 25) / 100)).toFixed(2)})`
                   ) : (
-                    'Trade'
+                    `Trade ($${parseFloat(amount).toFixed(2)})`
                   )}
                 </button>
 
-                {/* Disclaimer */}
+                {/* Info & Disclaimer */}
+                {insuranceEnabled && amount && parseFloat(amount) > 0 && (
+                  <div className="p-3 bg-gray-50 rounded-lg border border-gray-200">
+                    <p className="text-xs text-gray-700">
+                      <strong>Insurance Pool:</strong> Premium goes to pool. If you lose, payout comes from pool (backed by LP stakes).
+                    </p>
+                  </div>
+                )}
+                
                 <div className="text-center pt-2">
                   <p className="text-xs text-gray-500">
                     By trading, you agree to the{' '}
