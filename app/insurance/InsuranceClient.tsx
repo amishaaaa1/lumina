@@ -11,121 +11,56 @@ import { formatUSD, parseTokenAmount } from '@/lib/utils';
 import { CONTRACTS, ASSET_TOKEN } from '@/lib/contracts';
 import { cn } from '@/lib/utils';
 import { Shield, Search, TrendingUp, DollarSign } from 'lucide-react';
+import { usePolymarketData } from '@/hooks/usePolymarketData';
+import { useRiskOracle } from '@/hooks/useRiskOracle';
+import { AnimatedPrice } from '@/components/ui/AnimatedPrice';
 
-const MARKETS = [
-  {
-    id: '1',
-    token: 'Bitcoin',
-    symbol: 'BTC',
-    logo: '₿',
-    logoColor: 'from-orange-500 to-yellow-500',
-    question: 'BTC hits $120K by Q2 2025?',
-    votes: 234,
-    poolLiquidity: '$18.4M',
-    currentPrice: '$91,234',
-    premium: '2.8%',
-    coverage: '$6.2M',
-    category: 'Crypto',
-  },
-  {
-    id: '2',
-    token: 'Ethereum',
-    symbol: 'ETH',
-    logo: 'Ξ',
-    logoColor: 'from-blue-500 to-purple-500',
-    question: 'ETH flips $5K before June?',
-    votes: 187,
-    poolLiquidity: '$14.2M',
-    currentPrice: '$3,456',
-    premium: '3.4%',
-    coverage: '$4.8M',
-    category: 'Crypto',
-  },
-  {
-    id: '3',
-    token: 'Cardano',
-    symbol: 'ADA',
-    logo: '₳',
-    logoColor: 'from-blue-600 to-cyan-500',
-    question: 'ADA breaks $1.50 in 2025?',
-    votes: 142,
-    poolLiquidity: '$9.8M',
-    currentPrice: '$0.92',
-    premium: '4.6%',
-    coverage: '$2.3M',
-    category: 'Crypto',
-  },
-  {
-    id: '4',
-    token: 'Solana',
-    symbol: 'SOL',
-    logo: '◎',
-    logoColor: 'from-purple-500 to-pink-500',
-    question: 'SOL maintains above $200?',
-    votes: 203,
-    poolLiquidity: '$11.2M',
-    currentPrice: '$178',
-    premium: '3.9%',
-    coverage: '$3.7M',
-    category: 'Crypto',
-  },
-  {
-    id: '5',
-    token: 'Polkadot',
-    symbol: 'DOT',
-    logo: '●',
-    logoColor: 'from-pink-500 to-rose-500',
-    question: 'DOT hits $15 by March?',
-    votes: 91,
-    poolLiquidity: '$5.4M',
-    currentPrice: '$7.23',
-    premium: '5.4%',
-    coverage: '$1.8M',
-    category: 'Crypto',
-  },
-  {
-    id: '6',
-    token: 'Chainlink',
-    symbol: 'LINK',
-    logo: '⬡',
-    logoColor: 'from-blue-600 to-indigo-600',
-    question: 'LINK reaches $40 in 2025?',
-    votes: 167,
-    poolLiquidity: '$8.9M',
-    currentPrice: '$18.45',
-    premium: '4.3%',
-    coverage: '$2.9M',
-    category: 'Crypto',
-  },
-  {
-    id: '7',
-    token: 'US Election',
-    symbol: 'VOTE',
-    logo: '🗳',
-    logoColor: 'from-red-500 to-blue-500',
-    question: 'Democrats win 2024?',
-    votes: 456,
-    poolLiquidity: '$24.1M',
-    currentPrice: 'N/A',
-    premium: '6.2%',
-    coverage: '$8.4M',
-    category: 'Politics',
-  },
-  {
-    id: '8',
-    token: 'Fed Rate',
-    symbol: 'FED',
-    logo: '🏛',
-    logoColor: 'from-green-600 to-emerald-600',
-    question: 'Rate cut by March 2025?',
-    votes: 312,
-    poolLiquidity: '$15.7M',
-    currentPrice: 'N/A',
-    premium: '4.8%',
-    coverage: '$5.1M',
-    category: 'Politics',
-  },
-];
+// Helper function to get icon based on category and title
+const getCategoryIcon = (category: string, title?: string): string => {
+  const categoryLower = category.toLowerCase();
+  const titleLower = title?.toLowerCase() || '';
+  
+  // Check title for specific icons first
+  if (titleLower.includes('bitcoin') || titleLower.includes('btc')) return '₿';
+  if (titleLower.includes('ethereum') || titleLower.includes('eth')) return '⟠';
+  if (titleLower.includes('solana') || titleLower.includes('sol')) return '◎';
+  if (titleLower.includes('fed') || titleLower.includes('federal reserve')) return '🏦';
+  if (titleLower.includes('trump')) return '🇺🇸';
+  if (titleLower.includes('biden')) return '🇺🇸';
+  if (titleLower.includes('election')) return '🗳️';
+  
+  // Fallback to category icons
+  const icons: Record<string, string> = {
+    'crypto': '₿',
+    'cryptocurrency': '₿',
+    'politics': '🗳️',
+    'sports': '⚽',
+    'tech': '💻',
+    'technology': '💻',
+    'finance': '💰',
+    'business': '💼',
+    'science': '🔬',
+    'entertainment': '🎬',
+    'other': '📊',
+  };
+  return icons[categoryLower] || '📊';
+};
+
+const getLogoColor = (category: string): string => {
+  const colors: Record<string, string> = {
+    'crypto': 'from-orange-500 to-yellow-500',
+    'cryptocurrency': 'from-blue-500 to-purple-500',
+    'politics': 'from-red-500 to-blue-500',
+    'sports': 'from-green-500 to-emerald-500',
+    'tech': 'from-purple-500 to-pink-500',
+    'technology': 'from-blue-600 to-indigo-600',
+    'finance': 'from-green-600 to-emerald-600',
+    'business': 'from-gray-600 to-slate-600',
+    'science': 'from-cyan-500 to-blue-500',
+    'entertainment': 'from-pink-500 to-rose-500',
+  };
+  return colors[category.toLowerCase()] || 'from-gray-500 to-slate-500';
+};
 
 // Type definitions for future use when policies are displayed
 // type PolicyStatus = 'Active' | 'Claimed' | 'Expired' | 'Claimable';
@@ -149,20 +84,33 @@ interface InsuranceClientProps {
 export default function InsuranceClient({ marketParam }: InsuranceClientProps) {
   const { address, isConnected } = useAccount();
   const { openConnectModal } = useConnectModal();
-  // Removed my-policies tab - now in dashboard
-  const [selectedMarket, setSelectedMarket] = useState<string | null>(null);
+  const [selectedMarket, setSelectedMarket] = useState<any>(null);
   const [showPurchaseModal, setShowPurchaseModal] = useState(false);
   const [betAmount, setBetAmount] = useState('');
-  const [coveragePercentage, setCoveragePercentage] = useState(50); // Default 50%
+  const [coveragePercentage, setCoveragePercentage] = useState(50);
   const [duration, setDuration] = useState('30');
   const [searchQuery, setSearchQuery] = useState('');
   const [categoryFilter, setCategoryFilter] = useState<string>('all');
   const [sortBy, setSortBy] = useState<'premium-low' | 'premium-high' | 'liquidity'>('premium-low');
   const [validationError, setValidationError] = useState<string>('');
-  // User policies will be fetched from backend when available
-  // const [userPolicies, setUserPolicies] = useState<UserPolicy[]>([]);
 
-  const market = MARKETS.find((m) => m.id === selectedMarket);
+  // Use Polymarket data with category filter
+  const { markets: polymarketData, loading: marketsLoading, error: marketsError } = usePolymarketData(categoryFilter === 'all' ? undefined : categoryFilter);
+
+  // AI Risk Oracle for selected market
+  const riskOracleData = selectedMarket ? {
+    marketId: selectedMarket.id,
+    question: selectedMarket.title,
+    yesOdds: selectedMarket.sentiment.bullish,
+    noOdds: selectedMarket.sentiment.bearish,
+    totalVolume: selectedMarket.volume,
+    liquidity: selectedMarket.liquidity,
+    timeToExpiry: selectedMarket.endDate ? 
+      Math.max(0, (new Date(selectedMarket.endDate).getTime() - Date.now()) / (1000 * 60 * 60)) : 24,
+    category: selectedMarket.category,
+  } : null;
+  
+  const { assessment: riskAssessment, loading: riskLoading } = useRiskOracle(riskOracleData);
 
   // Calculate coverage amount based on bet amount and percentage
   const coverageAmount = useMemo(() => {
@@ -174,26 +122,34 @@ export default function InsuranceClient({ marketParam }: InsuranceClientProps) {
 
   // Handle URL parameter to open modal automatically
   useEffect(() => {
-    if (marketParam && isConnected) {
-      const marketExists = MARKETS.find((m) => m.id === marketParam);
+    if (marketParam && isConnected && transformedMarkets.length > 0) {
+      const marketExists = transformedMarkets.find((m) => m.id === marketParam);
       if (marketExists) {
-        // Use setTimeout to avoid setState during render
         setTimeout(() => {
-          setSelectedMarket(marketParam);
+          setSelectedMarket(marketExists);
           setShowPurchaseModal(true);
         }, 0);
       }
     }
-  }, [marketParam, isConnected]);
+  }, [marketParam, isConnected, transformedMarkets]);
 
-  const { data: premium, isLoading: premiumLoading } = useReadContract({
-    ...CONTRACTS.PolicyManager,
-    functionName: 'calculatePremium',
-    args:
-      selectedMarket && coverageAmount && parseFloat(coverageAmount) > 0
-        ? [selectedMarket, parseTokenAmount(coverageAmount)]
-        : undefined,
-  });
+  // Calculate premium from AI or fallback
+  const calculatedPremium = useMemo(() => {
+    if (!betAmount || parseFloat(betAmount) <= 0) return 0;
+    const amount = parseFloat(betAmount);
+    const coverage = (amount * coveragePercentage) / 100;
+    
+    // Use AI-calculated premium rate if available
+    if (riskAssessment && !riskLoading) {
+      return coverage * (riskAssessment.premiumRate / 100);
+    }
+    
+    // Fallback: 25% premium
+    return coverage * 0.25;
+  }, [betAmount, coveragePercentage, riskAssessment, riskLoading]);
+
+  const premium = calculatedPremium > 0 ? parseUnits(calculatedPremium.toFixed(2), 18) : undefined;
+  const premiumLoading = riskLoading;
 
   // Fetch USDT token balance
   const { data: usdtBalance, isLoading: isUsdtBalanceLoading } = useReadContract({
@@ -230,22 +186,34 @@ export default function InsuranceClient({ marketParam }: InsuranceClientProps) {
     args: address ? [address] : undefined,
   });
 
+  // Transform Polymarket data to display format
+  const transformedMarkets = useMemo(() => {
+    return polymarketData.map((market) => ({
+      ...market,
+      icon: getCategoryIcon(market.category, market.title),
+      logoColor: getLogoColor(market.category),
+      poolLiquidity: `$${(market.liquidity / 1000000).toFixed(1)}M`,
+      votes: market.insuredCount,
+      // AI will calculate premium dynamically
+      premium: market.premium,
+      coverage: `$${(market.volume * 0.3 / 1000000).toFixed(1)}M`,
+    }));
+  }, [polymarketData]);
+
   const filteredMarkets = useMemo(() => {
-    const filtered = MARKETS.filter((m) => {
+    const filtered = transformedMarkets.filter((m) => {
       const matchesSearch =
-        m.question.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        m.token.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        m.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         m.category.toLowerCase().includes(searchQuery.toLowerCase());
-      const matchesCategory = categoryFilter === 'all' || m.category === categoryFilter;
-      return matchesSearch && matchesCategory;
+      return matchesSearch;
     });
 
     // Sorting
     filtered.sort((a, b) => {
       const premiumA = parseFloat(a.premium);
       const premiumB = parseFloat(b.premium);
-      const liquidityA = parseFloat(a.poolLiquidity.replace(/[$M,K]/g, ''));
-      const liquidityB = parseFloat(b.poolLiquidity.replace(/[$M,K]/g, ''));
+      const liquidityA = a.liquidity;
+      const liquidityB = b.liquidity;
 
       if (sortBy === 'premium-low') return premiumA - premiumB;
       if (sortBy === 'premium-high') return premiumB - premiumA;
@@ -253,9 +221,9 @@ export default function InsuranceClient({ marketParam }: InsuranceClientProps) {
     });
 
     return filtered;
-  }, [searchQuery, categoryFilter, sortBy]);
+  }, [transformedMarkets, searchQuery, sortBy]);
 
-  const categories = ['all', ...Array.from(new Set(MARKETS.map((m) => m.category)))];
+  const categories = ['all', 'crypto', 'politics', 'sports', 'tech', 'finance', 'science', 'entertainment'];
 
   // Fetch individual policy details - will be implemented when backend is ready
   // useEffect(() => {
@@ -551,13 +519,17 @@ export default function InsuranceClient({ marketParam }: InsuranceClientProps) {
                 Clear Filters
               </button>
             </div>
+          ) : marketsLoading ? (
+            <div className="flex justify-center items-center py-32">
+              <LoadingSpinner size="lg" />
+            </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {filteredMarkets.map((m) => (
               <button
                 key={m.id}
                 onClick={() => {
-                  setSelectedMarket(m.id);
+                  setSelectedMarket(m);
                   setShowPurchaseModal(true);
                 }}
                 className="bg-white rounded-2xl p-6 hover:shadow-xl transition-all duration-300 border-2 border-gray-200 hover:border-blue-500 hover:scale-105 text-left group"
@@ -569,20 +541,20 @@ export default function InsuranceClient({ marketParam }: InsuranceClientProps) {
                       "w-12 h-12 rounded-full bg-gradient-to-br flex items-center justify-center text-white font-bold text-xl shadow-lg group-hover:scale-110 transition-transform",
                       m.logoColor
                     )}>
-                      {m.logo}
+                      {m.icon}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <h3 className="font-bold text-sm text-gray-900">{m.token}</h3>
-                      <p className="text-xs text-gray-500">{m.symbol}</p>
+                      <h3 className="font-bold text-sm text-gray-900 truncate">{m.category}</h3>
+                      <p className="text-xs text-gray-500">AI-Powered</p>
                     </div>
                   </div>
 
                   {/* Question */}
-                  <p className="text-sm font-semibold text-gray-900 min-h-[44px] leading-snug mb-4">
-                    {m.question}
+                  <p className="text-sm font-semibold text-gray-900 min-h-[44px] leading-snug mb-4 line-clamp-2">
+                    {m.title}
                   </p>
 
-                  {/* Stats - Simple List Style like reference */}
+                  {/* Stats */}
                   <div className="space-y-2">
                     <div className="flex justify-between items-center text-sm">
                       <span className="text-gray-500">Votes</span>
@@ -593,11 +565,13 @@ export default function InsuranceClient({ marketParam }: InsuranceClientProps) {
                       <span className="font-semibold text-gray-900">{m.poolLiquidity}</span>
                     </div>
                     <div className="flex justify-between items-center text-sm">
-                      <span className="text-gray-500">Current price</span>
-                      <span className="font-semibold text-gray-900">{m.currentPrice}</span>
+                      <span className="text-gray-500">Yes / No</span>
+                      <span className="font-semibold text-gray-900">
+                        <AnimatedPrice value={m.sentiment.bullish} decimals={1} suffix="%" /> / <AnimatedPrice value={m.sentiment.bearish} decimals={1} suffix="%" />
+                      </span>
                     </div>
                     <div className="flex justify-between items-center text-sm">
-                      <span className="text-gray-500">Premium</span>
+                      <span className="text-gray-500">AI Premium</span>
                       <span className="font-bold text-green-600">{m.premium}</span>
                     </div>
                     <div className="flex justify-between items-center text-sm">
@@ -617,12 +591,10 @@ export default function InsuranceClient({ marketParam }: InsuranceClientProps) {
               ))}
             </div>
           )}
-            </>
-
         </div>
 
       {/* Purchase Modal */}
-      {showPurchaseModal && selectedMarket && market && (
+      {showPurchaseModal && selectedMarket && (
         <Modal
           isOpen={showPurchaseModal}
           onClose={() => {
@@ -640,13 +612,13 @@ export default function InsuranceClient({ marketParam }: InsuranceClientProps) {
               <div className="flex items-center gap-3 mb-2">
                 <div className={cn(
                   "w-10 h-10 rounded-full bg-gradient-to-br flex items-center justify-center text-white font-bold text-lg shadow-md",
-                  market.logoColor
+                  selectedMarket.logoColor
                 )}>
-                  {market.logo}
+                  {selectedMarket.icon}
                 </div>
                 <div>
-                  <div className="font-semibold text-sm">{market.question}</div>
-                  <div className="text-xs text-gray-600 mt-0.5">{market.token} ({market.symbol})</div>
+                  <div className="font-semibold text-sm">{selectedMarket.title}</div>
+                  <div className="text-xs text-gray-600 mt-0.5">{selectedMarket.category} • AI-Powered</div>
                 </div>
               </div>
             </div>
@@ -762,14 +734,49 @@ export default function InsuranceClient({ marketParam }: InsuranceClientProps) {
               </select>
             </div>
 
-            {/* Summary */}
-            {premiumLoading && coverageAmount && (
-              <div className="flex items-center justify-center py-4">
+            {/* AI Risk Assessment */}
+            {riskLoading && (
+              <div className="flex items-center justify-center py-4 bg-blue-50 rounded-lg border border-blue-100">
                 <LoadingSpinner size="sm" />
-                <span className="ml-2 text-sm text-gray-600">Calculating premium...</span>
+                <span className="ml-2 text-sm text-blue-700 font-medium">🤖 AI calculating risk...</span>
               </div>
             )}
 
+            {riskAssessment && !riskLoading && (
+              <div className="p-4 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg border-2 border-blue-200">
+                <div className="flex items-center gap-2 mb-3">
+                  <svg className="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z" />
+                  </svg>
+                  <span className="text-sm font-bold text-blue-900">AI Risk Analysis (Gemini 3 Pro)</span>
+                </div>
+                <div className="space-y-2 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-blue-700">Risk Score:</span>
+                    <span className="font-semibold text-blue-900">{riskAssessment.riskScore}/100</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-blue-700">AI Premium Rate:</span>
+                    <span className="font-semibold text-blue-900">{riskAssessment.premiumRate.toFixed(1)}%</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-blue-700">Payout Rate:</span>
+                    <span className="font-semibold text-blue-900">{riskAssessment.payoutRate.toFixed(1)}%</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-blue-700">Confidence:</span>
+                    <span className="font-semibold text-blue-900">{riskAssessment.confidence}%</span>
+                  </div>
+                </div>
+                <div className="mt-3 pt-3 border-t border-blue-200">
+                  <p className="text-xs text-blue-700 italic">
+                    🤖 {riskAssessment.reasoning}
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {/* Summary */}
             {premium && betAmount && !premiumLoading && (
               <div className="p-4 bg-gray-50 rounded-lg space-y-2">
                 <div className="flex justify-between text-sm">
@@ -781,7 +788,7 @@ export default function InsuranceClient({ marketParam }: InsuranceClientProps) {
                   <span className="font-semibold">${coverageAmount}</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-600">Premium</span>
+                  <span className="text-gray-600">AI Premium ({riskAssessment ? riskAssessment.premiumRate.toFixed(1) : '25'}%)</span>
                   <span className="font-semibold">{formatUSD(premium)}</span>
                 </div>
                 <div className="flex justify-between text-sm">

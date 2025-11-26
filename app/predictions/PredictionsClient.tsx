@@ -10,6 +10,7 @@ import { CONTRACTS, ASSET_TOKEN } from '@/lib/contracts';
 import { LeaderboardSection } from '@/components/leaderboard/LeaderboardSection';
 import { usePolymarketData } from '@/hooks/usePolymarketData';
 import { AnimatedPrice } from '@/components/ui/AnimatedPrice';
+import { useRiskOracle } from '@/hooks/useRiskOracle';
 // Removed MarketResolutionStatus - internal mechanism, not user-facing
 
 interface PredictionMarket {
@@ -44,6 +45,21 @@ export default function PredictionsClient() {
   const [betOutcome, setBetOutcome] = useState<'Yes' | 'No'>('Yes');
   const [placing, setPlacing] = useState(false);
   const [insuranceEnabled, setInsuranceEnabled] = useState(true); // Toggle for insurance
+
+  // AI Risk Oracle integration
+  const riskOracleData = selectedMarket ? {
+    marketId: selectedMarket.id,
+    question: selectedMarket.question,
+    yesOdds: parseFloat(selectedMarket.yesOdds),
+    noOdds: parseFloat(selectedMarket.noOdds),
+    totalVolume: selectedMarket.totalVolume,
+    liquidity: selectedMarket.yesPool + selectedMarket.noPool,
+    timeToExpiry: selectedMarket.deadline ? 
+      Math.max(0, (new Date(selectedMarket.deadline).getTime() - Date.now()) / (1000 * 60 * 60)) : 24,
+    category: selectedMarket.riskType,
+  } : null;
+  
+  const { assessment: riskAssessment, loading: riskLoading } = useRiskOracle(riskOracleData);
 
   // Use Polymarket data with category filter
   const { markets: polymarketData, loading, error } = usePolymarketData(categoryFilter === 'all' ? undefined : categoryFilter);
@@ -274,7 +290,12 @@ export default function PredictionsClient() {
     if (!selectedMarket || !betAmount) return 0;
     const amount = parseFloat(betAmount);
     
-    // Calculate market skew
+    // Use AI-calculated premium rate if available
+    if (riskAssessment && !riskLoading) {
+      return amount * (riskAssessment.premiumRate / 100);
+    }
+    
+    // Fallback: Calculate market skew
     const totalPool = selectedMarket.yesPool + selectedMarket.noPool;
     const skew = Math.abs(selectedMarket.yesPool - selectedMarket.noPool) / totalPool;
     
@@ -288,7 +309,12 @@ export default function PredictionsClient() {
     if (!selectedMarket || !betAmount) return 0;
     const amount = parseFloat(betAmount);
     
-    // Calculate market skew
+    // Use AI-calculated payout rate if available
+    if (riskAssessment && !riskLoading) {
+      return amount * (riskAssessment.payoutRate / 100);
+    }
+    
+    // Fallback: Calculate market skew
     const totalPool = selectedMarket.yesPool + selectedMarket.noPool;
     const skew = Math.abs(selectedMarket.yesPool - selectedMarket.noPool) / totalPool;
     
@@ -310,6 +336,11 @@ export default function PredictionsClient() {
   };
 
   const getRefundPercentage = (market: PredictionMarket) => {
+    // Use AI assessment if available for selected market
+    if (selectedMarket?.id === market.id && riskAssessment && !riskLoading) {
+      return Math.round(riskAssessment.payoutRate);
+    }
+    
     const totalPool = market.yesPool + market.noPool;
     const skew = Math.abs(market.yesPool - market.noPool) / totalPool;
     
@@ -319,6 +350,11 @@ export default function PredictionsClient() {
   };
 
   const getPremiumPercentage = (market: PredictionMarket) => {
+    // Use AI assessment if available for selected market
+    if (selectedMarket?.id === market.id && riskAssessment && !riskLoading) {
+      return Math.round(riskAssessment.premiumRate);
+    }
+    
     const totalPool = market.yesPool + market.noPool;
     const skew = Math.abs(market.yesPool - market.noPool) / totalPool;
     
@@ -709,8 +745,27 @@ export default function PredictionsClient() {
                           </svg>
                         </div>
                         <div className="flex-1">
-                          <div className="text-sm font-bold text-blue-900 mb-1">
-                            Protected Bet
+                          <div className="flex items-center gap-2 mb-1">
+                            <div className="text-sm font-bold text-blue-900">
+                              Protected Bet
+                            </div>
+                            {riskLoading && (
+                              <div className="flex items-center gap-1 text-xs text-blue-600">
+                                <svg className="animate-spin h-3 w-3" fill="none" viewBox="0 0 24 24">
+                                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                                </svg>
+                                <span>AI calculating...</span>
+                              </div>
+                            )}
+                            {riskAssessment && !riskLoading && (
+                              <div className="flex items-center gap-1 text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full font-medium">
+                                <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                                  <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z" />
+                                </svg>
+                                AI-Powered
+                              </div>
+                            )}
                           </div>
                           <div className="text-xs text-blue-700 leading-relaxed">
                             Get {getRefundPercentage(selectedMarket)}% back if you lose (${calculateInsuranceRefund().toFixed(2)})
@@ -718,6 +773,11 @@ export default function PredictionsClient() {
                           <div className="text-xs text-blue-600 font-semibold mt-1">
                             Premium: {getPremiumPercentage(selectedMarket)}% (+${calculateInsurancePremium().toFixed(2)})
                           </div>
+                          {riskAssessment && !riskLoading && (
+                            <div className="text-xs text-blue-500 mt-2 pt-2 border-t border-blue-200">
+                              🤖 {riskAssessment.reasoning}
+                            </div>
+                          )}
                         </div>
                       </div>
                     </div>

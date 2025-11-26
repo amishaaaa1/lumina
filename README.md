@@ -1,27 +1,48 @@
-# Lumina - Protected Prediction Markets
+# Lumina Protocol
 
-The first AI prediction market platform with built-in insurance. Trade with confidence knowing you get 20-70% back if you're wrong.
+AI-powered insurance layer for prediction markets. We protect traders when they lose, making prediction markets accessible to everyone.
 
 ## The Problem
 
-Prediction markets have a fundamental UX problem - users hesitate to participate because losing means losing everything. This creates:
-- Low participation rates, especially from retail users
-- Concentrated liquidity in only high-confidence markets
-- Risk-averse users staying away entirely
-
-Traditional prediction markets force you to choose between sitting out or going all-in. There's no middle ground.
+Prediction markets have a fundamental adoption problem:
+- One wrong prediction = total loss
+- Beginners are scared to participate
+- No risk protection available
+- This kills mass adoption
 
 ## Our Solution
 
-Lumina introduces an insurance layer on top of prediction markets. Every bet is automatically protected:
+Lumina is an **add-on insurance layer** that can plug into any prediction market:
 
-- **Lose your bet?** Get 20-70% of your stake back
-- **Dynamic premiums** based on market conditions (5-20% of stake)
-- **No extra steps** - insurance is built into the trading flow
+**Works with:**
+- Polymarket
+- Hyperliquid Prediction
+- HL Arena
+- Seedify participants
+- Any prediction market platform
 
-This changes the risk/reward calculation. Instead of risking $100 to win $150, you're risking $30-80 to win $150. Much more attractive.
+**How it works:**
+1. User places a bet (Yes/No)
+2. Our AI calculates risk score for that market
+3. System determines premium (3-8% of stake)
+4. If user loses: automatic payout (20-70% of stake back)
+5. If user wins: full payout as normal
 
-The insurance pool is funded by premiums and generates sustainable revenue while making markets more accessible.
+**AI Risk Model factors:**
+- Asset volatility
+- Current odds
+- Historical accuracy
+- Pool liquidity
+
+## Example
+
+Bet $100 on "BNB reaches $500":
+- AI calculates 5% premium
+- You pay $105 total
+- If wrong: get $40 back (40% protection)
+- If right: win full payout
+
+The insurance pool is funded by premiums and staking. AI adjusts rates to keep it sustainable.
 
 ## How It Works
 
@@ -65,6 +86,14 @@ This keeps the insurance pool sustainable while protecting users.
 - **Foundry** - Development framework
 - **OpenZeppelin** - Security standards
 
+### AI & Backend
+- **Google Gemini 3 Pro** - AI risk assessment (latest model with PhD-level reasoning)
+- **Grok AI (xAI)** - Fallback AI for risk scoring
+- **Cohere** - Secondary fallback AI
+- **Node.js** - API server
+- **Edge Runtime** - Fast API responses
+- **Real-time AI Integration** - Live risk assessment in betting flow
+
 ### Infrastructure
 - **BNB Chain** - Primary deployment
 - **Polymarket API** - Market data source
@@ -99,22 +128,53 @@ lumina/
     └── polymarket.ts               # API integration
 ```
 
+## Key Features
+
+### 1. Insurance Pools
+- View liquidity and APR for LPs
+- Track payout history
+- See risk scores per market
+- Stake to earn from premiums
+
+### 2. Dual Mode Operation
+- **Native markets**: Run our own prediction markets with built-in insurance
+- **Add-on layer**: Integrate with external platforms (Polymarket, Hyperliquid, etc.)
+
+### 3. AI Risk Oracle
+- Real-time risk scoring
+- Dynamic premium calculation
+- Safe odds recommendations
+- Learns from historical data
+
+### 4. User Dashboard
+- Active insurance policies
+- Total protected amount
+- Claim history
+- Win/loss tracking with insurance coverage
+
+## Why This Matters
+
+We're not competing with prediction markets - we're making them safer:
+
+- **For users**: Trade with confidence knowing you get partial refunds
+- **For platforms**: Offer insurance without building it yourself
+- **For builders**: Use our SDK to add insurance to your platform
+
+This changes prediction markets from gambling to risk-managed trading.
+
 ## BNB Chain Integration
 
-Lumina is built specifically for BNB Chain:
+We're deployed on BNB Chain because:
+- Low fees matter when you're adding insurance premiums on top of bets
+- Fast finality means quick settlements
+- Growing prediction market ecosystem (Seedify, PancakeSwap, etc.)
 
-### Markets on BNB Ecosystem
-- BNB price predictions ($500, $1000 milestones)
-- BSC TVL growth targets
-- New project launches on BNB Chain
+Markets we're running:
+- BNB price milestones ($500, $1000)
+- BSC TVL targets
 - Seedify IDO outcomes
-- PancakeSwap volume predictions
-
-### Why BNB Chain?
-- **Low fees** - Essential for small bets with insurance
-- **Fast finality** - Quick bet placement and resolution
-- **Growing ecosystem** - Natural market opportunities
-- **Strong community** - Built-in user base
+- PancakeSwap metrics
+- New project launches
 
 ### Contract Deployment
 ```bash
@@ -150,11 +210,24 @@ cp .env.local.example .env.local
 ### Environment Variables
 
 ```env
+# Web3
 NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID=your_project_id
 NEXT_PUBLIC_ENABLE_TESTNETS=true
+
+# AI Risk Oracle
+GEMINI_API_KEY=your_gemini_api_key
+
+# Contracts (BNB Chain Testnet)
+NEXT_PUBLIC_PREDICTION_MARKET_ADDRESS=0x...
+NEXT_PUBLIC_POOL_ADDRESS=0x...
+NEXT_PUBLIC_POLICY_MANAGER_ADDRESS=0x...
+NEXT_PUBLIC_ORACLE_ADDRESS=0x...
+NEXT_PUBLIC_ASSET_TOKEN=0x...
 ```
 
-Get WalletConnect ID: https://cloud.walletconnect.com
+Get API Keys:
+- WalletConnect: https://cloud.walletconnect.com
+- Gemini AI: https://aistudio.google.com/app/apikey
 
 ### Run Development Server
 
@@ -203,26 +276,30 @@ forge script script/Deploy.s.sol \
   --verify
 ```
 
-## Key Features
+## Current Features
 
-### 1. Protected Trading
-Every bet includes insurance. No separate purchase needed.
+**Insurance Mechanics**
+- Automatic protection on every bet
+- Dynamic premium calculation (5-20%)
+- Tiered protection based on market skew (20-70%)
+- Sustainable pool economics
 
-### 2. Real-time Updates
-Prices update every 1-3 seconds with smooth animations.
+**Trading**
+- Native prediction markets across crypto, politics, sports
+- Real-time price updates
+- Multiple outcome support
+- Leaderboard and portfolio tracking
 
-### 3. Multiple Categories
-- Crypto (BTC, ETH, BNB, SOL)
-- Politics (elections, policy)
-- Sports (NBA, soccer, NFL)
-- Tech (AI, product launches)
-- Finance (Fed rates, markets)
+**Smart Contracts**
+- ERC-721 insurance policies (tradeable)
+- Separate insurance pool from market liquidity
+- AI risk oracle integration
+- Gasless transactions support
 
-### 4. Leaderboard
-Track top traders and their performance.
-
-### 5. Portfolio Dashboard
-View your active bets, insurance coverage, and history.
+**Platform Integration (Roadmap)**
+- SDK for external platforms
+- Cross-platform policy management
+- Unified insurance dashboard
 
 ## Configuration
 
