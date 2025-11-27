@@ -341,30 +341,7 @@ export default function Home() {
               />
             </div>
 
-            <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-2xl p-8 border-2 border-blue-100">
-              <div className="text-center mb-6">
-                <h3 className="text-2xl font-bold text-gray-900 mb-2">
-                  🔌 Built for Builders
-                </h3>
-                <p className="text-gray-600">
-                  Integrate Lumina insurance into your prediction platform with our SDK
-                </p>
-              </div>
-              <div className="flex flex-wrap justify-center gap-4 text-sm">
-                <span className="px-4 py-2 bg-white rounded-full font-semibold text-gray-700 shadow-sm">
-                  Polymarket
-                </span>
-                <span className="px-4 py-2 bg-white rounded-full font-semibold text-gray-700 shadow-sm">
-                  Hyperliquid
-                </span>
-                <span className="px-4 py-2 bg-white rounded-full font-semibold text-gray-700 shadow-sm">
-                  HL Arena
-                </span>
-                <span className="px-4 py-2 bg-white rounded-full font-semibold text-gray-700 shadow-sm">
-                  Your Platform
-                </span>
-              </div>
-            </div>
+
           </div>
         </section>
 

@@ -177,6 +177,7 @@ export default function InsuranceClient({ marketParam }: InsuranceClientProps) {
   }, [marketParam, isConnected, transformedMarkets]);
 
   // Calculate premium from AI or fallback (in USDT)
+  // CRITICAL: Must match contract's calculation to avoid "Premium too low" error
   const calculatedPremiumUSDT = useMemo(() => {
     if (!betAmount || parseFloat(betAmount) <= 0) {
       console.log('❌ No bet amount:', betAmount);
@@ -185,11 +186,14 @@ export default function InsuranceClient({ marketParam }: InsuranceClientProps) {
     const amount = parseFloat(betAmount);
     const coverage = (amount * coveragePercentage) / 100;
     
-    let premiumRate = 5; // Default 5%
+    // Contract uses: basePremium * (1 + utilizationRate^2) * (1 + riskScore)
+    // For safety, we use a higher rate to ensure we always meet contract's minimum
+    let premiumRate = 8; // Default 8% (higher than contract's 5% base to account for utilization)
     
-    // Use AI-calculated premium rate if available
+    // Use AI-calculated premium rate if available, but add safety margin
     if (riskAssessment) {
-      premiumRate = riskAssessment.premiumRate;
+      // Add 3% safety margin to AI rate to account for pool utilization
+      premiumRate = Math.max(8, riskAssessment.premiumRate + 3);
     }
     
     const premium = coverage * (premiumRate / 100);
@@ -202,10 +206,12 @@ export default function InsuranceClient({ marketParam }: InsuranceClientProps) {
       premiumRate,
       premium,
       riskAssessment: riskAssessment ? 'Available' : 'Using fallback',
+      note: 'Added 3% safety margin for pool utilization',
     });
     
-    // While loading or if AI fails, use fallback: 5% premium (reasonable default)
-    return premium;
+    // Ensure minimum premium (3% of coverage as per contract)
+    const minPremium = coverage * 0.03;
+    return Math.max(premium, minPremium);
   }, [betAmount, coveragePercentage, riskAssessment]);
 
   // Convert premium to selected token
@@ -262,21 +268,33 @@ export default function InsuranceClient({ marketParam }: InsuranceClientProps) {
   const isPending = isApprovePending || isCreatePending || isApproving;
   const isConfirming = isCreating;
 
+  // Track if we're in the middle of a purchase flow
+  const [isPurchasing, setIsPurchasing] = useState(false);
+  const [hasAutoCreated, setHasAutoCreated] = useState(false);
+
   // Auto-create policy after approval success
   useEffect(() => {
-    if (isApproveSuccess && selectedMarket && premium && address && betAmount && coverageAmount && calculatedPremiumUSDT > 0) {
+    if (isApproveSuccess && isPurchasing && !hasAutoCreated && selectedMarket && premium && address && betAmount && coverageAmount && calculatedPremiumUSDT > 0) {
+      setHasAutoCreated(true); // Prevent double execution
       // Refetch allowance first
       refetchAllowance().then(() => {
         const durationSeconds = BigInt(parseInt(duration) * 24 * 60 * 60);
         const amount = parseUnits(coverageAmount, 18);
-        // Use the same calculation as handleBuy for USDT
-        const premiumAmount = parseUnits(Math.max(0.01, calculatedPremiumUSDT).toFixed(6), 18);
+        // CRITICAL FIX: Use the SAME premium calculation as handleBuy
+        // Ensure minimum premium matches contract requirement (3% of coverage)
+        const minPremiumUSDT = parseFloat(coverageAmount) * 0.03;
+        const premiumUSDTValue = Math.max(minPremiumUSDT, calculatedPremiumUSDT);
+        const premiumAmount = parseUnits(premiumUSDTValue.toFixed(6), 18);
         // CRITICAL FIX: Ensure marketId is always a string
         const marketIdString = String(selectedMarket.id);
 
         console.log('📝 Auto-creating Policy after approval:', {
           premiumAmount: premiumAmount.toString(),
+          premiumAmountInEther: formatUnits(premiumAmount, 18),
           calculatedPremiumUSDT,
+          minPremiumUSDT,
+          premiumUSDTValue,
+          coverageAmount,
         });
 
         showToast('Step 2/2: Creating insurance policy...', 'info');
@@ -285,9 +303,13 @@ export default function InsuranceClient({ marketParam }: InsuranceClientProps) {
           functionName: 'createPolicy',
           args: [address, marketIdString, amount, premiumAmount, durationSeconds],
         });
+        
+        // Reset purchasing flags after creating policy
+        setIsPurchasing(false);
       });
     }
-  }, [isApproveSuccess, selectedMarket, premium, address, betAmount, coverageAmount, duration, calculatedPremiumUSDT, createPolicy, showToast, refetchAllowance]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isApproveSuccess, isPurchasing, hasAutoCreated]);
   const isSuccess = isCreateSuccess;
 
   // Fetch user's policy IDs - will be used when displaying user policies
@@ -452,9 +474,15 @@ export default function InsuranceClient({ marketParam }: InsuranceClientProps) {
     }
     if (!validateBetAmount(betAmount)) return;
 
-    // Validate premium is not too small
-    if (calculatedPremiumUSDT < 0.01) {
-      showToast('❌ Premium amount too small. Minimum bet is 1 USDT.', 'error');
+    // Validate premium is not too small (minimum 3% of coverage as per contract)
+    const minPremiumRequired = parseFloat(coverageAmount) * 0.03;
+    if (calculatedPremiumUSDT < minPremiumRequired) {
+      showToast(`❌ Premium too low. Minimum required: $${minPremiumRequired.toFixed(2)}`, 'error');
+      console.error('Premium validation failed:', {
+        calculatedPremiumUSDT,
+        minPremiumRequired,
+        coverageAmount,
+      });
       return;
     }
 
@@ -469,8 +497,9 @@ export default function InsuranceClient({ marketParam }: InsuranceClientProps) {
     const amount = parseUnits(coverageAmount, 18);
     
     // Calculate premium in selected token with proper precision
-    // Ensure minimum values to avoid 0 amounts
-    const premiumUSDTValue = Math.max(0.01, calculatedPremiumUSDT);
+    // CRITICAL: Ensure minimum values match contract requirements (3% of coverage)
+    const minPremiumUSDT = parseFloat(coverageAmount) * 0.03;
+    const premiumUSDTValue = Math.max(minPremiumUSDT, calculatedPremiumUSDT);
     const premiumBNBValue = Math.max(0.000001, calculatedPremiumInToken);
     
     const premiumAmount = paymentToken === 'BNB' 
@@ -481,10 +510,12 @@ export default function InsuranceClient({ marketParam }: InsuranceClientProps) {
       paymentToken,
       calculatedPremiumUSDT,
       calculatedPremiumInToken,
+      minPremiumUSDT,
       premiumUSDTValue,
       premiumBNBValue,
       premiumAmount: premiumAmount.toString(),
       premiumAmountInEther: formatUnits(premiumAmount, 18),
+      coverageAmount,
     });
     
     // Validate premium amount is not zero
@@ -557,6 +588,7 @@ export default function InsuranceClient({ marketParam }: InsuranceClientProps) {
 
           if (currentAllowance < premiumAmount) {
             showToast('Step 1/2: Approving USDT...', 'info');
+            setIsPurchasing(true); // Set flag for auto-create
             approveToken({
               ...ASSET_TOKEN,
               functionName: 'approve',
@@ -898,6 +930,8 @@ export default function InsuranceClient({ marketParam }: InsuranceClientProps) {
             setSelectedMarket(null);
             setBetAmount('');
             setValidationError('');
+            setHasAutoCreated(false);
+            setIsPurchasing(false);
           }}
           title="Purchase Insurance"
         >
@@ -1243,6 +1277,8 @@ export default function InsuranceClient({ marketParam }: InsuranceClientProps) {
                   setBetAmount('');
                   setCoveragePercentage(50);
                   setValidationError('');
+                  setHasAutoCreated(false);
+                  setIsPurchasing(false);
                 }}
                 className="px-6 py-4 bg-gray-200 text-gray-700 rounded-lg font-semibold hover:bg-gray-300 transition-all focus:ring-2 focus:ring-gray-400 focus:ring-offset-2"
                 aria-label="Cancel"
