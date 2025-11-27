@@ -134,15 +134,15 @@ function getFallbackAssessment(market: MarketData): RiskAssessment {
   
   const riskScore = (skew * 0.4) + ((100 - liquidityScore) * 0.3) + (timeScore * 0.3);
   
-  let premiumRate = 25; // 25% default
-  let payoutRate = 50; // 50% default
+  let premiumRate = 5; // 5% default (range: 3-8%)
+  let payoutRate = 50; // 50% default (range: 40-60%)
   
   if (riskScore < 30) {
-    premiumRate = 20;
-    payoutRate = 50;
+    premiumRate = 3.5;
+    payoutRate = 45;
   } else if (riskScore > 60) {
-    premiumRate = 30;
-    payoutRate = 70;
+    premiumRate = 7;
+    payoutRate = 58;
   }
   
   return {

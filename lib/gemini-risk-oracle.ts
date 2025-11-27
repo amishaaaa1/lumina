@@ -36,28 +36,89 @@ interface RiskAssessment {
 }
 
 export async function calculateRiskScore(market: MarketData): Promise<RiskAssessment> {
-  // Try Gemini first
-  try {
-    return await calculateRiskScoreWithGemini(market);
-  } catch (geminiError) {
-    console.error('Gemini error, trying Grok:', geminiError);
-    
-    // Try Grok as fallback
-    try {
-      return await calculateRiskScoreWithGrok(market);
-    } catch (grokError) {
-      console.error('Grok error, trying Cohere:', grokError);
-      
-      // Try Cohere as second fallback
-      try {
-        return await calculateRiskScoreWithCohere(market);
-      } catch (cohereError) {
-        console.error('All AI failed, using rule-based:', cohereError);
-        // Final fallback to rule-based calculation
-        return calculateFallbackRisk(market);
-      }
-    }
+  // Run all 3 AI models in parallel for combined assessment
+  const results = await Promise.allSettled([
+    calculateRiskScoreWithGemini(market),
+    calculateRiskScoreWithGrok(market),
+    calculateRiskScoreWithCohere(market),
+  ]);
+
+  const successfulResults: RiskAssessment[] = [];
+  const aiNames: string[] = [];
+
+  // Collect successful results
+  if (results[0].status === 'fulfilled') {
+    successfulResults.push(results[0].value);
+    aiNames.push('Gemini 3 Pro');
   }
+  if (results[1].status === 'fulfilled') {
+    successfulResults.push(results[1].value);
+    aiNames.push('Grok');
+  }
+  if (results[2].status === 'fulfilled') {
+    successfulResults.push(results[2].value);
+    aiNames.push('Cohere');
+  }
+
+  // If no AI succeeded, use fallback
+  if (successfulResults.length === 0) {
+    console.error('All AI models failed, using rule-based fallback');
+    return calculateFallbackRisk(market);
+  }
+
+  // Combine results using weighted average based on confidence
+  return combineAssessments(successfulResults, aiNames);
+}
+
+function combineAssessments(assessments: RiskAssessment[], aiNames: string[]): RiskAssessment {
+  // Calculate total confidence weight
+  const totalConfidence = assessments.reduce((sum, a) => sum + a.confidence, 0);
+  
+  // Weighted average for each metric
+  const combinedRiskScore = assessments.reduce(
+    (sum, a) => sum + (a.riskScore * a.confidence), 0
+  ) / totalConfidence;
+  
+  const combinedPremiumRate = assessments.reduce(
+    (sum, a) => sum + (a.premiumRate * a.confidence), 0
+  ) / totalConfidence;
+  
+  const combinedPayoutRate = assessments.reduce(
+    (sum, a) => sum + (a.payoutRate * a.confidence), 0
+  ) / totalConfidence;
+  
+  const combinedConfidence = assessments.reduce(
+    (sum, a) => sum + a.confidence, 0
+  ) / assessments.length;
+  
+  // Combine factors
+  const combinedFactors = {
+    volatility: Math.round(
+      assessments.reduce((sum, a) => sum + (a.factors.volatility * a.confidence), 0) / totalConfidence
+    ),
+    liquidity: Math.round(
+      assessments.reduce((sum, a) => sum + (a.factors.liquidity * a.confidence), 0) / totalConfidence
+    ),
+    timeDecay: Math.round(
+      assessments.reduce((sum, a) => sum + (a.factors.timeDecay * a.confidence), 0) / totalConfidence
+    ),
+    marketSkew: Math.round(
+      assessments.reduce((sum, a) => sum + (a.factors.marketSkew * a.confidence), 0) / totalConfidence
+    ),
+  };
+  
+  // Create combined reasoning
+  const aiList = aiNames.join(' + ');
+  const reasoning = `Combined analysis from ${aiList} (${assessments.length} AI${assessments.length > 1 ? 's' : ''})`;
+  
+  return {
+    riskScore: Math.round(combinedRiskScore),
+    premiumRate: Math.round(combinedPremiumRate * 10) / 10, // 1 decimal
+    payoutRate: Math.round(combinedPayoutRate * 10) / 10, // 1 decimal
+    confidence: Math.round(combinedConfidence),
+    factors: combinedFactors,
+    reasoning,
+  };
 }
 
 async function calculateRiskScoreWithGemini(market: MarketData): Promise<RiskAssessment> {
