@@ -204,7 +204,7 @@ export default function Home() {
               </h1>
 
               <p className="text-xl md:text-2xl text-gray-600 mb-12 max-w-3xl mx-auto">
-                The first AI-powered insurance layer for prediction markets. Works with Polymarket, Hyperliquid, and any prediction platform. Trade with confidence, never lose everything.
+                The first AI-powered insurance layer for prediction markets. Trade with confidence, never lose everything.
               </p>
 
               <div className="flex flex-wrap gap-4 justify-center mb-20">
