@@ -288,5 +288,22 @@ export const ASSET_TOKEN = {
       outputs: [{ name: '', type: 'uint256' }],
       stateMutability: 'view',
     },
+    {
+      type: 'function',
+      name: 'faucet',
+      inputs: [],
+      outputs: [],
+      stateMutability: 'nonpayable',
+    },
+    {
+      type: 'function',
+      name: 'canUseFaucet',
+      inputs: [{ name: 'user', type: 'address' }],
+      outputs: [
+        { name: 'canUse', type: 'bool' },
+        { name: 'timeLeft', type: 'uint256' },
+      ],
+      stateMutability: 'view',
+    },
   ] as const,
 };
