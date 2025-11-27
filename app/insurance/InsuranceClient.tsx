@@ -122,7 +122,7 @@ export default function InsuranceClient({ marketParam }: InsuranceClientProps) {
   }, []);
 
   // Use Polymarket data with category filter
-  const { markets: polymarketData, loading: marketsLoading, error: marketsError } = usePolymarketData(categoryFilter === 'all' ? undefined : categoryFilter);
+  const { markets: polymarketData, loading: marketsLoading } = usePolymarketData(categoryFilter === 'all' ? undefined : categoryFilter);
 
   // Transform Polymarket data to display format
   const transformedMarkets = useMemo(() => {

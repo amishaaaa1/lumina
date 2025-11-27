@@ -204,7 +204,7 @@ export default function Home() {
               </h1>
 
               <p className="text-xl md:text-2xl text-gray-600 mb-12 max-w-3xl mx-auto">
-                The first AI-powered insurance layer for prediction markets. Trade with confidence, never lose everything.
+                The first AI-powered insurance layer for prediction markets. Works with Polymarket, Hyperliquid, and any prediction platform. Trade with confidence, never lose everything.
               </p>
 
               <div className="flex flex-wrap gap-4 justify-center mb-20">
@@ -318,10 +318,10 @@ export default function Home() {
               </p>
             </div>
 
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
               <FeatureCard
                 title="Traders Buy Coverage"
-                description="Pay 20-30% premium to hedge your bet on any platform"
+                description="Pay 5-10% premium to hedge your bet on any platform"
                 color="blue"
               />
               <FeatureCard
@@ -331,14 +331,39 @@ export default function Home() {
               />
               <FeatureCard
                 title="AI Risk Oracle"
-                description="Gemini 3 Pro calculates optimal pricing"
+                description="Gemini 3 Pro analyzes volatility, odds, liquidity & history"
                 color="purple"
               />
               <FeatureCard
                 title="Pool Pays Claims"
-                description="Get 50-70% back from insurance pool if you lose"
+                description="Get 20-70% back from insurance pool if you lose"
                 color="pink"
               />
+            </div>
+
+            <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-2xl p-8 border-2 border-blue-100">
+              <div className="text-center mb-6">
+                <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                  🔌 Built for Builders
+                </h3>
+                <p className="text-gray-600">
+                  Integrate Lumina insurance into your prediction platform with our SDK
+                </p>
+              </div>
+              <div className="flex flex-wrap justify-center gap-4 text-sm">
+                <span className="px-4 py-2 bg-white rounded-full font-semibold text-gray-700 shadow-sm">
+                  Polymarket
+                </span>
+                <span className="px-4 py-2 bg-white rounded-full font-semibold text-gray-700 shadow-sm">
+                  Hyperliquid
+                </span>
+                <span className="px-4 py-2 bg-white rounded-full font-semibold text-gray-700 shadow-sm">
+                  HL Arena
+                </span>
+                <span className="px-4 py-2 bg-white rounded-full font-semibold text-gray-700 shadow-sm">
+                  Your Platform
+                </span>
+              </div>
             </div>
           </div>
         </section>
