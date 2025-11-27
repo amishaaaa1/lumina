@@ -2,18 +2,19 @@
 
 import { useState, useMemo, useEffect } from 'react';
 import { useAccount, useReadContract, useWriteContract, useWaitForTransactionReceipt, useBalance } from 'wagmi';
-import { parseUnits } from 'viem';
+import { parseUnits, formatUnits } from 'viem';
 import { useConnectModal } from '@rainbow-me/rainbowkit';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { Modal } from '@/components/ui/Modal';
 import { useToast } from '@/hooks/useToast';
-import { formatUSD, parseTokenAmount } from '@/lib/utils';
+import { formatUSD } from '@/lib/utils';
 import { CONTRACTS, ASSET_TOKEN } from '@/lib/contracts';
 import { cn } from '@/lib/utils';
 import { Shield, Search, TrendingUp, DollarSign } from 'lucide-react';
 import { usePolymarketData } from '@/hooks/usePolymarketData';
 import { useRiskOracle } from '@/hooks/useRiskOracle';
 import { AnimatedPrice } from '@/components/ui/AnimatedPrice';
+import { getBNBPrice, convertUSDTtoBNB, formatTokenAmount } from '@/lib/priceOracle';
 
 // Helper function to get icon based on category and title
 const getCategoryIcon = (category: string, title?: string): string => {
@@ -112,9 +113,16 @@ export default function InsuranceClient({ marketParam }: InsuranceClientProps) {
   const [categoryFilter, setCategoryFilter] = useState<string>('all');
   const [sortBy, setSortBy] = useState<'premium-low' | 'premium-high' | 'liquidity'>('premium-low');
   const [validationError, setValidationError] = useState<string>('');
+  const [paymentToken, setPaymentToken] = useState<'USDT' | 'BNB'>('USDT'); // USDT only for now
+  const [bnbPrice, setBnbPrice] = useState<number>(600); // Default price
+
+  // Fetch BNB price on mount
+  useEffect(() => {
+    getBNBPrice().then(setBnbPrice);
+  }, []);
 
   // Use Polymarket data with category filter
-  const { markets: polymarketData, loading: marketsLoading, error: marketsError } = usePolymarketData(categoryFilter === 'all' ? undefined : categoryFilter);
+  const { markets: polymarketData, loading: marketsLoading } = usePolymarketData(categoryFilter === 'all' ? undefined : categoryFilter);
 
   // Transform Polymarket data to display format
   const transformedMarkets = useMemo(() => {
@@ -129,18 +137,21 @@ export default function InsuranceClient({ marketParam }: InsuranceClientProps) {
     }));
   }, [polymarketData]);
 
-  // AI Risk Oracle for selected market
-  const riskOracleData = selectedMarket ? {
-    marketId: selectedMarket.id,
-    question: selectedMarket.title,
-    yesOdds: selectedMarket.sentiment.bullish,
-    noOdds: selectedMarket.sentiment.bearish,
-    totalVolume: selectedMarket.volume,
-    liquidity: selectedMarket.liquidity,
-    timeToExpiry: selectedMarket.endDate ? 
-      Math.max(0, (new Date(selectedMarket.endDate).getTime() - Date.now()) / (1000 * 60 * 60)) : 24,
-    category: selectedMarket.category,
-  } : null;
+  // AI Risk Oracle for selected market - memoized to prevent re-renders
+  const riskOracleData = useMemo(() => {
+    if (!selectedMarket) return null;
+    return {
+      marketId: selectedMarket.id,
+      question: selectedMarket.title,
+      yesOdds: selectedMarket.sentiment.bullish,
+      noOdds: selectedMarket.sentiment.bearish,
+      totalVolume: selectedMarket.volume,
+      liquidity: selectedMarket.liquidity,
+      timeToExpiry: selectedMarket.endDate ? 
+        Math.max(0, (new Date(selectedMarket.endDate).getTime() - Date.now()) / (1000 * 60 * 60)) : 24,
+      category: selectedMarket.category,
+    };
+  }, [selectedMarket]);
   
   const { assessment: riskAssessment, loading: riskLoading } = useRiskOracle(riskOracleData);
 
@@ -165,22 +176,41 @@ export default function InsuranceClient({ marketParam }: InsuranceClientProps) {
     }
   }, [marketParam, isConnected, transformedMarkets]);
 
-  // Calculate premium from AI or fallback
-  const calculatedPremium = useMemo(() => {
+  // Calculate premium from AI or fallback (in USDT)
+  const calculatedPremiumUSDT = useMemo(() => {
     if (!betAmount || parseFloat(betAmount) <= 0) return 0;
     const amount = parseFloat(betAmount);
     const coverage = (amount * coveragePercentage) / 100;
     
     // Use AI-calculated premium rate if available
     if (riskAssessment && !riskLoading) {
-      return coverage * (riskAssessment.premiumRate / 100);
+      // Ensure AI rate meets contract minimum + safety buffer
+      // Contract requires: premium >= expectedPayout * 30%
+      // With default 50% risk: expectedPayout = coverage * 50%
+      // So: premium >= coverage * 50% * 30% = coverage * 15%
+      // Add 1% buffer for safety: 16%
+      const aiRate = riskAssessment.premiumRate / 100;
+      const minRate = 0.16; // 16% minimum (15% contract + 1% buffer)
+      return coverage * Math.max(aiRate, minRate);
     }
     
-    // Fallback: 25% premium
-    return coverage * 0.25;
+    // Fallback: 16% premium (15% + 1% safety buffer)
+    // Contract sustainability check: premium >= expectedPayout * claimProbability
+    // With default riskScore 5000 (50%): payout = 50% of coverage
+    // Expected loss = 50% * 30% = 15% of coverage
+    // We add 1% buffer to ensure transactions always succeed
+    return coverage * 0.16;
   }, [betAmount, coveragePercentage, riskAssessment, riskLoading]);
 
-  const premium = calculatedPremium > 0 ? parseUnits(calculatedPremium.toFixed(2), 18) : undefined;
+  // Convert premium to selected token
+  const calculatedPremiumInToken = useMemo(() => {
+    if (paymentToken === 'BNB') {
+      return convertUSDTtoBNB(calculatedPremiumUSDT, bnbPrice);
+    }
+    return calculatedPremiumUSDT;
+  }, [calculatedPremiumUSDT, paymentToken, bnbPrice]);
+
+  const premium = calculatedPremiumUSDT > 0 ? parseUnits(calculatedPremiumUSDT.toFixed(2), 18) : undefined;
   const premiumLoading = riskLoading;
 
   // Fetch USDT token balance
@@ -188,6 +218,13 @@ export default function InsuranceClient({ marketParam }: InsuranceClientProps) {
     ...ASSET_TOKEN,
     functionName: 'balanceOf',
     args: address ? [address] : undefined,
+  });
+
+  // Fetch USDT allowance
+  const { refetch: refetchAllowance } = useReadContract({
+    ...ASSET_TOKEN,
+    functionName: 'allowance',
+    args: address ? [address, CONTRACTS.PolicyManager.address] : undefined,
   });
 
   // Fetch native BNB balance
@@ -201,7 +238,7 @@ export default function InsuranceClient({ marketParam }: InsuranceClientProps) {
   // Claim contract write - will be used when claim feature is implemented
   // const { writeContract: claimPolicy, data: claimHash } = useWriteContract();
   
-  const { isLoading: isApproving } = useWaitForTransactionReceipt({ hash: approveHash });
+  const { isLoading: isApproving, isSuccess: isApproveSuccess } = useWaitForTransactionReceipt({ hash: approveHash });
   const { isLoading: isCreating, isSuccess: isCreateSuccess } = useWaitForTransactionReceipt({ hash: policyHash });
   // Claim transaction receipt - will be used when claim feature is implemented
   // const { isLoading: isClaiming } = useWaitForTransactionReceipt({ hash: claimHash });
@@ -209,6 +246,25 @@ export default function InsuranceClient({ marketParam }: InsuranceClientProps) {
   const error = approveError || createError;
   const isPending = isApprovePending || isCreatePending || isApproving;
   const isConfirming = isCreating;
+
+  // Auto-create policy after approval success
+  useEffect(() => {
+    if (isApproveSuccess && selectedMarket && premium && address && betAmount && coverageAmount) {
+      // Refetch allowance first
+      refetchAllowance().then(() => {
+        const durationSeconds = BigInt(parseInt(duration) * 24 * 60 * 60);
+        const amount = parseUnits(coverageAmount, 18);
+        const premiumAmount = premium as bigint;
+
+        showToast('Step 2/2: Creating insurance policy...', 'info');
+        createPolicy({
+          ...CONTRACTS.PolicyManager,
+          functionName: 'createPolicy',
+          args: [address, selectedMarket.id, amount, premiumAmount, durationSeconds],
+        });
+      });
+    }
+  }, [isApproveSuccess, selectedMarket, premium, address, betAmount, coverageAmount, duration, createPolicy, showToast, refetchAllowance]);
   const isSuccess = isCreateSuccess;
 
   // Fetch user's policy IDs - will be used when displaying user policies
@@ -342,36 +398,80 @@ export default function InsuranceClient({ marketParam }: InsuranceClientProps) {
   const handleBuy = async () => {
     if (!selectedMarket || !premium || !address || !betAmount || !coverageAmount) return;
     if (!validateBetAmount(betAmount)) return;
-    if (!validateBetAmount(betAmount)) return;
 
     const durationSeconds = BigInt(parseInt(duration) * 24 * 60 * 60);
     const amount = parseUnits(coverageAmount, 18);
-    const premiumAmount = premium as bigint;
+    
+    // Calculate premium in selected token
+    const premiumAmount = paymentToken === 'BNB' 
+      ? parseUnits(calculatedPremiumInToken.toFixed(8), 18) // BNB with 8 decimals precision
+      : premium as bigint;
+
+    // Debug log
+    console.log('🔍 Premium Debug:', {
+      betAmount,
+      coverageAmount,
+      coveragePercentage,
+      calculatedPremiumUSDT,
+      calculatedPremiumInToken,
+      premiumAmount: premiumAmount.toString(),
+      paymentToken,
+    });
 
     try {
-      // Step 1: Approve premium
-      showToast('Approving premium...', 'info');
-      approveToken({
-        ...ASSET_TOKEN,
-        functionName: 'approve',
-        args: [CONTRACTS.PolicyManager.address, premiumAmount],
+      if (paymentToken === 'USDT') {
+        // Refetch allowance to get latest on-chain value
+        const { data: latestAllowance } = await refetchAllowance();
+        const currentAllowance = latestAllowance || 0n;
+        
+        console.log('💰 Allowance Check:', {
+          currentAllowance: currentAllowance.toString(),
+          premiumAmount: premiumAmount.toString(),
+          needsApproval: currentAllowance < premiumAmount,
+        });
+
+        if (currentAllowance < premiumAmount) {
+          showToast('Step 1/2: Approving USDT...', 'info');
+          approveToken({
+            ...ASSET_TOKEN,
+            functionName: 'approve',
+            args: [CONTRACTS.PolicyManager.address, premiumAmount],
+          });
+          return;
+        }
+        // Already approved, proceed to create policy
+        showToast('Creating insurance policy...', 'info');
+      } else {
+        showToast('Creating insurance policy with BNB...', 'info');
+      }
+
+      console.log('📝 Creating Policy:', {
+        holder: address,
+        marketId: selectedMarket.id,
+        coverageAmount: amount.toString(),
+        premium: premiumAmount.toString(),
+        duration: durationSeconds.toString(),
       });
 
-      // Wait for approval
-      await new Promise(resolve => setTimeout(resolve, 3000));
-
-      // Step 2: Create policy
-      showToast('Creating insurance policy...', 'info');
-      createPolicy({
-        ...CONTRACTS.PolicyManager,
-        functionName: 'createPolicy',
-        args: [address, selectedMarket.id, amount, premiumAmount, durationSeconds],
-      });
+      if (paymentToken === 'BNB') {
+        createPolicy({
+          ...CONTRACTS.PolicyManager,
+          functionName: 'createPolicy',
+          args: [address, selectedMarket.id, amount, premium, durationSeconds],
+          value: premiumAmount, // Send BNB as value
+        });
+      } else {
+        createPolicy({
+          ...CONTRACTS.PolicyManager,
+          functionName: 'createPolicy',
+          args: [address, selectedMarket.id, amount, premium, durationSeconds],
+        });
+      }
 
       // Wait for transaction
       await new Promise(resolve => setTimeout(resolve, 3000));
 
-      showToast('✅ Insurance policy created successfully!', 'success');
+      showToast(`✅ Insurance policy created! Paid ${formatTokenAmount(calculatedPremiumInToken, 6)} ${paymentToken}`, 'success');
       setShowPurchaseModal(false);
       setBetAmount('');
       setCoveragePercentage(50);
@@ -669,6 +769,29 @@ export default function InsuranceClient({ marketParam }: InsuranceClientProps) {
               )}
             </div>
 
+            {/* Payment Token Selector */}
+            <div>
+              <label className="block text-sm font-medium mb-2">Payment Token</label>
+              <select
+                value={paymentToken}
+                onChange={(e) => setPaymentToken(e.target.value as 'USDT' | 'BNB')}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent bg-white font-medium"
+              >
+                <option value="BNB">
+                  BNB - Balance: {nativeBalance ? formatTokenAmount(parseFloat(formatUnits(nativeBalance.value, 18)), 4) : '0.0000'}
+                </option>
+                <option value="USDT">
+                  USDT - Balance: {usdtBalance ? formatTokenAmount(parseFloat(formatUnits(usdtBalance, 18)), 2) : '0.00'}
+                </option>
+              </select>
+              <div className="flex items-center justify-between mt-2 text-xs text-gray-500">
+                <span>Selected: {paymentToken}</span>
+                {paymentToken === 'BNB' && (
+                  <span>1 BNB = ${bnbPrice.toFixed(2)}</span>
+                )}
+              </div>
+            </div>
+
             {/* Coverage Percentage Slider */}
             <div>
               <div className="flex items-center justify-between mb-3">
@@ -755,7 +878,7 @@ export default function InsuranceClient({ marketParam }: InsuranceClientProps) {
             {riskLoading && (
               <div className="flex items-center justify-center py-4 bg-blue-50 rounded-lg border border-blue-100">
                 <LoadingSpinner size="sm" />
-                <span className="ml-2 text-sm text-blue-700 font-medium">🤖 AI calculating risk...</span>
+                <span className="ml-2 text-sm text-blue-700 font-medium">Calculating risk assessment...</span>
               </div>
             )}
 
@@ -806,15 +929,32 @@ export default function InsuranceClient({ marketParam }: InsuranceClientProps) {
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-600">AI Premium ({riskAssessment ? riskAssessment.premiumRate.toFixed(1) : '25'}%)</span>
-                  <span className="font-semibold">{formatUSD(premium)}</span>
+                  <span className="font-semibold text-gray-900">
+                    {paymentToken === 'BNB' ? (
+                      <span>
+                        {formatTokenAmount(calculatedPremiumInToken, 6)} BNB
+                        <span className="text-xs text-gray-500 ml-1">(≈${calculatedPremiumUSDT.toFixed(2)})</span>
+                      </span>
+                    ) : (
+                      formatUSD(premium)
+                    )}
+                  </span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-600">Duration</span>
                   <span className="font-semibold">{duration} days</span>
                 </div>
                 <div className="pt-2 border-t border-gray-200 flex justify-between">
-                  <span className="font-semibold">You pay</span>
-                  <span className="font-bold text-lg">{formatUSD(premium)}</span>
+                  <span className="font-semibold">You pay with {paymentToken}</span>
+                  <span className="font-bold text-lg">
+                    {paymentToken === 'BNB' ? (
+                      <span className="text-blue-600">
+                        {formatTokenAmount(calculatedPremiumInToken, 6)} BNB
+                      </span>
+                    ) : (
+                      formatUSD(premium)
+                    )}
+                  </span>
                 </div>
               </div>
             )}
@@ -853,18 +993,31 @@ export default function InsuranceClient({ marketParam }: InsuranceClientProps) {
                 </span>
               </div>
 
-              {/* Help message if no USDT */}
-              {!isUsdtBalanceLoading && (!usdtBalance || usdtBalance === 0n) && (
+              {/* Help message based on selected token */}
+              {paymentToken === 'USDT' && !isUsdtBalanceLoading && (!usdtBalance || usdtBalance === 0n) && (
                 <div className="pt-2 border-t border-gray-200">
-                  <p className="text-xs text-amber-600 mb-1">⚠️ You need USDT to purchase insurance</p>
-                  <a
-                    href="https://testnet.bnbchain.org/faucet-smart"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-xs text-blue-600 hover:text-blue-700 underline"
-                  >
-                    Get testnet tokens →
-                  </a>
+                  <p className="text-xs text-amber-600 mb-2">⚠️ Insufficient USDT balance</p>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => setPaymentToken('BNB')}
+                      className="text-xs px-2 py-1 bg-blue-600 text-white rounded hover:bg-blue-700"
+                    >
+                      💡 Pay with BNB instead
+                    </button>
+                    <a
+                      href="https://testnet.bnbchain.org/faucet-smart"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-xs px-2 py-1 border border-gray-300 rounded hover:bg-gray-50"
+                    >
+                      🚰 Get USDT
+                    </a>
+                  </div>
+                </div>
+              )}
+              {paymentToken === 'BNB' && nativeBalance && parseFloat(formatUnits(nativeBalance.value, 18)) < calculatedPremiumInToken && (
+                <div className="pt-2 border-t border-gray-200">
+                  <p className="text-xs text-amber-600">⚠️ Insufficient BNB balance for premium</p>
                 </div>
               )}
             </div>
@@ -930,3 +1083,6 @@ export default function InsuranceClient({ marketParam }: InsuranceClientProps) {
     </main>
   );
 }
+
+
+

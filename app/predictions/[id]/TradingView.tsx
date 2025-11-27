@@ -37,7 +37,7 @@ export default function TradingView({ marketId }: TradingViewProps) {
   const [insuranceEnabled, setInsuranceEnabled] = useState(true); // Insurance toggle
 
   const [marketData, setMarketData] = useState<MarketData | null>(null);
-  const [prevOdds, setPrevOdds] = useState<{ yes: number; no: number } | null>(null);
+  const [, setPrevOdds] = useState<{ yes: number; no: number } | null>(null);
   const [priceHistory, setPriceHistory] = useState<PricePoint[]>([]);
   const [loading, setLoading] = useState(true);
   const [trading, setTrading] = useState(false);

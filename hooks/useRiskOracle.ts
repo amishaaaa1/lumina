@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 interface RiskAssessment {
   riskScore: number;
@@ -25,18 +25,39 @@ interface MarketData {
   category: string;
 }
 
+// Cache for risk assessments (in-memory)
+const assessmentCache = new Map<string, { assessment: RiskAssessment; timestamp: number }>();
+const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
+
 export function useRiskOracle(market: MarketData | null) {
   const [assessment, setAssessment] = useState<RiskAssessment | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   useEffect(() => {
     if (!market) {
       setAssessment(null);
+      setLoading(false);
       return;
     }
 
-    let isCancelled = false;
+    // Check cache first
+    const cacheKey = market.marketId;
+    const cached = assessmentCache.get(cacheKey);
+    if (cached && Date.now() - cached.timestamp < CACHE_DURATION) {
+      setAssessment(cached.assessment);
+      setLoading(false);
+      return;
+    }
+
+    // Cancel previous request
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+
+    const abortController = new AbortController();
+    abortControllerRef.current = abortController;
 
     async function fetchRiskAssessment() {
       if (!market) return;
@@ -51,6 +72,7 @@ export function useRiskOracle(market: MarketData | null) {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify(market),
+          signal: abortController.signal,
         });
 
         if (!response.ok) {
@@ -59,27 +81,45 @@ export function useRiskOracle(market: MarketData | null) {
 
         const data = await response.json();
         
-        if (!isCancelled && data.success) {
+        if (!abortController.signal.aborted && data.success) {
           setAssessment(data.assessment);
+          // Cache the result
+          assessmentCache.set(market.marketId, {
+            assessment: data.assessment,
+            timestamp: Date.now(),
+          });
         }
       } catch (err) {
-        if (!isCancelled && market) {
+        if (!abortController.signal.aborted) {
+          if (err instanceof Error && err.name === 'AbortError') {
+            return; // Ignore abort errors
+          }
           console.error('Risk oracle error:', err);
           setError(err instanceof Error ? err.message : 'Failed to calculate risk');
           // Use fallback calculation
-          setAssessment(getFallbackAssessment(market));
+          const fallback = getFallbackAssessment(market);
+          setAssessment(fallback);
+          // Cache fallback too
+          assessmentCache.set(market.marketId, {
+            assessment: fallback,
+            timestamp: Date.now(),
+          });
         }
       } finally {
-        if (!isCancelled) {
+        if (!abortController.signal.aborted) {
           setLoading(false);
         }
       }
     }
 
-    fetchRiskAssessment();
+    // Debounce: wait 300ms before fetching
+    const timeoutId = setTimeout(() => {
+      fetchRiskAssessment();
+    }, 300);
 
     return () => {
-      isCancelled = true;
+      clearTimeout(timeoutId);
+      abortController.abort();
     };
   }, [market]);
 

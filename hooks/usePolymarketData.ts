@@ -11,16 +11,16 @@ export interface MarketWithSentiment extends PolymarketEvent {
 }
 
 // Add small random fluctuations to simulate real-time price movement
-function addMicroFluctuation(price: number): number {
-  // Add fluctuation between -1% to +1% for more visible movement
-  const fluctuation = (Math.random() - 0.5) * 0.02;
-  let newPrice = price + fluctuation;
-  
-  // Keep price between 0.15 and 0.85 to maintain variety
-  newPrice = Math.max(0.15, Math.min(0.85, newPrice));
-  
-  return newPrice;
-}
+// function addMicroFluctuation(price: number): number {
+//   // Add fluctuation between -1% to +1% for more visible movement
+//   const fluctuation = (Math.random() - 0.5) * 0.02;
+//   let newPrice = price + fluctuation;
+//   
+//   // Keep price between 0.15 and 0.85 to maintain variety
+//   newPrice = Math.max(0.15, Math.min(0.85, newPrice));
+//   
+//   return newPrice;
+// }
 
 export function usePolymarketData(category?: string) {
   const [markets, setMarkets] = useState<MarketWithSentiment[]>([]);

@@ -174,7 +174,7 @@ export const CONTRACTS = {
           { name: 'duration', type: 'uint256' },
         ],
         outputs: [{ name: 'policyId', type: 'uint256' }],
-        stateMutability: 'nonpayable',
+        stateMutability: 'payable',
       },
       {
         type: 'function',
